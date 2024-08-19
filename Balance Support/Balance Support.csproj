@@ -44,7 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Third-party configs\Firebase\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json">
+    <Content Update="Third-party configs\Firebase\FirebaseCloudMessaging.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

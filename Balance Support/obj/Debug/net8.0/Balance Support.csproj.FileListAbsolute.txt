@@ -62,7 +62,6 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\System.Net
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\FirebaseAdmin.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\Google.Api.Gax.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\Google.Api.Gax.Rest.dll
-C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Debug\net8.0\Balance_Support.Properties.Resources.resources
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Debug\net8.0\Balance Support.csproj.GenerateResource.cache
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\publish\web.config
@@ -72,3 +71,7 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\publish\Ba
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\publish\Balance Support.runtimeconfig.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\publish\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\publish\Config.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\Third-party configs\Firebase\FirebaseAuthApiKey.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\Third-party configs\Firebase\FirebaseDatabaseClientConfig.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Debug\net8.0\Balance Support.sourcelink.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\Third-party configs\Firebase\FirebaseCloudMessaging.json

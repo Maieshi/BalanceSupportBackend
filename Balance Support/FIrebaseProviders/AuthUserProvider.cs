@@ -40,28 +40,28 @@ public class AuthUserProvider: IAuthUserProvider
 
     private List<FirebaseAuthLink> loggedInUsers;
 
-    private DatabaseUserProvider _databaseUserProvider;
+    private IDatabaseUserProvider _databaseUserProvider;
 
 
-    public AuthUserProvider()
-    {
-        
-        // var app = FirebaseApp.Create(new AppOptions()
-        // {
-        //     Credential = GoogleCredential.FromFile(@"C:\Projects\Asp. Net\Balance Support\Balance Support\balance-support-431615-0a30add1ec30.json"),
-        // });
-        //
-        var firebseAuthApiKey = JsonConvert.DeserializeObject<FirebaseAuthApiKey>(File.ReadAllText(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseAuthApiKey)));
-        provider = new Firebase.Auth.FirebaseAuthProvider(new FirebaseConfig(firebseAuthApiKey.ApiKey));
-        emailAttribute = new EmailAddressAttribute();
-        loggedInUsers = new List<FirebaseAuthLink>();
-        // _databaseUserProvider = new DatabaseUserProvider();
+    // public AuthUserProvider()
+    // {
+    //     
+    //     // var app = FirebaseApp.Create(new AppOptions()
+    //     // {
+    //     //     Credential = GoogleCredential.FromFile(@"C:\Projects\Asp. Net\Balance Support\Balance Support\balance-support-431615-0a30add1ec30.json"),
+    //     // });
+    //     //
+    //     var firebseAuthApiKey = JsonConvert.DeserializeObject<FirebaseAuthApiKey>(File.ReadAllText(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseAuthApiKey)));
+    //     provider = new Firebase.Auth.FirebaseAuthProvider(new FirebaseConfig(firebseAuthApiKey.ApiKey));
+    //     emailAttribute = new EmailAddressAttribute();
+    //     loggedInUsers = new List<FirebaseAuthLink>();
+    //     // _databaseUserProvider = new DatabaseUserProvider();
+    //
+    //     Test();
+    //
+    // }
 
-        Test();
-
-    }
-
-    public AuthUserProvider(DatabaseUserProvider databaseUserProvider, IFirebaseAuthProvider provider)
+    public AuthUserProvider(IDatabaseUserProvider databaseUserProvider, IFirebaseAuthProvider provider)
     {
         this.provider = provider;
         emailAttribute = new EmailAddressAttribute();

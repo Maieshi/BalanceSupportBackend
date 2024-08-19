@@ -19,14 +19,15 @@ public static class ServicesInitializer
         FirebaseAuthApiKey apiKey = JsonConvert.DeserializeObject<FirebaseAuthApiKey>(
             File.ReadAllText(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseAuthApiKey)));
 
+        
+        
         FirebaseDatabaseClientConfig databseConfig = JsonConvert.DeserializeObject<FirebaseDatabaseClientConfig>(
             File.ReadAllText(
                 Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseDatabaseClientConfigJson)));
 
         FirebaseApp.Create(new AppOptions()
         {
-            Credential = GoogleCredential.FromFile(Path.Combine(PathStorage.ThirdPartyConfigs, PathStorage.Firebase,
-                PathStorage.FirebaseDatabaseClientConfigJson)),
+            Credential = GoogleCredential.FromFile(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseCloudMessagingJson)),
         });
         
         services.AddSingleton<IFirebaseClient>(
@@ -46,5 +47,7 @@ public static class ServicesInitializer
             );
 
         services.AddSingleton<IDatabaseUserProvider, DatabaseUserProvider>();
+
+        services.AddSingleton<IAuthUserProvider, AuthUserProvider>();
     }
 }

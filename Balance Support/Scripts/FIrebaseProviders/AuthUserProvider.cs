@@ -40,7 +40,7 @@ public class AuthUserProvider: IAuthUserProvider
 
     private List<FirebaseAuthLink> loggedInUsers;
 
-    private IDatabaseUserProvider _databaseUserProvider;
+    private IDatabaseUserProvider databaseUserProvider;
 
 
     // public AuthUserProvider()
@@ -66,7 +66,7 @@ public class AuthUserProvider: IAuthUserProvider
         this.provider = provider;
         emailAttribute = new EmailAddressAttribute();
         loggedInUsers = new List<FirebaseAuthLink>();
-        _databaseUserProvider = databaseUserProvider;
+        this.databaseUserProvider = databaseUserProvider;
 
         // Test();
     }
@@ -100,7 +100,7 @@ public class AuthUserProvider: IAuthUserProvider
                     $"Invalid email:{email}  username:{username} or password:{pasword}. Check your data");
         }
         
-        if (_databaseUserProvider.TryGetUser(email, out var user))
+        if (databaseUserProvider.TryGetUser(email, out var user))
             return Results.BadRequest("User already exists");
 
         FirebaseAuthLink link;
@@ -117,7 +117,7 @@ public class AuthUserProvider: IAuthUserProvider
                     title: "An error occurred while creating the user");
         }
         
-        var newUser = await _databaseUserProvider.CreateNewUserAsync(new UserAuthData()
+        var newUser = await databaseUserProvider.CreateNewUserAsync(new UserAuthData()
             { Id = link.User.LocalId, Email = link.User.Email, DisplayName = link.User.DisplayName });
         if (newUser == String.Empty) return
             Results.Problem( statusCode: 500,
@@ -141,7 +141,7 @@ public class AuthUserProvider: IAuthUserProvider
             if (string.IsNullOrEmpty(userRecordId))
             {
                 
-                if (_databaseUserProvider.TryGetUser(userCred, out var user))
+                if (databaseUserProvider.TryGetUser(userCred, out var user))
                 {
                     userEmail = user.Email;
                 }
@@ -153,7 +153,7 @@ public class AuthUserProvider: IAuthUserProvider
             }
             else
             {
-                if (_databaseUserProvider.TryGetUserByRecordId(userRecordId, out var user))
+                if (databaseUserProvider.TryGetUserByRecordId(userRecordId, out var user))
                 {
                     userEmail = user.Email;
                 }

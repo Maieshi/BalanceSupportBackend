@@ -16,9 +16,9 @@ namespace Balance_Support;
 
 public class DatabaseUserProvider: IDatabaseUserProvider
 {
-    private const string DatabaseUrl = "https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/";
-
-    private const string DatabaseSecret = "3J23Se6pRRrvuTiyPKSuLRbIB94GM4jtTqmuf6fe";
+    // private const string DatabaseUrl = "https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/";
+    //
+    // private const string DatabaseSecret = "3J23Se6pRRrvuTiyPKSuLRbIB94GM4jtTqmuf6fe";
 
     // private FirebaseClient client;
 

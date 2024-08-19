@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Web;
+using Balance_Support.Interfaces;
 using Firebase.Auth;
 using FirebaseAdmin;
 using FirebaseAdmin.Auth;
@@ -23,7 +24,7 @@ using Newtonsoft.Json;
 
 namespace Balance_Support;
 
-public class AuthUserProvider
+public class AuthUserProvider: IAuthUserProvider
 {
     
     private FirebaseAdminAuth admin =>FirebaseAdminAuth.DefaultInstance;
@@ -54,7 +55,7 @@ public class AuthUserProvider
         provider = new Firebase.Auth.FirebaseAuthProvider(new FirebaseConfig(firebseAuthApiKey.ApiKey));
         emailAttribute = new EmailAddressAttribute();
         loggedInUsers = new List<FirebaseAuthLink>();
-        _databaseUserProvider = new DatabaseUserProvider();
+        // _databaseUserProvider = new DatabaseUserProvider();
 
         Test();
 
@@ -67,7 +68,7 @@ public class AuthUserProvider
         loggedInUsers = new List<FirebaseAuthLink>();
         _databaseUserProvider = databaseUserProvider;
 
-        Test();
+        // Test();
     }
 
     async void Test()
@@ -218,6 +219,11 @@ public class AuthUserProvider
         }
 
         return Results.Problem(detail: "Dafuck!!", statusCode: 500, title: "AuthLink is default");
+    }
+
+    public Task<IResult> LogOutUser(string userRecordId, string userCred, string password, LoginDeviceType deviceType)
+    {
+        throw new NotImplementedException();
     }
 
     // public void SignInUser(HttpRequestWrapper wrapper,string email, string token, bool isPersistent)

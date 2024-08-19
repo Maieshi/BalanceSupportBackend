@@ -3,10 +3,10 @@ using Balance_Support;
 using FireSharp;
 using FireSharp.Config;
 using FireSharp.Interfaces;
-
+using Balance_Support.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
-DIServiceInitializer.Initialize(builder.Services);
+ServicesInitializer.Initialize(builder.Services);
 
 var app = builder.Build();
 var todos = new List<ToDo>();
@@ -39,17 +39,17 @@ app.MapPost("/todos", (ToDo todo) =>
     return "todos";
 });
 app.MapPost("/Register",
-    async (UserReginstrationData registration) =>
+    async (UserReginstrationData registration, IAuthUserProvider authProvider) =>
         await authProvider.RegisterNewUser(registration.DisplayName, registration.Email, registration.Password));
 
 app.MapPost("/Mobile/Login",
-    async (UserSignData userSignData) =>
+    async (UserSignData userSignData, IAuthUserProvider authProvider) =>
         await authProvider.LogInUser(userSignData.UserRecord, userSignData.UserCred, userSignData.Password,
             LoginDeviceType.Mobile));
 
-app.MapPost("/Desktop/Login",
-    async (UserSignData userSignData) =>
-        await authProvider.LogInUser(userSignData.UserRecord, userSignData.UserCred, userSignData.Password,
+app.MapPost("/Desktop/Logout",
+    async (UserSignData userSignData, IAuthUserProvider authProvider) =>
+        await authProvider.LogOutUser(userSignData.UserRecord, userSignData.UserCred, userSignData.Password,
             LoginDeviceType.Desktop));
 
 app.Run();

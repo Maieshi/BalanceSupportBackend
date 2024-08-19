@@ -10,10 +10,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using FirebaseConfig = FireSharp.Config.FirebaseConfig;
 using System.Linq;
+using Balance_Support.Interfaces;
 using Balance_Support.SerializationClasses;
 namespace Balance_Support;
 
-public class DatabaseUserProvider
+public class DatabaseUserProvider: IDatabaseUserProvider
 {
     private const string DatabaseUrl = "https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/";
 
@@ -28,16 +29,16 @@ public class DatabaseUserProvider
 
     private Dictionary<string, UserAuthData> usersCache;
 
-    public DatabaseUserProvider()
-    {
-        config = new FireSharp.Config.FirebaseConfig()
-        {
-            AuthSecret = DatabaseSecret,
-            BasePath = DatabaseUrl
-        };
-        client = new FireSharp.FirebaseClient(config);
-        usersCache = new Dictionary<string, UserAuthData>();
-    }
+    // public DatabaseUserProvider()
+    // {
+    //     config = new FireSharp.Config.FirebaseConfig()
+    //     {
+    //         AuthSecret = DatabaseSecret,
+    //         BasePath = DatabaseUrl
+    //     };
+    //     client = new FireSharp.FirebaseClient(config);
+    //     usersCache = new Dictionary<string, UserAuthData>();
+    // }
 
     public DatabaseUserProvider(IFirebaseClient client)
     {
@@ -172,6 +173,20 @@ public class DatabaseUserProvider
         }
     }
 
+    private void UpdateUserByRecordId(string recordId)
+    {
+        try
+        {
+            var response = client.Get($"Users/{recordId}");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
+        
+    }
    
 
     private bool TryGetCachedUserByRecordId(string recordId, out UserAuthData user)

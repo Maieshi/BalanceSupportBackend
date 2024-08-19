@@ -1,3 +1,4 @@
+using Balance_Support.Interfaces;
 using Balance_Support.SerializationClasses;
 using Newtonsoft.Json;
 using Firebase.Auth;
@@ -11,7 +12,7 @@ using Google.Apis.Auth.OAuth2;
 
 namespace Balance_Support;
 
-public static class DIServiceInitializer
+public static class ServicesInitializer
 {
     public static void Initialize(IServiceCollection services)
     {
@@ -27,11 +28,7 @@ public static class DIServiceInitializer
             Credential = GoogleCredential.FromFile(Path.Combine(PathStorage.ThirdPartyConfigs, PathStorage.Firebase,
                 PathStorage.FirebaseDatabaseClientConfigJson)),
         });
-
-        IFirebaseAuthProvider firebaseAuthProvider =
-            new FirebaseAuthProvider(new Firebase.Auth.FirebaseConfig(apiKey.ApiKey));
-
-
+        
         services.AddSingleton<IFirebaseClient>(
             new FirebaseClient(
                 new FirebaseConfig()
@@ -47,5 +44,7 @@ public static class DIServiceInitializer
                 new Firebase.Auth.FirebaseConfig(apiKey.ApiKey)
                 )
             );
+
+        services.AddSingleton<IDatabaseUserProvider, DatabaseUserProvider>();
     }
 }

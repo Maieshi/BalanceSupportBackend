@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Balance Support.props" />
+</Project>

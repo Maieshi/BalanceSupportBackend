@@ -1,0 +1,5 @@
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\PubTmp\Out\appsettings.Development.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\PubTmp\Out\appsettings.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\PubTmp\Out\Config.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\PubTmp\Out\Balance Support.pdb
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\PubTmp\Out\Balance Support

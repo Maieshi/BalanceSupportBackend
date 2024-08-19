@@ -1,0 +1,45 @@
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Balance Support.exe
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\appsettings.Development.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\appsettings.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Config.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Balance Support.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Balance Support.deps.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Balance Support.runtimeconfig.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Balance Support.pdb
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Firebase.Auth.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\FirebaseAdmin.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\FireSharp.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Google.Api.Gax.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Google.Api.Gax.Rest.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Google.Apis.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Google.Apis.Auth.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Google.Apis.Core.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.AspNet.Identity.Core.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.AspNet.Identity.Owin.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.AspNetCore.Connections.Abstractions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.AspNetCore.SignalR.Common.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.Threading.Tasks.Extensions.Desktop.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.Threading.Tasks.Extensions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.Threading.Tasks.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.Extensions.Features.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.Extensions.Options.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.Extensions.Primitives.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\System.Net.Http.Extensions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\System.Net.Http.Primitives.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\System.ServiceModel.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.Owin.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.Owin.Security.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.Owin.Security.Cookies.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Microsoft.Owin.Security.OAuth.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Newtonsoft.Json.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\Owin.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\System.CodeDom.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\System.IO.Pipelines.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\System.Management.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\System.Text.Encodings.Web.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\System.Text.Json.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\runtimes\win\lib\net7.0\System.Management.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\publish\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll

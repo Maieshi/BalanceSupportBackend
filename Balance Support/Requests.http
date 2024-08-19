@@ -1,0 +1,38 @@
+GET http://localhost:5144/
+###
+POST http://localhost:5144/Register
+content-type: application/json
+
+{
+   "DisplayName":"myuser",
+   "Email" : "crazban1@mail.ru",
+   "Password": "testuser4testuser4"
+}
+###
+POST http://localhost:5144/Mobile/Login
+content-type: application/json
+
+{
+  "UserCred":"myuser",
+  "Password": "testuser4testuser4"
+}
+###
+POST http://localhost:5144/Mobile/Logout
+content-type: application/json
+
+{
+  "UserCred":"testuser3",
+  "Password": "44444123123123"
+}
+###
+GET http://localhost:5144/todos/2
+###
+POST http://localhost:5144/todos
+content-type: application/json
+
+{ 
+  "id":1,  
+"name":"aaa",  
+"dueDate":"2024-01-01",  
+"isComplited":true
+}

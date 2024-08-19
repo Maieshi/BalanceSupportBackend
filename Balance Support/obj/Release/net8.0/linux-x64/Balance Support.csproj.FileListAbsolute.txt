@@ -1,0 +1,62 @@
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\appsettings.Development.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\appsettings.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Config.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Balance Support
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Balance Support.deps.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Balance Support.runtimeconfig.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Balance Support.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Balance Support.pdb
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Firebase.Auth.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\FirebaseAdmin.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\FireSharp.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Google.Api.Gax.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Google.Api.Gax.Rest.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Google.Apis.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Google.Apis.Auth.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Google.Apis.Core.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.AspNet.Identity.Core.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.AspNet.Identity.Owin.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.AspNetCore.Connections.Abstractions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.AspNetCore.SignalR.Common.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.Threading.Tasks.Extensions.Desktop.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.Threading.Tasks.Extensions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.Threading.Tasks.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.Extensions.Features.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.Extensions.Options.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.Extensions.Primitives.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\System.Net.Http.Extensions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\System.Net.Http.Primitives.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\System.ServiceModel.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.Owin.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.Owin.Security.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.Owin.Security.Cookies.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Microsoft.Owin.Security.OAuth.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Newtonsoft.Json.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\Owin.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\System.CodeDom.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\System.IO.Pipelines.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\System.Management.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\System.Text.Encodings.Web.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\linux-x64\System.Text.Json.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\Balance Support.csproj.AssemblyReference.cache
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\Balance Support.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\Balance Support.AssemblyInfoInputs.cache
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\Balance Support.AssemblyInfo.cs
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\Balance Support.csproj.CoreCompileInputs.cache
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\Balance Support.MvcApplicationPartsAssemblyInfo.cache
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\staticwebassets.build.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\staticwebassets.development.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\staticwebassets\msbuild.Balance Support.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\staticwebassets\msbuild.build.Balance Support.props
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\staticwebassets\msbuild.buildMultiTargeting.Balance Support.props
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\staticwebassets\msbuild.buildTransitive.Balance Support.props
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\staticwebassets.pack.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\scopedcss\bundle\Balance Support.styles.css
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\Balance .68DC3F61.Up2Date
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\Balance Support.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\refint\Balance Support.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\Balance Support.pdb
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\Balance Support.genruntimeconfig.cache
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\linux-x64\ref\Balance Support.dll

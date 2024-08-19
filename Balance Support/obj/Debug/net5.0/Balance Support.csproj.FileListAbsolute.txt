@@ -1,0 +1,6 @@
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Debug\net5.0\Balance Support.csproj.AssemblyReference.cache
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Debug\net5.0\Balance Support.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Debug\net5.0\Balance Support.AssemblyInfoInputs.cache
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Debug\net5.0\Balance Support.AssemblyInfo.cs
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Debug\net5.0\Balance Support.csproj.CoreCompileInputs.cache
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Debug\net5.0\Balance Support.MvcApplicationPartsAssemblyInfo.cache

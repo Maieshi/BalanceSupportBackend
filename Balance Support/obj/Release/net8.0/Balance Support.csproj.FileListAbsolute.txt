@@ -1,0 +1,74 @@
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\appsettings.Development.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\appsettings.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Config.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Balance Support.exe
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Balance Support.deps.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Balance Support.runtimeconfig.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Balance Support.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Balance Support.pdb
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Firebase.Auth.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\FirebaseAdmin.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\FireSharp.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Google.Api.Gax.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Google.Api.Gax.Rest.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Google.Apis.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Google.Apis.Auth.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Google.Apis.Core.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.AspNet.Identity.Core.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.AspNet.Identity.Owin.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.AspNetCore.Connections.Abstractions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.AspNetCore.SignalR.Common.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.Threading.Tasks.Extensions.Desktop.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.Threading.Tasks.Extensions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.Threading.Tasks.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.Extensions.Features.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.Extensions.Options.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.Extensions.Primitives.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\System.Net.Http.Extensions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\System.Net.Http.Primitives.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\System.ServiceModel.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.Owin.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.Owin.Security.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.Owin.Security.Cookies.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Microsoft.Owin.Security.OAuth.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Newtonsoft.Json.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Owin.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\System.CodeDom.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\System.IO.Pipelines.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\System.Management.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\System.Text.Encodings.Web.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\System.Text.Json.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\runtimes\win\lib\net7.0\System.Management.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.csproj.AssemblyReference.cache
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.AssemblyInfoInputs.cache
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.AssemblyInfo.cs
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.csproj.CoreCompileInputs.cache
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.MvcApplicationPartsAssemblyInfo.cache
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\staticwebassets.build.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\staticwebassets.development.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\staticwebassets\msbuild.Balance Support.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\staticwebassets\msbuild.build.Balance Support.props
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\staticwebassets\msbuild.buildMultiTargeting.Balance Support.props
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\staticwebassets\msbuild.buildTransitive.Balance Support.props
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\staticwebassets.pack.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\scopedcss\bundle\Balance Support.styles.css
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance .68DC3F61.Up2Date
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\refint\Balance Support.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.pdb
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.genruntimeconfig.cache
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\ref\Balance Support.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance_Support.Properties.Resources.resources
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.csproj.GenerateResource.cache
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\publish\appsettings.Development.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\publish\appsettings.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\publish\Balance Support.deps.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\publish\Balance Support.runtimeconfig.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\publish\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\publish\Config.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\publish\web.config

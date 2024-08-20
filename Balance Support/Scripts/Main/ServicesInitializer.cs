@@ -9,7 +9,8 @@ using FirebaseAdmin;
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
-
+using FluentValidation;
+using FluentValidation.AspNetCore;
 namespace Balance_Support;
 
 public static class ServicesInitializer
@@ -29,6 +30,8 @@ public static class ServicesInitializer
         {
             Credential = GoogleCredential.FromFile(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseCloudMessagingJson)),
         });
+        
+        services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<DeviceInfoValidator>());
         
         services.AddSingleton<IFirebaseClient>(
             new FirebaseClient(

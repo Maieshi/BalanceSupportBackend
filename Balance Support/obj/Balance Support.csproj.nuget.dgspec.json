@@ -53,6 +53,14 @@
               "target": "Package",
               "version": "[3.0.0, )"
             },
+            "FluentValidation": {
+              "target": "Package",
+              "version": "[11.9.2, )"
+            },
+            "FluentValidation.AspNetCore": {
+              "target": "Package",
+              "version": "[11.3.0, )"
+            },
             "Google.Apis.Auth": {
               "target": "Package",
               "version": "[1.68.0, )"

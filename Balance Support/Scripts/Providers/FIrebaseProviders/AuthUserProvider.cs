@@ -5,6 +5,7 @@ using FirebaseAuthException = FirebaseAdmin.Auth.FirebaseAuthException;
 using Balance_Support.SerializationClasses;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using Balance_Support.Scripts.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -63,7 +64,7 @@ public class AuthUserProvider : IAuthUserProvider
     }
 
     public async Task<IResult> LogInUser(string userRecordId, string userCred, string password,
-        LoginDeviceType deviceType, HttpContext context)
+        LoginDeviceType deviceType)
     {
         if (string.IsNullOrEmpty(userCred) || string.IsNullOrEmpty(password))
         {
@@ -95,7 +96,7 @@ public class AuthUserProvider : IAuthUserProvider
 
     public async Task<IResult> LogOutUser()
     {
-        if (!IsUserAuthorized())
+        if (!httpContextAccessor.HttpContext.IsUserAuthorized())
         {
             return Results.Unauthorized();
         }
@@ -129,27 +130,6 @@ public class AuthUserProvider : IAuthUserProvider
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(claimsIdentity),
             authProperties);
-    }
-
-    private bool IsUserAuthorized()
-    {
-        var user = httpContextAccessor.HttpContext.User;
-        var sessionStartTime = DateTime.MinValue;
-        var expiresUtc = DateTime.MinValue;
-
-        if (user.Identity.IsAuthenticated && user.HasClaim(c => c.Type == "FirebaseToken"))
-        {
-            var sessionStartClaim = user.FindFirst("SessionStartTime");
-            var expiresUtcClaim = user.FindFirst("ExpiresUtc");
-
-            if (sessionStartClaim != null && DateTime.TryParse(sessionStartClaim.Value, out sessionStartTime) &&
-                expiresUtcClaim != null && DateTime.TryParse(expiresUtcClaim.Value, out expiresUtc))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private string ResolveUserEmail(string userRecordId, string userCred)

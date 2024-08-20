@@ -5,22 +5,28 @@ using FireSharp.Config;
 using FireSharp.Interfaces;
 using Balance_Support.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromHours(24);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 ServicesInitializer.Initialize(builder.Services);
 
 var app = builder.Build();
+app.UseSession();
 var todos = new List<ToDo>();
 
-
-
-const string DatabaseUrl = "https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/";
-const string DatabaseSecret = "3J23Se6pRRrvuTiyPKSuLRbIB94GM4jtTqmuf6fe";
-
-IFirebaseClient client = new FirebaseClient(new FireSharp.Config.FirebaseConfig()
-{
-    AuthSecret = DatabaseSecret,
-    BasePath = DatabaseUrl
-});
+// const string DatabaseUrl = "https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/";
+// const string DatabaseSecret = "3J23Se6pRRrvuTiyPKSuLRbIB94GM4jtTqmuf6fe";
+//
+// IFirebaseClient client = new FirebaseClient(new FireSharp.Config.FirebaseConfig()
+// {
+//     AuthSecret = DatabaseSecret,
+//     BasePath = DatabaseUrl
+// });
 
 // DatabaseUserProvider databaseUserProvider = new(client);
 //
@@ -43,14 +49,13 @@ app.MapPost("/Register",
         await authProvider.RegisterNewUser(registration.DisplayName, registration.Email, registration.Password));
 
 app.MapPost("/Mobile/Login",
-    async (UserSignData userSignData, IAuthUserProvider authProvider) =>
+    async (UserSignData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
         await authProvider.LogInUser(userSignData.UserRecord, userSignData.UserCred, userSignData.Password,
-            LoginDeviceType.Mobile));
+            LoginDeviceType.Mobile, context));
 
 app.MapPost("/Desktop/Logout",
-    async (UserSignData userSignData, IAuthUserProvider authProvider) =>
-        await authProvider.LogOutUser(userSignData.UserRecord, userSignData.UserCred, userSignData.Password,
-            LoginDeviceType.Desktop));
+    async (UserSignData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
+        await authProvider.LogOutUser());
 
 app.Run();
 

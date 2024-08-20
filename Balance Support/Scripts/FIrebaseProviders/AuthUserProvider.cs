@@ -1,93 +1,30 @@
 using System.ComponentModel.DataAnnotations;
-
-using Google.Apis.Auth;
-using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Security;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Claims;
-using System.Web;
 using Balance_Support.Interfaces;
 using Firebase.Auth;
-using FirebaseAdmin;
-using FirebaseAdmin.Auth;
-using Google.Apis.Auth.OAuth2;
-using Microsoft.AspNetCore.Http.Abstractions;
 using FirebaseAuthException = FirebaseAdmin.Auth.FirebaseAuthException;
-using FirebaseAdminAuth = FirebaseAdmin.Auth.FirebaseAuth;
-using FirebaseAuth = Firebase.Auth.FirebaseAuth;
-
 using Balance_Support.SerializationClasses;
-using Newtonsoft.Json;
-
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 namespace Balance_Support;
 
-public class AuthUserProvider: IAuthUserProvider
+public class AuthUserProvider : IAuthUserProvider
 {
-    
-    private FirebaseAdminAuth admin =>FirebaseAdminAuth.DefaultInstance;
-    
     private IFirebaseAuthProvider provider;
-    // private FirebaseAuthProvider provider;
 
     private EmailAddressAttribute emailAttribute;
 
-    // private const string apiKey = "AIzaSyBQ6MmEOw3kCEH0s56Ux5KwtdVWs_0jdOY";
-    //
-    // private const string bucketId = "balance-support-b9da3.appspot.com";
-
-    private List<FirebaseAuthLink> loggedInUsers;
-
     private IDatabaseUserProvider databaseUserProvider;
 
-
-    // public AuthUserProvider()
-    // {
-    //     
-    //     // var app = FirebaseApp.Create(new AppOptions()
-    //     // {
-    //     //     Credential = GoogleCredential.FromFile(@"C:\Projects\Asp. Net\Balance Support\Balance Support\balance-support-431615-0a30add1ec30.json"),
-    //     // });
-    //     //
-    //     var firebseAuthApiKey = JsonConvert.DeserializeObject<FirebaseAuthApiKey>(File.ReadAllText(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseAuthApiKey)));
-    //     provider = new Firebase.Auth.FirebaseAuthProvider(new FirebaseConfig(firebseAuthApiKey.ApiKey));
-    //     emailAttribute = new EmailAddressAttribute();
-    //     loggedInUsers = new List<FirebaseAuthLink>();
-    //     // _databaseUserProvider = new DatabaseUserProvider();
-    //
-    //     Test();
-    //
-    // }
+    private IHttpContextAccessor httpContextAccessor;
 
     public AuthUserProvider(IDatabaseUserProvider databaseUserProvider, IFirebaseAuthProvider provider)
     {
         this.provider = provider;
         emailAttribute = new EmailAddressAttribute();
-        loggedInUsers = new List<FirebaseAuthLink>();
         this.databaseUserProvider = databaseUserProvider;
-
-        // Test();
-    }
-
-    async void Test()
-    {
-        // var newUser1 = await RegisterNewUser("testuser1", "testuser1@gmail.com", "123123123");
-        // var newUser2 = await RegisterNewUser("testuser2", "testuser2@gmail.com", "123123123");
-        // databaseProvider.TryCreateNewUser(new UserAuthData() { Id = newUser1.LocalId, Email = newUser1.Item2.User.Email, DisplayName = newUser1.Item2.User.DisplayName });
-        // databaseProvider.TryCreateNewUser(new UserAuthData() { Id = newUser2.User.LocalId, Email = newUser2.Item2.User.Email, DisplayName = newUser2.Item2.User.DisplayName });
-
-        // Debug.Print(databaseProvider.IsUserExists("testuser1").ToString());
-        // Debug.Print(databaseProvider.IsUserExists("testuser2").ToString());
-        // Debug.Print(databaseProvider.IsUserExists("testuser1@gmail.com").ToString());
-        // Debug.Print(databaseProvider.IsUserExists("testuser2@gmail.com").ToString());
-        // Debug.Print(databaseProvider.IsUserExists("asdfasdf").ToString());
-        // var authLink = await provider.SignInWithEmailAndPasswordAsync("testuser1@gmail.com", "123123123");
-        // var user = await provider.GetUserAsync("testuser1@gmail.com");
-        // var a = authLink;
-        var res = await LogInUser("-O3Yly5O5gBeLic7_rAW","testuser1@gmail.com", "123123123", LoginDeviceType.Mobile);
-        //Debug.Print(res.Item2.FirebaseToken);
     }
 
     public async Task<IResult> RegisterNewUser(string username, string email, string pasword)
@@ -99,7 +36,7 @@ public class AuthUserProvider: IAuthUserProvider
                 Results.BadRequest(
                     $"Invalid email:{email}  username:{username} or password:{pasword}. Check your data");
         }
-        
+
         if (databaseUserProvider.TryGetUser(email, out var user))
             return Results.BadRequest("User already exists");
 
@@ -107,8 +44,7 @@ public class AuthUserProvider: IAuthUserProvider
 
         try
         {
-            // var newUser = await admin.CreateUserAsync(new UserRecordArgs(){Email = email, Password = pasword, DisplayName = username, EmailVerified = true});
-            link = await provider.CreateUserWithEmailAndPasswordAsync(email, pasword, username,true);
+            link = await provider.CreateUserWithEmailAndPasswordAsync(email, pasword, username, true);
         }
         catch (FirebaseAuthException ex)
         {
@@ -116,197 +52,129 @@ public class AuthUserProvider: IAuthUserProvider
                 Results.Problem(detail: ex.Message, statusCode: 500,
                     title: "An error occurred while creating the user");
         }
-        
+
         var newUser = await databaseUserProvider.CreateNewUserAsync(new UserAuthData()
             { Id = link.User.LocalId, Email = link.User.Email, DisplayName = link.User.DisplayName });
-        if (newUser == String.Empty) return
-            Results.Problem( statusCode: 500,
-                title: "An error occurred while pushing user to database ");
+        if (newUser == String.Empty)
+            return
+                Results.Problem(statusCode: 500,
+                    title: "An error occurred while pushing user to database ");
         return (Results.Created($"/Users/{newUser}", newUser));
     }
 
-    public async Task<IResult> LogInUser(string userRecordId,string userCred, string password,LoginDeviceType deviceType)
+    public async Task<IResult> LogInUser(string userRecordId, string userCred, string password,
+        LoginDeviceType deviceType, HttpContext context)
     {
         if (string.IsNullOrEmpty(userCred) || string.IsNullOrEmpty(password))
         {
-            return (Results.BadRequest($"Invalid email: {userCred} or password: {password}. Check your data."));
+            return Results.BadRequest($"Invalid email: {userCred} or password: {password}. Check your data.");
         }
 
-        FirebaseAuthLink authLink;
-        
-        string userEmail = default;
-
-        if (emailAttribute.IsValid(userCred) == false)
+        try
         {
-            if (string.IsNullOrEmpty(userRecordId))
-            {
-                
-                if (databaseUserProvider.TryGetUser(userCred, out var user))
-                {
-                    userEmail = user.Email;
-                }
-                else
-                {
-                    return Results.Problem(detail: "cannot find user in database", statusCode: 500,
-                        title: "Cannot find user by username");
-                }
-            }
-            else
-            {
-                if (databaseUserProvider.TryGetUserByRecordId(userRecordId, out var user))
-                {
-                    userEmail = user.Email;
-                }
-                else
-                {
-                    return Results.Problem(detail: "cannot find user in database", statusCode: 500,
-                        title: "Cannot find user by username");
-                }
-            }
-           
-            // try
-            // {
-            //     var token = await admin.CreateCustomTokenAsync((await admin.GetUserByEmailAsync(userCred)).Uid);
-            //     
-            //     authLink = await provider.SignInWithCustomTokenAsync(token);
-            // }
-            // catch (Exception ex)
-            // {
-            //     return Results.Problem(detail: ex.Message, statusCode: 500,
-            //             title: "An error occurred while login through username");
-            // }
-        }
-        else userEmail = userCred;
-         
-            try
-            {
-                authLink = await provider.SignInWithEmailAndPasswordAsync(userEmail, password);
-            
-                return Results.Ok(new
-                {
-                    User = new
-                    {
-                       userEmail
-                    },
-                    
-                });
-            }
-            catch (Exception ex)
-            {
-                return
-                    Results.Problem(detail: ex.Message, statusCode: 500, title: "An error occurred while login through email");
-            }
-        
+            var userEmail = ResolveUserEmail(userRecordId, userCred);
+            if (userEmail == null)
+                return Results.Problem(detail: "Cannot find user in database", statusCode: 500, title: "User not found");
 
-        if (authLink != default)
-        {
-            var user = authLink.User; // Get the authenticated user
-            var token = authLink.FirebaseToken; // Get the ID token
+            var authLink = await provider.SignInWithEmailAndPasswordAsync(userEmail, password);
 
-            // SignInUser(wrapper ,user.Email, token, false);
+            // Manage claims-based session
+            await SignInUser(authLink, deviceType);
 
-            // Return the user info and token
             return Results.Ok(new
             {
-                User = new
-                {
-                    user.Email,
-                    user.DisplayName,
-                    user.LocalId // User ID
-                },
-                Token = token
+                User = new { userEmail },
+                Token = authLink.FirebaseToken // Example: Returning token to client
             });
         }
-
-        return Results.Problem(detail: "Dafuck!!", statusCode: 500, title: "AuthLink is default");
+        catch (Exception ex)
+        {
+            return Results.Problem(detail: ex.Message, statusCode: 500, title: "An error occurred while logging in");
+        }
     }
 
-    public Task<IResult> LogOutUser(string userRecordId, string userCred, string password, LoginDeviceType deviceType)
+    public async Task<IResult> LogOutUser()
     {
-        throw new NotImplementedException();
+        if (!IsUserAuthorized())
+        {
+            return Results.Unauthorized();
+        }
+
+        await httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return Results.Ok("User has been logged out successfully.");
+    }
+    
+    private async Task SignInUser(FirebaseAuthLink authLink, LoginDeviceType deviceType)
+    {
+        var expirationTime = DateTime.UtcNow.Add(GetSessionTimeout(deviceType));
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, authLink.User.LocalId),
+            new Claim(ClaimTypes.Email, authLink.User.Email),
+            new Claim("FirebaseToken", authLink.FirebaseToken),
+            new Claim("SessionStartTime", DateTime.UtcNow.ToString("o")), // ISO 8601 format
+            new Claim("DeviceType", deviceType.ToString()),
+            new Claim("ExpiresUtc", expirationTime.ToString("o")) 
+        };
+
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+        var authProperties = new AuthenticationProperties
+        {
+            IsPersistent = true, // Keep the user logged in across sessions
+            ExpiresUtc = DateTime.UtcNow.Add(GetSessionTimeout(deviceType))
+        };
+
+        await httpContextAccessor.HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity),
+            authProperties);
     }
 
-    // public void SignInUser(HttpRequestWrapper wrapper,string email, string token, bool isPersistent)
-    // {
-    //     var claims = new List<Claim>();
-    //
-    //     try
-    //     {
-    //         // Setting
-    //         claims.Add(new Claim(ClaimTypes.Email, email));
-    //         claims.Add(new Claim(ClaimTypes.Authentication, token));
-    //         var claimIdenties = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
-    //         var ctx = wrapper.GetOwinContext();
-    //         var authenticationManager = ctx.Authentication;
-    //         // Sign In.
-    //         authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistent }, claimIdenties);
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         // Info
-    //         throw new Exception("Failed to sign in user",ex);
-    //     }
-    // }
-
-    public async Task<(IResult, FirebaseAuthLink?)> SignOutUser(string userCred)
+    private bool IsUserAuthorized()
     {
-        if (string.IsNullOrEmpty(userCred))
-        {
-            return (Results.BadRequest($"Invalid email: {userCred}. Check your data."),
-                default);
-        }
+        var user = httpContextAccessor.HttpContext.User;
+        var sessionStartTime = DateTime.MinValue;
+        var expiresUtc = DateTime.MinValue;
 
-        FirebaseAuthLink? authLink = default;
+        if (user.Identity.IsAuthenticated && user.HasClaim(c => c.Type == "FirebaseToken"))
+        {
+            var sessionStartClaim = user.FindFirst("SessionStartTime");
+            var expiresUtcClaim = user.FindFirst("ExpiresUtc");
 
-        if (emailAttribute.IsValid(userCred) == false)
-        {
-            try
+            if (sessionStartClaim != null && DateTime.TryParse(sessionStartClaim.Value, out sessionStartTime) &&
+                expiresUtcClaim != null && DateTime.TryParse(expiresUtcClaim.Value, out expiresUtc))
             {
-                var link = loggedInUsers.FirstOrDefault(x => x.User.DisplayName == userCred);
-                link.RefreshUserDetails();
-            }
-            catch (Exception ex)
-            {
-                return ((
-                    Results.Problem(detail: ex.Message, statusCode: 500,
-                        title: "An error occurred while login through username"), default));
-            }
-        }
-        else
-        {
-            try
-            {
-                var link = loggedInUsers.FirstOrDefault(x => x.User.Email == userCred);
-                link.RefreshUserDetails();
-            }
-            catch (Exception ex)
-            {
-                return
-                    (Results.Problem(detail: ex.Message, statusCode: 500, title: "An error occurred while login through email"),
-                        default);
+                return true;
             }
         }
 
-        if (authLink != default)
+        return false;
+    }
+
+    private string ResolveUserEmail(string userRecordId, string userCred)
+    {
+        if (emailAttribute.IsValid(userCred))
+            return userCred;
+
+        if (!string.IsNullOrEmpty(userRecordId) &&
+            databaseUserProvider.TryGetUserByRecordId(userRecordId, out var user))
+            return user.Email;
+
+        if (databaseUserProvider.TryGetUser(userCred, out var userByUsername))
+            return userByUsername.Email;
+
+        return null;
+    }
+    
+    private TimeSpan GetSessionTimeout(LoginDeviceType deviceType)
+    {
+        return deviceType switch
         {
-            var user = authLink.User; // Get the authenticated user
-            var idToken = authLink.FirebaseToken; // Get the ID token
-
-            // Return the user info and token
-            return (Results.Ok(new
-            {
-                User = new
-                {
-                    user.Email,
-                    user.DisplayName,
-                    user.LocalId // User ID
-                },
-                Token = idToken
-            }), authLink);
-        }
-
-        return (Results.Problem(detail: "Dafuck!!", statusCode: 500, title: "AuthLink is default"),
-            default);
+            LoginDeviceType.Mobile => TimeSpan.FromDays(7), // Longer session for mobile
+            LoginDeviceType.Desktop => TimeSpan.FromHours(24), // Shorter session for desktop
+            _ => TimeSpan.FromMinutes(30),
+        };
     }
 }
 
@@ -315,3 +183,163 @@ public enum LoginDeviceType
     Mobile,
     Desktop
 }
+
+// if (string.IsNullOrEmpty(userCred))
+// {
+//     return (Results.BadRequest($"Invalid email: {userCred}. Check your data."),
+//         default);
+// }
+//
+// FirebaseAuthLink? authLink = default;
+//
+// if (emailAttribute.IsValid(userCred) == false)
+// {
+//     try
+//     {
+//         var link = loggedInUsers.FirstOrDefault(x => x.User.DisplayName == userCred);
+//         link.RefreshUserDetails();
+//     }
+//     catch (Exception ex)
+//     {
+//         return ((
+//             Results.Problem(detail: ex.Message, statusCode: 500,
+//                 title: "An error occurred while login through username"), default));
+//     }
+// }
+// else
+// {
+//     try
+//     {
+//         var link = loggedInUsers.FirstOrDefault(x => x.User.Email == userCred);
+//         link.RefreshUserDetails();
+//     }
+//     catch (Exception ex)
+//     {
+//         return
+//             (Results.Problem(detail: ex.Message, statusCode: 500, title: "An error occurred while login through email"),
+//                 default);
+//     }
+// }
+//
+// if (authLink != default)
+// {
+//     var user = authLink.User; // Get the authenticated user
+//     var idToken = authLink.FirebaseToken; // Get the ID token
+//
+//     // Return the user info and token
+//     return (Results.Ok(new
+//     {
+//         User = new
+//         {
+//             user.Email,
+//             user.DisplayName,
+//             user.LocalId // User ID
+//         },
+//         Token = idToken
+//     }), authLink);
+// }
+//
+// return (Results.Problem(detail: "Dafuck!!", statusCode: 500, title: "AuthLink is default"),
+//     default);
+
+// public void SignInUser(HttpRequestWrapper wrapper,string email, string token, bool isPersistent)
+// {
+//     var claims = new List<Claim>();
+//
+//     try
+//     {
+//         // Setting
+//         claims.Add(new Claim(ClaimTypes.Email, email));
+//         claims.Add(new Claim(ClaimTypes.Authentication, token));
+//         var claimIdenties = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
+//         var ctx = wrapper.GetOwinContext();
+//         var authenticationManager = ctx.Authentication;
+//         // Sign In.
+//         authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistent }, claimIdenties);
+//     }
+//     catch (Exception ex)
+//     {
+//         // Info
+//         throw new Exception("Failed to sign in user",ex);
+//     }
+// }
+
+// if (authLink != default)
+// {
+//     var user = authLink.User; // Get the authenticated user
+//     var token = authLink.FirebaseToken; // Get the ID token
+//
+//     // SignInUser(wrapper ,user.Email, token, false);
+//
+//     // Return the user info and token
+//     return Results.Ok(new
+//     {
+//         User = new
+//         {
+//             user.Email,
+//             user.DisplayName,
+//             user.LocalId // User ID
+//         },
+//         Token = token
+//     });
+//     return Results.Problem(detail: "Dafuck!!", statusCode: 500, title: "AuthLink is default");
+
+// try
+// {
+//     var token = await admin.CreateCustomTokenAsync((await admin.GetUserByEmailAsync(userCred)).Uid);
+//     
+//     authLink = await provider.SignInWithCustomTokenAsync(token);
+// }
+// catch (Exception ex)
+// {
+//     return Results.Problem(detail: ex.Message, statusCode: 500,
+//             title: "An error occurred while login through username");
+// }
+
+// async void Test()
+// {
+// var newUser1 = await RegisterNewUser("testuser1", "testuser1@gmail.com", "123123123");
+// var newUser2 = await RegisterNewUser("testuser2", "testuser2@gmail.com", "123123123");
+// databaseProvider.TryCreateNewUser(new UserAuthData() { Id = newUser1.LocalId, Email = newUser1.Item2.User.Email, DisplayName = newUser1.Item2.User.DisplayName });
+// databaseProvider.TryCreateNewUser(new UserAuthData() { Id = newUser2.User.LocalId, Email = newUser2.Item2.User.Email, DisplayName = newUser2.Item2.User.DisplayName });
+
+// Debug.Print(databaseProvider.IsUserExists("testuser1").ToString());
+// Debug.Print(databaseProvider.IsUserExists("testuser2").ToString());
+// Debug.Print(databaseProvider.IsUserExists("testuser1@gmail.com").ToString());
+// Debug.Print(databaseProvider.IsUserExists("testuser2@gmail.com").ToString());
+// Debug.Print(databaseProvider.IsUserExists("asdfasdf").ToString());
+// var authLink = await provider.SignInWithEmailAndPasswordAsync("testuser1@gmail.com", "123123123");
+// var user = await provider.GetUserAsync("testuser1@gmail.com");
+// var a = authLink;
+// var res = await LogInUser("-O3Yly5O5gBeLic7_rAW","testuser1@gmail.com", "123123123", LoginDeviceType.Mobile);
+//Debug.Print(res.Item2.FirebaseToken);
+// }
+
+// public AuthUserProvider()
+// {
+//     
+//     // var app = FirebaseApp.Create(new AppOptions()
+//     // {
+//     //     Credential = GoogleCredential.FromFile(@"C:\Projects\Asp. Net\Balance Support\Balance Support\balance-support-431615-0a30add1ec30.json"),
+//     // });
+//     //
+//     var firebseAuthApiKey = JsonConvert.DeserializeObject<FirebaseAuthApiKey>(File.ReadAllText(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseAuthApiKey)));
+//     provider = new Firebase.Auth.FirebaseAuthProvider(new FirebaseConfig(firebseAuthApiKey.ApiKey));
+//     emailAttribute = new EmailAddressAttribute();
+//     loggedInUsers = new List<FirebaseAuthLink>();
+//     // _databaseUserProvider = new DatabaseUserProvider();
+//
+//     Test();
+//
+// }
+
+// private const string apiKey = "AIzaSyBQ6MmEOw3kCEH0s56Ux5KwtdVWs_0jdOY";
+//
+// private const string bucketId = "balance-support-b9da3.appspot.com";
+
+// private List<FirebaseAuthLink> loggedInUsers;
+
+// public async Task<(IResult, FirebaseAuthLink?)> SignOutUser(string userCred)
+// {
+// logout implementation
+// }

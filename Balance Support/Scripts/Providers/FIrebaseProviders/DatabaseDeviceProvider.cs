@@ -14,7 +14,7 @@ using Balance_Support.Scripts.Extensions;
 using Balance_Support.SerializationClasses;
 namespace Balance_Support;
 
-public class DatabaseRecordsProvider
+public class DatabaseDeviceProvider:IDatabaseDeviceProvider
 {
     private IFirebaseClient client;
     private  IDatabaseUserProvider userProvider;
@@ -23,7 +23,7 @@ public class DatabaseRecordsProvider
 
     private Dictionary<string, DeviceInfo> deviceInfos;
     
-    public DatabaseRecordsProvider(IFirebaseClient client, IDatabaseUserProvider userProvider)
+    public DatabaseDeviceProvider(IFirebaseClient client, IDatabaseUserProvider userProvider)
     {
         this.client = client;
         this.userProvider = userProvider;
@@ -50,6 +50,39 @@ public class DatabaseRecordsProvider
             return Results.Problem(detail: ex.Message, statusCode: 500, title: "An error occurred while register device in database");
         }
     }
+
+    public async Task<IResult> UpdateDeviceData(DeviceRequestData deviceRequestData)
+    {
+        if(!userDevicesRecordIds.TryGetValue(deviceRequestData.UserRecordId,out var userDevicesRecorIds))return Results.Problem(statusCode: 500,    title: "Cannot find user");
+        if(!userDevicesRecorIds.Contains(deviceRequestData.DeviceRecordId)||!deviceInfos.ContainsKey(deviceRequestData.DeviceRecordId))return Results.Problem(statusCode: 500,    title: "Cannot find user device");
+        try
+        {
+            var setResponse = await client.SetAsync($"Devices/{deviceRequestData.DeviceRecordId}", deviceRequestData.DeviceInfo);
+            deviceInfos[deviceRequestData.DeviceRecordId] = deviceRequestData.DeviceInfo;
+            return Results.Ok($"Devices/{deviceRequestData.DeviceRecordId}");
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem(detail: ex.Message, statusCode: 500, title: "An error occurred while register device in database");
+        }
+    }
     
-    public async Task<IResult> UpdateDeviceData
+    public async Task<IResult> DeleteDeviceData(DeviceDeleteData deviceDeleteData)
+    {
+        if(!userProvider.TryGetUserByRecordId(deviceDeleteData.UserRecordId,out var user))return Results.Problem(statusCode: 500,    title: "Cannot find user");
+        if(!deviceInfos.TryGetValue(deviceDeleteData.DeviceRecordId, out var deviceInfo))return Results.Problem(statusCode: 500,    title: "Cannot find user device");
+        try
+        {
+            var setResponse = await client.DeleteAsync($"Devices/{deviceInfo}");
+            userDevicesRecordIds[deviceDeleteData.UserRecordId].Remove(deviceDeleteData.DeviceRecordId);
+            deviceInfos.Remove(deviceDeleteData.DeviceRecordId) ;
+            return Results.Ok($"Devices/{deviceDeleteData.DeviceRecordId}");
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem(detail: ex.Message, statusCode: 500, title: "An error occurred while register device in database");
+        }
+    }
+    
+    
 }

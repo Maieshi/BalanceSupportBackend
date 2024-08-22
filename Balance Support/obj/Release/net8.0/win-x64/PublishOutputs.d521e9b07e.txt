@@ -2,7 +2,6 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\publish\web.config
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\appsettings.Development.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\appsettings.json
-C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Config.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\publish\appsettings.Development.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\publish\appsettings.json
@@ -10,6 +9,9 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\publish\Balance Support.runtimeconfig.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\publish\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\publish\Config.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Third-party configs\Firebase\FirebaseAuthApiKey.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Third-party configs\Firebase\FirebaseCloudMessaging.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Third-party configs\Firebase\FirebaseDatabaseClientConfig.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Balance Support.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Balance Support.deps.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Balance Support.runtimeconfig.json
@@ -17,6 +19,9 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Firebase.Auth.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\FirebaseAdmin.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\FireSharp.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\FluentValidation.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\FluentValidation.AspNetCore.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\FluentValidation.DependencyInjectionExtensions.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Google.Api.Gax.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Google.Api.Gax.Rest.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Google.Apis.dll

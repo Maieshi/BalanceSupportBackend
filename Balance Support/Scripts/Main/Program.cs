@@ -108,12 +108,12 @@ app.MapPost("/Logout",
             .GetResult()
 );
 
-app.MapPost("/Mobile/RegisterDevice", async (DeviceInfo deviceInfo, HttpContext context) =>
+app.MapPost("/Mobile/RegisterDevice", async (DeviceRequestData deviceRequestData,IDatabaseDeviceProvider deviceProvider, HttpContext context) =>
     ResultContainer
         .Start()
-        .Validate<DeviceInfo, DeviceInfoValidator>(deviceInfo)
+        .Validate<DeviceRequestData, DeviceRequestDataValidator>(deviceRequestData)
         .Authorize(context)
-        .Process<DeviceInfo>(deviceInfo)
+        .Process<DeviceRequestData>(async ()=>await deviceProvider.RegisterDevice(deviceRequestData))
         .GetResult()
 );
 
@@ -145,11 +145,22 @@ public record SimcardData(
 );
 
 public record DeviceInfo(
-    string UserRecordId,
+    
     string DeviceId,
     string LastName,
     int DeviceGroup,
     int DeviceSubgroup,
     List<SimcardData> SimcardsData,
     string Description
+);
+
+public record DeviceRequestData(
+    string UserRecordId,
+    string DeviceRecordId,
+    DeviceInfo DeviceInfo
+);
+
+public record DeviceDeleteData(
+    string UserRecordId,
+    string DeviceRecordId
 );

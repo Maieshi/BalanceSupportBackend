@@ -62,7 +62,6 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\refint\B
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.pdb
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.genruntimeconfig.cache
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\ref\Balance Support.dll
-C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance_Support.Properties.Resources.resources
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.csproj.GenerateResource.cache
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\publish\appsettings.Development.json
@@ -72,3 +71,11 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\publish\
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\publish\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\publish\Config.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\publish\web.config
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Third-party configs\Firebase\FirebaseAuthApiKey.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Third-party configs\Firebase\FirebaseDatabaseClientConfig.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Third-party configs\Firebase\FirebaseCloudMessaging.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\FluentValidation.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\FluentValidation.AspNetCore.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\FluentValidation.DependencyInjectionExtensions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.MvcApplicationPartsAssemblyInfo.cs
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\Balance Support.sourcelink.json

@@ -9,4 +9,6 @@ public interface IDatabaseUserProvider
     public bool TryGetUser(string userCred, out UserAuthData user);
 
     public bool TryGetUserByRecordId(string recordId, out UserAuthData user);
+    
+    //TODO:add IsUserExist
 }

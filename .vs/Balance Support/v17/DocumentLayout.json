@@ -3,20 +3,20 @@
   "WorkspaceRootPath": "C:\\Projects\\Asp. Net\\Balance Support\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Balance Support\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Balance Support\\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\balance support.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
       "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\balance support.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\config.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\config.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\balance support.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
@@ -27,8 +27,8 @@
       "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\cloudmessagingprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\cloudmessagingprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\CloudMessagingProvider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Balance Support\\CloudMessagingProvider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,7 +38,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
@@ -46,16 +46,15 @@
               "Title": "Balance Support.csproj",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Balance Support.csproj",
               "RelativeDocumentMoniker": "Balance Support\\Balance Support.csproj",
-              "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Balance Support.csproj*",
-              "RelativeToolTip": "Balance Support\\Balance Support.csproj*",
+              "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Balance Support.csproj",
+              "RelativeToolTip": "Balance Support\\Balance Support.csproj",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-08-13T16:14:36.381Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-13T16:14:36.381Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Balance Support",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Balance Support.csproj",
               "RelativeDocumentMoniker": "Balance Support\\Balance Support.csproj",
@@ -75,12 +74,11 @@
               "RelativeToolTip": "Balance Support\\appsettings.json",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-08-13T16:08:13.288Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-13T16:08:13.288Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Config.json",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Config.json",
               "RelativeDocumentMoniker": "Balance Support\\Config.json",
@@ -88,34 +86,29 @@
               "RelativeToolTip": "Balance Support\\Config.json",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-08-13T16:08:09.512Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-13T16:08:09.512Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Program.cs",
               "RelativeDocumentMoniker": "Balance Support\\Program.cs",
               "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Program.cs",
               "RelativeToolTip": "Balance Support\\Program.cs",
-              "ViewState": "AQIAABIAAAAAAAAAAAAAABkAAABNAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-11T15:00:06.952Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-11T15:00:06.952Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json",
               "RelativeDocumentMoniker": "Balance Support\\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json",
               "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json",
               "RelativeToolTip": "Balance Support\\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-08-11T14:35:17.144Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-11T14:35:17.144Z"
             },
             {
               "$type": "Document",

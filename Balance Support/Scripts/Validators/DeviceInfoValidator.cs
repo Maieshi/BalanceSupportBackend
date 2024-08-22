@@ -4,7 +4,6 @@ public class DeviceInfoValidator : AbstractValidator<DeviceInfo>
 {
     public DeviceInfoValidator()
     {
-        RuleFor(x => x.UserRecordId).NotNull().NotEmpty();
         RuleFor(x => x.DeviceId).NotNull().NotEmpty();
         RuleFor(x => x.LastName).NotNull().NotEmpty();
         RuleFor(x => x.DeviceGroup).NotEmpty().GreaterThan(0);

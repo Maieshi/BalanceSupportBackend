@@ -1,6 +1,6 @@
 namespace Balance_Support.Scripts.Extensions;
 
-public static class UserManagementUtils
+public static class UserManagementExtensions
 {
     public static  bool IsUserAuthorized(this HttpContext httpContext)
     {

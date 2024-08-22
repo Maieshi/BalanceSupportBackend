@@ -21,11 +21,12 @@ public class AuthUserProvider : IAuthUserProvider
 
     private IHttpContextAccessor httpContextAccessor;
 
-    public AuthUserProvider(IDatabaseUserProvider databaseUserProvider, IFirebaseAuthProvider provider)
+    public AuthUserProvider(IDatabaseUserProvider databaseUserProvider, IFirebaseAuthProvider provider, IHttpContextAccessor httpContextAccessor)
     {
         this.provider = provider;
         emailAttribute = new EmailAddressAttribute();
         this.databaseUserProvider = databaseUserProvider;
+        this.httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<IResult> RegisterNewUser(string username, string email, string pasword)

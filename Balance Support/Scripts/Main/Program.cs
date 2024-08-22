@@ -4,7 +4,11 @@ using FireSharp;
 using FireSharp.Config;
 using FireSharp.Interfaces;
 using Balance_Support.Interfaces;
+using Balance_Support.Scripts.Extensions;
 using System.ComponentModel.DataAnnotations;
+using Balance_Support.Scripts.Validators;
+using Balance_Support.Scripts.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -47,44 +51,81 @@ app.MapPost("/todos", (ToDo todo) =>
 });
 app.MapPost("/Register",
     async (UserReginstrationData registration, IAuthUserProvider authProvider) =>
-        await authProvider.RegisterNewUser(registration.DisplayName, registration.Email, registration.Password));
+        ResultContainer
+            .Start()
+            .Validate<UserReginstrationData, UserReginstrationDataValidator>(registration)
+            .Process<UserReginstrationData>(
+                async () =>
+                    await authProvider.RegisterNewUser(registration.DisplayName, registration.Email,
+                        registration.Password))
+            .GetResult());
+
+// app.MapPost("/Mobile/Login",
+//     async (UserSignData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
+//         await authProvider.LogInUser(userSignData.UserRecord, userSignData.UserCred, userSignData.Password,
+//             LoginDeviceType.Mobile));
 
 app.MapPost("/Mobile/Login",
-    async (UserSignData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
-        await authProvider.LogInUser(userSignData.UserRecord, userSignData.UserCred, userSignData.Password,
-            LoginDeviceType.Mobile));
+    (UserSignData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
+        ResultContainer
+            .Start()
+            .Validate<UserSignData, UserSignDataValidator>(userSignData)
+            .Authorize(context)
+            .Process<UserSignData>(
+                async () =>
+                    await authProvider.LogInUser(
+                        userSignData.UserRecord,
+                        userSignData.UserCred,
+                        userSignData.Password,
+                        LoginDeviceType.Mobile))
+            .GetResult()
+);
 
 app.MapPost("/Desktop/Login",
     async (UserSignData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
-        await authProvider.LogInUser(userSignData.UserRecord, userSignData.UserCred, userSignData.Password,
-            LoginDeviceType.Desktop));
+        ResultContainer
+            .Start()
+            .Validate<UserSignData, UserSignDataValidator>(userSignData)
+            .Authorize(context)
+            .Process<UserSignData>(
+                async () =>
+                    await authProvider.LogInUser(
+                        userSignData.UserRecord,
+                        userSignData.UserCred,
+                        userSignData.Password,
+                        LoginDeviceType.Desktop))
+            .GetResult()
+);
 
 app.MapPost("/Logout",
-    async (IAuthUserProvider authProvider) =>
-        await authProvider.LogOutUser());
+    async (IAuthUserProvider authProvider, HttpContext context) =>
+        ResultContainer
+            .Start()
+            .Authorize(context)
+            .Process<UserSignData>(
+                async () =>
+                    await authProvider.LogOutUser())
+            .GetResult()
+);
 
-app.MapPost("/Mobile/RegisterDevice", async (DeviceInfo deviceInfo, DeviceInfoValidator validator) =>
-{
-    var validationResults = new List<ValidationResult>();
-    var validationContext = new ValidationContext(deviceInfo);
-    
-    bool isValid = Validator.TryValidateObject(deviceInfo, validationContext, validationResults, true);
-
-    if (!isValid)
-    {
-        // Return a bad request with validation errors
-        return Results.BadRequest(validationResults);
-    }
-
-    // Process the valid data
-    // ...
-
-    return Results.Ok();
-});
+app.MapPost("/Mobile/RegisterDevice", async (DeviceInfo deviceInfo, HttpContext context) =>
+    ResultContainer
+        .Start()
+        .Validate<DeviceInfo, DeviceInfoValidator>(deviceInfo)
+        .Authorize(context)
+        .Process<DeviceInfo>(deviceInfo)
+        .GetResult()
+);
 
 app.MapPost("/Logout",
-    async (IAuthUserProvider authProvider) =>
-        await authProvider.LogOutUser());
+    async (IAuthUserProvider authProvider, HttpContext context) =>
+        ResultContainer
+            .Start()
+            .Authorize(context)
+            .Process<DeviceInfo>(
+                async () => await authProvider.LogOutUser())
+            .GetResult()
+);
 
 app.Run();
 
@@ -96,31 +137,19 @@ public record UserReginstrationData(string Email, string DisplayName, string Pas
 public record UserSignData(string UserRecord, string UserCred, string Password);
 
 public record SimcardData(
-   
     int SimId,
-   
     string SimNumber,
-   
     string BankType,
-   
     int CardNumber,
-   
     decimal InitalBalance
 );
 
 public record DeviceInfo(
-    
     string UserRecordId,
-   
     string DeviceId,
-   
     string LastName,
-    
     int DeviceGroup,
-    
     int DeviceSubgroup,
-    
     List<SimcardData> SimcardsData,
-    
     string Description
 );

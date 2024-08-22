@@ -24,7 +24,7 @@ public class DatabaseUserProvider: IDatabaseUserProvider
 
     private IFirebaseClient client;
 
-    private IFirebaseConfig config;
+    // private IFirebaseConfig config;
 
 
     private Dictionary<string, UserAuthData> usersCache;

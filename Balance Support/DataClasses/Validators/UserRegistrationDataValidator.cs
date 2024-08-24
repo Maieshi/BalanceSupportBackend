@@ -1,9 +1,10 @@
+using Balance_Support.DataClasses.Records.UserData;
 using FluentValidation;
 namespace Balance_Support.Scripts.Validators;
 
-public class UserReginstrationDataValidator:AbstractValidator<UserReginstrationData>
+public class UserRegistrationDataValidator:AbstractValidator<UserRegistrationData>
 {
-    public UserReginstrationDataValidator()
+    public UserRegistrationDataValidator()
     {
         RuleFor(x => x.Email).NotNull().NotEmpty();
         RuleFor(x => x.DisplayName).NotNull().NotEmpty(); 

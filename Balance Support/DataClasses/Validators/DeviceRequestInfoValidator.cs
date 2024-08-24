@@ -1,8 +1,11 @@
+using Balance_Support.DataClasses.Records.DeviceData;
 using FluentValidation;
 
-public class DeviceInfoValidator : AbstractValidator<DeviceInfo>
+namespace Balance_Support.DataClasses.Validators;
+
+public class DeviceRequestInfoValidator : AbstractValidator<DeviceData>
 {
-    public DeviceInfoValidator()
+    public DeviceRequestInfoValidator()
     {
         RuleFor(x => x.DeviceId).NotNull().NotEmpty();
         RuleFor(x => x.LastName).NotNull().NotEmpty();

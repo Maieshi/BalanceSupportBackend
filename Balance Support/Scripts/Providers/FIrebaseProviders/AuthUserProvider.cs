@@ -39,7 +39,7 @@ public class AuthUserProvider : IAuthUserProvider
                     $"Invalid email:{email}  username:{username} or password:{pasword}. Check your data");
         }
 
-        if (databaseUserProvider.TryGetUser(email, out var user))
+        if (await databaseUserProvider.IsEmailAlreadyRegistered(email))
             return Results.BadRequest("User already exists");
 
         FirebaseAuthLink link;
@@ -64,7 +64,7 @@ public class AuthUserProvider : IAuthUserProvider
         return (Results.Created($"/Users/{newUser}", newUser));
     }
 
-    public async Task<IResult> LogInUser(string userRecordId, string userCred, string password,
+    public async Task<IResult> LogInUser(string userCred, string password,
         LoginDeviceType deviceType)
     {
         if (string.IsNullOrEmpty(userCred) || string.IsNullOrEmpty(password))
@@ -74,7 +74,7 @@ public class AuthUserProvider : IAuthUserProvider
 
         try
         {
-            var userEmail = ResolveUserEmail(userRecordId, userCred);
+            var userEmail = await ResolveUserEmail(userCred);
             if (userEmail == null)
                 return Results.Problem(detail: "Cannot find user in database", statusCode: 500, title: "User not found");
 
@@ -97,11 +97,6 @@ public class AuthUserProvider : IAuthUserProvider
 
     public async Task<IResult> LogOutUser()
     {
-        if (!httpContextAccessor.HttpContext.IsUserAuthorized())
-        {
-            return Results.Unauthorized();
-        }
-
         await httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return Results.Ok("User has been logged out successfully.");
     }
@@ -133,19 +128,25 @@ public class AuthUserProvider : IAuthUserProvider
             authProperties);
     }
 
-    private string ResolveUserEmail(string userRecordId, string userCred)
+    private async Task<string> ResolveUserEmail(string userCred)
     {
         if (emailAttribute.IsValid(userCred))
             return userCred;
+        
+        var user = await databaseUserProvider.GetUser(userCred);
 
-        if (!string.IsNullOrEmpty(userRecordId) &&
-            databaseUserProvider.TryGetUserByRecordId(userRecordId, out var user))
-            return user.Email;
+        return user?.Email;
 
-        if (databaseUserProvider.TryGetUser(userCred, out var userByUsername))
-            return userByUsername.Email;
-
-        return null;
+        
+        //
+        // if (!string.IsNullOrEmpty(userRecordId) &&
+        //     databaseUserProvider.TryGetUserByRecordId(userRecordId, out var user))
+        //     return user.Email;
+        //
+        // if (databaseUserProvider.TryGetUser(userCred, out var userByUsername))
+        //     return userByUsername.Email;
+        //
+        // return null;
     }
     
     private TimeSpan GetSessionTimeout(LoginDeviceType deviceType)

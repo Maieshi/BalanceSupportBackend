@@ -1,10 +1,12 @@
 using System.Diagnostics;
 // using Firebase.Auth;
 using Firebase.Auth;
-using FireSharp;
-using FireSharp.Interfaces;
-using FireSharp.Response;
-using FireSharp.Config;
+// using FireSharp;
+// using FireSharp.Interfaces;
+// using FireSharp.Response;
+// using FireSharp.Config;
+using Firebase.Database;
+using Firebase.Database.Query;
 // using Google.Apis.Auth.OAuth2;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,47 +14,24 @@ using FirebaseConfig = FireSharp.Config.FirebaseConfig;
 using System.Linq;
 using Balance_Support.Interfaces;
 using Balance_Support.SerializationClasses;
+
 namespace Balance_Support;
 
-public class DatabaseUserProvider: IDatabaseUserProvider
+public class DatabaseUserProvider : IDatabaseUserProvider
 {
-    // private const string DatabaseUrl = "https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/";
-    //
-    // private const string DatabaseSecret = "3J23Se6pRRrvuTiyPKSuLRbIB94GM4jtTqmuf6fe";
+    private FirebaseClient client;
 
-    // private FirebaseClient client;
-
-    private IFirebaseClient client;
-
-    // private IFirebaseConfig config;
-
-
-    private Dictionary<string, UserAuthData> usersCache;
-
-    // public DatabaseUserProvider()
-    // {
-    //     config = new FireSharp.Config.FirebaseConfig()
-    //     {
-    //         AuthSecret = DatabaseSecret,
-    //         BasePath = DatabaseUrl
-    //     };
-    //     client = new FireSharp.FirebaseClient(config);
-    //     usersCache = new Dictionary<string, UserAuthData>();
-    // }
-
-    public DatabaseUserProvider(IFirebaseClient client)
+    public DatabaseUserProvider(FirebaseClient client)
     {
         this.client = client;
-        usersCache = new Dictionary<string, UserAuthData>();
     }
 
     public async Task<string> CreateNewUserAsync(UserAuthData newUser)
     {
         try
         {
-            var pushResponse = await client.PushAsync("Users/", newUser);
-            usersCache.Add(pushResponse.Result.name, newUser);
-            return pushResponse.Result.name;
+            var postResponse = await client.Child("Users").PostAsync(newUser);
+            return postResponse.Key;
         }
         catch (Exception e)
         {
@@ -60,145 +39,130 @@ public class DatabaseUserProvider: IDatabaseUserProvider
         }
     }
 
-
-    // public async Task<bool> IsUserExistsAsync(string userCred)
-    // {
-    //     
-    //     try
-    //     { 
-    //         var response = await client.GetAsync("Users");
-    //
-    //         if (string.IsNullOrEmpty(response.Body)) return false;
-    //
-    //         List<UserAuthData> users = ParseUsersToList(response.Body);
-    //         return users.Exists(x =>
-    //             string.Equals(x.Email, userCred, StringComparison.OrdinalIgnoreCase) ||
-    //             string.Equals(x.DisplayName, userCred, StringComparison.OrdinalIgnoreCase));
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         Console.WriteLine(e);
-    //         return false;
-    //     }
-    // }
-    //
-    // public bool IsUserExists(string userCred)
-    // {
-    //     try
-    //     {
-    //         var response = client.Get("Users");
-    //
-    //         Debug.Print(response.Body + string.IsNullOrEmpty(response.Body));
-    //
-    //
-    //         if (string.IsNullOrEmpty(response.Body) || response.Body == "null") return false;
-    //
-    //         // Use LINQ to convert the dictionary to a list of UserAuthData
-    //         List<UserAuthData> users = ParseUsersToList(response.Body);
-    //         return users.Exists(x =>
-    //             string.Equals(x.Email, userCred, StringComparison.OrdinalIgnoreCase) ||
-    //             string.Equals(x.DisplayName, userCred, StringComparison.OrdinalIgnoreCase));
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         Console.WriteLine(e);
-    //         return false;
-    //     }
-    // }
-    
-    public bool TryGetUser(string userCred, out UserAuthData user)
+    public async Task<UserAuthData> GetUser(string userCred)
     {
-        if(TryGetCachedUserByCred(userCred, out user)) return true;
+        var userByDisplayName = await GetUserByDisplayName(userCred);
+        if (userByDisplayName != null)
+        {
+            return userByDisplayName;
+        }
         
-        UpdateUsersCache();
+        var userByEmail = await GetUserByEmail(userCred);
+        if (userByEmail != null)
+        {
+            return userByEmail;
+        }
         
-        return (user = usersCache.Values.FirstOrDefault(x =>
-            string.Equals(x.Email, userCred, StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(x.DisplayName, userCred, StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(x.Id, userCred, StringComparison.OrdinalIgnoreCase)))!=null;
-    }
-
-    public bool TryGetUserByRecordId(string recordId, out UserAuthData user)
-    {
+        var userById = await GetUserById(userCred);
+        if (userById != null)
+        {
+            return userById;
+        }
         
-        if(TryGetCachedUserByRecordId(recordId, out user)) return true;
-        
-        UpdateUsersCache();
-
-        return usersCache.TryGetValue(recordId, out user);
+        var userByRecordId = await GetUserByRecordId(userCred);
+        if (userByRecordId != null)
+        {
+            return userByRecordId;
+        }
+// Return null if no match is found
+        return null;
     }
     
-    #region Private 
-
-    private List<UserAuthData> ParseUsersToList(string response)
-        => JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(response)
-            .Values
-            .Select(user => new UserAuthData
-            {
-                Id = user["Id"],
-                Email = user["Email"],
-                DisplayName = user["DisplayName"]
-            })
-            .ToList();
-    
-    
-    private Dictionary<string, UserAuthData> ParseUsersToDict(string response)
-        => JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(response)
-            .ToDictionary(
-                kvp => kvp.Key,
-                kvp => new UserAuthData
-                {
-                    Id = kvp.Value["Id"],
-                    Email = kvp.Value["Email"],
-                    DisplayName = kvp.Value["DisplayName"]
-                }
-            );
-    
-    
-    private void UpdateUsersCache()
+    public async Task<bool> IsEmailAlreadyRegistered(string email)
     {
         try
         {
-            var response = client.Get("Users");
-            var parsedUsers = ParseUsersToDict(response.Body);
-            foreach (var parsedUser in parsedUsers)
-            {
-                if(usersCache.ContainsKey(parsedUser.Key)) usersCache[parsedUser.Key] = parsedUser.Value;
-                else usersCache.Add(parsedUser.Key, parsedUser.Value);
-            }
+            var usersByEmail = await client
+                .Child("Users")
+                .OrderBy("Email")
+                .EqualTo(email)
+                .OnceAsync<UserAuthData>();
+
+            // If any result is returned, the email is already registered
+            return usersByEmail.Any();
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
+            
         }
+
+        return false;
     }
 
-    private void UpdateUserByRecordId(string recordId)
+    public async Task<bool> IsUserWithIdExist(string recordId)
+    {
+        return (await GetUserByRecordId(recordId)) != null;
+    }
+
+    #region Private
+
+    private async Task<UserAuthData> GetUserByRecordId(string recordId)
     {
         try
         {
-            var response = client.Get($"Users/{recordId}");
+            return await client
+                .Child("Users")
+                .Child(recordId)
+                .OnceSingleAsync<UserAuthData>();
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            throw;
+            return null;
         }
-        
-        
     }
-   
-
-    private bool TryGetCachedUserByRecordId(string recordId, out UserAuthData user)
-        => usersCache.TryGetValue(recordId, out user);
-
-    private bool TryGetCachedUserByCred(string userCred, out UserAuthData user)
-        => (user = (from cachedUser in usersCache.Values
-            where string.Equals(cachedUser.DisplayName, userCred, StringComparison.OrdinalIgnoreCase)
-            ||  string.Equals(cachedUser.Email, userCred, StringComparison.OrdinalIgnoreCase)
-            select cachedUser).FirstOrDefault()) != null;
     
+    private async Task<UserAuthData> GetUserByEmail(string email)
+    {
+        try
+        {
+            return  await client
+                .Child("Users")
+                .OrderBy("Email")
+                .EqualTo(email)
+                .OnceSingleAsync<UserAuthData>();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
+    }
+    
+    private async Task<UserAuthData> GetUserByDisplayName(string DisplayName)
+    {
+        try
+        {
+            return  await client
+                .Child("Users")
+                .OrderBy("DisplayName")
+                .EqualTo(DisplayName)
+                .OnceSingleAsync<UserAuthData>();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
+    }
+    
+    private async Task<UserAuthData> GetUserById(string Id)
+    {
+        try
+        {
+            return  await client
+                .Child("Users")
+                .OrderBy("Id")
+                .EqualTo(Id)
+                .OnceSingleAsync<UserAuthData>();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
+    }
 
     #endregion
 }
-

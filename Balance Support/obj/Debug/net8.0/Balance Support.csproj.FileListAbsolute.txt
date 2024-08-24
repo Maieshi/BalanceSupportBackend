@@ -75,3 +75,11 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\Third-part
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\Third-party configs\Firebase\FirebaseDatabaseClientConfig.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Debug\net8.0\Balance Support.sourcelink.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\Third-party configs\Firebase\FirebaseCloudMessaging.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\FluentValidation.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\FluentValidation.AspNetCore.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Debug\net8.0\Balance Support.MvcApplicationPartsAssemblyInfo.cs
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\Firebase.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\LiteDB.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\System.Reactive.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Debug\net8.0\System.Runtime.InteropServices.WindowsRuntime.dll

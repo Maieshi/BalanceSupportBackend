@@ -2,27 +2,27 @@ using System.Diagnostics.Eventing.Reader;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
-
+using Balance_Support.Scripts.Extensions;
 namespace Balance_Support.Scripts.Extensions;
 
-public static class EndpointExtensions
-{
-    public static async Task<IResult> HandleWithValidation<TModel, TValidator>(
-        TModel model,
-        Func<TModel, Task<IResult>> action)
-        where TValidator : IValidator<TModel>, new()
-    {
-        var validator = new TValidator();
-        var validationResult = validator.Validate(model);
-
-        if (!validationResult.IsValid)
-        {
-            return Results.BadRequest(validationResult.Errors);
-        }
-
-        return await action(model);
-    }
-}
+// public static class EndpointExtensions
+// {
+//     public static async Task<IResult> HandleWithValidation<TModel, TValidator>(
+//         TModel model,
+//         Func<TModel, Task<IResult>> action)
+//         where TValidator : IValidator<TModel>, new()
+//     {
+//         var validator = new TValidator();
+//         var validationResult = validator.Validate(model);
+//
+//         if (!validationResult.IsValid)
+//         {
+//             return Results.BadRequest(validationResult.Errors);
+//         }
+//
+//         return await action(model);
+//     }
+// }
 
 // public static class EndpointHandler
 // {
@@ -129,13 +129,13 @@ public class ResultContainer
         return this;
     }
 
-    public ResultContainer Authorize(HttpContext context, Func<HttpContext, bool> authorizationFunc = null)
+    public ResultContainer Authorize(HttpContext context, ContextStrategy strategy =null)
     {
         if (_isCancelled) return this;
 
-        bool isAuthorized = authorizationFunc != null
-            ? authorizationFunc(context)
-            : context.User?.Identity?.IsAuthenticated == true;
+        bool isAuthorized = strategy != null
+            ? strategy.IsUserAuthorized(context)
+            : new DefaultContextStrategy().IsUserAuthorized(context);
 
         if (!isAuthorized)
         {
@@ -146,7 +146,7 @@ public class ResultContainer
         return this;
     }
 
-    public ResultContainer Process<TData>(Func<Task<IResult>> processFunc)
+    public ResultContainer Process(Func<Task<IResult>> processFunc)
     {
         if (_isCancelled) return this;
 

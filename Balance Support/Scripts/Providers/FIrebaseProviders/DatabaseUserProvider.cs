@@ -46,28 +46,29 @@ public class DatabaseUserProvider : IDatabaseUserProvider
         {
             return userByDisplayName;
         }
-        
+
         var userByEmail = await GetUserByEmail(userCred);
         if (userByEmail != null)
         {
             return userByEmail;
         }
-        
+
         var userById = await GetUserById(userCred);
         if (userById != null)
         {
             return userById;
         }
-        
+
         var userByRecordId = await GetUserByRecordId(userCred);
         if (userByRecordId != null)
         {
             return userByRecordId;
         }
+
 // Return null if no match is found
         return null;
     }
-    
+
     public async Task<bool> IsEmailAlreadyRegistered(string email)
     {
         try
@@ -84,85 +85,49 @@ public class DatabaseUserProvider : IDatabaseUserProvider
         catch (Exception e)
         {
             Console.WriteLine(e);
-            
         }
 
         return false;
     }
 
-    public async Task<bool> IsUserWithIdExist(string recordId)
+    public async Task<bool> IsUserWithIdExist(string userId)
     {
-        return (await GetUserByRecordId(recordId)) != null;
+        return (await GetUserById(userId)) != null;
     }
 
     #region Private
 
     private async Task<UserAuthData> GetUserByRecordId(string recordId)
-    {
-        try
-        {
-            return await client
-                .Child("Users")
-                .Child(recordId)
-                .OnceSingleAsync<UserAuthData>();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return null;
-        }
-    }
-    
+        => await client
+            .Child("Users")
+            .Child(recordId)
+            .OnceSingleAsync<UserAuthData>();
+
+
     private async Task<UserAuthData> GetUserByEmail(string email)
-    {
-        try
-        {
-            return  await client
+    =>await client
                 .Child("Users")
                 .OrderBy("Email")
                 .EqualTo(email)
                 .OnceSingleAsync<UserAuthData>();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return null;
-        }
-    }
+        
     
+
     private async Task<UserAuthData> GetUserByDisplayName(string DisplayName)
-    {
-        try
-        {
-            return  await client
+    => await client
                 .Child("Users")
                 .OrderBy("DisplayName")
                 .EqualTo(DisplayName)
                 .OnceSingleAsync<UserAuthData>();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return null;
-        }
-    }
-    
+      
+
     private async Task<UserAuthData> GetUserById(string Id)
-    {
-        try
-        {
-            return  await client
+    => await client
                 .Child("Users")
                 .OrderBy("Id")
                 .EqualTo(Id)
                 .OnceSingleAsync<UserAuthData>();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return null;
-        }
-    }
+        
 
     #endregion
 }

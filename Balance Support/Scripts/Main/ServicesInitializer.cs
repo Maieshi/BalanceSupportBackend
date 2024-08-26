@@ -24,8 +24,6 @@ public static class ServicesInitializer
     {
         FirebaseAuthApiKey apiKey = JsonConvert.DeserializeObject<FirebaseAuthApiKey>(
             File.ReadAllText(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseAuthApiKey)));
-
-        
         
         FirebaseDatabaseClientConfig databseConfig = JsonConvert.DeserializeObject<FirebaseDatabaseClientConfig>(
             File.ReadAllText(
@@ -36,7 +34,7 @@ public static class ServicesInitializer
             Credential = GoogleCredential.FromFile(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseCloudMessagingJson)),
         });
         
-        services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<DeviceRequestInfoValidator>());
+        services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<DeviceUpdateRequestValidator>());
         
         services.AddSingleton<FirebaseClient>(
             new FirebaseClient("https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/",
@@ -57,12 +55,12 @@ public static class ServicesInitializer
 
         services.AddSingleton<CloudMessagingProvider>();
 
-        services.AddSingleton<FbTest>();
+        // services.AddSingleton<FbTest>();
         
         var provider = services.BuildServiceProvider();
         // provider.GetService<IDatabaseDeviceProvider>().Test();
         // provider.GetService<CloudMessagingProvider>().Test();
-        provider.GetService<FbTest>().Test();
+        provider.GetService<IDatabaseDeviceProvider>().Test();
         
     }
     private static async Task<string> GetTokenByGoogleServices()

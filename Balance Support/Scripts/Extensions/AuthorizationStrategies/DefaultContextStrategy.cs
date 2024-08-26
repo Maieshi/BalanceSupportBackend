@@ -1,8 +1,8 @@
 namespace Balance_Support.Scripts.Extensions;
 
-public static class UserManagementExtensions
+public  class DefaultContextStrategy: ContextStrategy
 {
-    public static  bool IsUserAuthorized(this HttpContext httpContext)
+    public override bool IsUserAuthorized(HttpContext httpContext)
     {
         if (httpContext == null || httpContext.User == null || !httpContext.User.Identity.IsAuthenticated)
         {
@@ -30,4 +30,5 @@ public static class UserManagementExtensions
 
         return false;
     }
+    
 }

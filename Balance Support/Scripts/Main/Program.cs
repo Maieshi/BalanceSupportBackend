@@ -57,7 +57,7 @@ app.MapPost("/Register",
         ResultContainer
             .Start()
             .Validate<UserRegistrationData, UserRegistrationDataValidator>(registration)
-            .Process<UserRegistrationData>(
+            .Process(
                 async () =>
                     await authProvider.RegisterNewUser(registration.DisplayName, registration.Email,
                         registration.Password))
@@ -74,7 +74,7 @@ app.MapPost("/Mobile/Login",
             .Start()
             .Validate<UserLoginData, UserLoginDataValidator>(userSignData)
             .Authorize(context)
-            .Process<UserLoginData>(
+            .Process(
                 async () =>
                     await authProvider.LogInUser(
                         userSignData.UserCred,
@@ -88,7 +88,7 @@ app.MapPost("/Desktop/Login",
         ResultContainer
             .Start()
             .Validate<UserLoginData, UserLoginDataValidator>(userSignData)
-            .Process<UserLoginData>(
+            .Process(
                 async () =>
                     await authProvider.LogInUser(
                         userSignData.UserCred,
@@ -102,30 +102,22 @@ app.MapPost("/Logout",
         ResultContainer
             .Start()
             .Authorize(context)
-            .Process<UserLoginData>(
+            .Process(
                 async () =>
                     await authProvider.LogOutUser())
             .GetResult()
 );
 
-app.MapPost("/Mobile/RegisterDevice", async (DeviceRegisterRequest deviceRegisterData,IDatabaseDeviceProvider deviceProvider, HttpContext context) =>
+app.MapPost("/Mobile/Device/Register", async (DeviceRegisterRequest deviceRegisterData,IDatabaseDeviceProvider deviceProvider, HttpContext context) =>
     ResultContainer
         .Start()
-        .Validate<DeviceRegisterRequest, DeviceRegisterDataValidator>(deviceRegisterData)
+        .Validate<DeviceRegisterRequest, DeviceRegisterRequestValidator>(deviceRegisterData)
         .Authorize(context)
-        .Process<DeviceRegisterRequest>(async ()=>await deviceProvider.RegisterDevice(deviceRegisterData))
+        .Process(async ()=>await deviceProvider.RegisterDevice(deviceRegisterData))
         .GetResult()
 );
 
-app.MapPost("/Logout",
-    async (IAuthUserProvider authProvider, HttpContext context) =>
-        ResultContainer
-            .Start()
-            .Authorize(context)
-            .Process<DeviceData>(
-                async () => await authProvider.LogOutUser())
-            .GetResult()
-);
+
 
 app.Run();
 

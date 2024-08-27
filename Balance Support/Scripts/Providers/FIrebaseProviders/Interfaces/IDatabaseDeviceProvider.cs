@@ -4,8 +4,10 @@ namespace Balance_Support.Interfaces;
 public interface IDatabaseDeviceProvider
 {
     public Task<IResult> RegisterDevice(DeviceRegisterRequest deviceRegisterRequest);
-    public Task<IResult> UpdateDeviceData(DeviceUpdateRequest deviceRequestRequest);
-    public Task<IResult> DeleteDeviceData(DeviceDeleteRequest deviceDeleteRequest);
+    public Task<IResult> UpdateDevice(DeviceUpdateRequest deviceRequestRequest);
+    public Task<IResult> DeleteDevice(DeviceDeleteRequest deviceDeleteRequest);
+    
+    public  Task<string> GetBankBySimCardId(string simCardId);
     
     public void Test();
 }

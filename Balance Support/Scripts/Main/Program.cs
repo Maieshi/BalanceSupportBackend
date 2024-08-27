@@ -108,7 +108,7 @@ app.MapPost("/Logout",
             .GetResult()
 );
 
-app.MapPost("/Mobile/Device/Register", async (DeviceRegisterRequest deviceRegisterData,IDatabaseDeviceProvider deviceProvider, HttpContext context) =>
+app.MapPost("/Desktop/Device/Register", async (DeviceRegisterRequest deviceRegisterData,IDatabaseDeviceProvider deviceProvider, HttpContext context) =>
     ResultContainer
         .Start()
         .Validate<DeviceRegisterRequest, DeviceRegisterRequestValidator>(deviceRegisterData)
@@ -117,6 +117,23 @@ app.MapPost("/Mobile/Device/Register", async (DeviceRegisterRequest deviceRegist
         .GetResult()
 );
 
+app.MapPost("/Desktop/Device/Update", async (DeviceUpdateRequest deviceRegisterData,IDatabaseDeviceProvider deviceProvider, HttpContext context) =>
+    ResultContainer
+        .Start()
+        .Validate<DeviceUpdateRequest, DeviceUpdateRequestValidator>(deviceRegisterData)
+        .Authorize(context)
+        .Process(async ()=>await deviceProvider.UpdateDevice(deviceRegisterData))
+        .GetResult()
+);
+
+app.MapPost("/Desktop/Device/Delete", async (DeviceDeleteRequest deviceRegisterData,IDatabaseDeviceProvider deviceProvider, HttpContext context) =>
+    ResultContainer
+        .Start()
+        .Validate<DeviceDeleteRequest, DeviceDeleteRequestValidator>(deviceRegisterData)
+        .Authorize(context)
+        .Process(async ()=>await deviceProvider.DeleteDevice(deviceRegisterData))
+        .GetResult()
+);
 
 
 app.Run();

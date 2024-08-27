@@ -96,7 +96,7 @@ public class DatabaseDeviceProvider : IDatabaseDeviceProvider
         }
     }
 
-    public async Task<IResult> UpdateDeviceData(DeviceUpdateRequest deviceRequestRequest)
+    public async Task<IResult> UpdateDevice(DeviceUpdateRequest deviceRequestRequest)
     {
         try
         {
@@ -121,7 +121,7 @@ public class DatabaseDeviceProvider : IDatabaseDeviceProvider
         }
     }
 
-    public async Task<IResult> DeleteDeviceData(DeviceDeleteRequest deviceDeleteRequest)
+    public async Task<IResult> DeleteDevice(DeviceDeleteRequest deviceDeleteRequest)
     {
         try
         {
@@ -144,6 +144,12 @@ public class DatabaseDeviceProvider : IDatabaseDeviceProvider
                     .Child("SimCards")
                     .Child(relation.Object.SimCardRecordId)
                     .DeleteAsync();
+                
+                await client
+                    .Child("Relations")
+                    .Child("User-Device-Simcard")
+                    .Child(relation.Key)
+                    .DeleteAsync();
             }
             
             return Results.Ok($"Devices/{deviceDeleteRequest.DeviceId}");
@@ -153,6 +159,12 @@ public class DatabaseDeviceProvider : IDatabaseDeviceProvider
             Console.WriteLine(e);
             return Results.Problem(statusCode: 500, title: "Cannot delete device");
         }
+    }
+
+    public async Task<string> GetBankBySimCardId(string simCardId)
+    {
+        var sim = await FindSimcard(simCardId);
+        return sim==default?string.Empty:sim.Object.BankType;
     }
 
     public async void Test()
@@ -185,22 +197,28 @@ public class DatabaseDeviceProvider : IDatabaseDeviceProvider
         var checkSimm2 = await FindSimcarddd2(simcards[0].SimCardId);
         var checkDef2 = checkSimm2 == default;
         var checkNull2 = checkSimm2 == null;
-        var registerDevice = await RegisterDevice(
-            new DeviceRegisterRequest(
-                "sDAmWae7RqMsmWIC74lVdLuQRpq1",
-                new DeviceData(
-                    "asefasdf",
-                    "Ivanov",
-                    3,
-                    1,
-                    "Very rich person"
-                ),
-                simcards
-                
-            )
-        );
+        // var registerDevice = await RegisterDevice(
+        //     new DeviceRegisterRequest(
+        //         "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+        //         new DeviceData(
+        //             "asefasdf",
+        //             "Ivanov",
+        //             3,
+        //             1,
+        //             "Very rich person"
+        //         ),
+        //         simcards
+        //         
+        //     )
+        // );
 
-        Debug.Print(registerDevice.ToString());
+        // var updatateDevice = await UpdateDeviceData(
+        //     new DeviceUpdateRequest("asefasdf", new DeviceData("asefasdf", "petrov", 2, 2, "Very poor person"))
+        // );
+        
+        var deleteDevice = await DeleteDevice(new DeviceDeleteRequest( "asefasdf"));
+
+        Debug.Print(deleteDevice.ToString());
     }
 
     private async Task<IEnumerable<FirebaseObject<SimCardData>>> RegisterSimcards(List<SimCardData> simcards)
@@ -348,11 +366,11 @@ public class DatabaseDeviceProvider : IDatabaseDeviceProvider
             .OnceAsync<UserDeviceSimСardRelationData>();
 
     private async Task<IReadOnlyCollection<FirebaseObject<UserDeviceSimСardRelationData>>>
-        FindRelationByDeviceId(string simId)
+        FindRelationByDeviceId(string deviceId)
         => await client
             .Child("Relations")
             .Child("User-Device-Simcard")
-            .OrderBy("UserId")
-            .EqualTo(simId)
+            .OrderBy("DeviceId")
+            .EqualTo(deviceId)
             .OnceAsync<UserDeviceSimСardRelationData>();
 }

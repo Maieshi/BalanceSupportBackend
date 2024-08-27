@@ -42,10 +42,12 @@ public class DatabaseDeviceProvider : IDatabaseDeviceProvider
 
         if (await IsSimcardsExists(deviceRegisterRequest.SimcardsData))
             return Results.Problem(statusCode: 500, title: "One of sim cars already registered");
-        
-        if(await IsAlreadyExistDeviceWithSameGropAndSubgrup(deviceRegisterRequest.UserId, deviceRegisterRequest.DeviceData.DeviceGroup, deviceRegisterRequest.DeviceData.DeviceSubgroup))
-            return Results.Problem(statusCode: 500, title: "One divice with same group and subgroup already registered");
-        
+
+        if (await IsAlreadyExistDeviceWithSameGropAndSubgrup(deviceRegisterRequest.UserId,
+                deviceRegisterRequest.DeviceData.DeviceGroup, deviceRegisterRequest.DeviceData.DeviceSubgroup))
+            return Results.Problem(statusCode: 500,
+                title: "One divice with same group and subgroup already registered");
+
         FirebaseObject<DeviceData> userDevice = null;
         IEnumerable<FirebaseObject<SimCardData>> postSimcardsList = Enumerable.Empty<FirebaseObject<SimCardData>>();
         IEnumerable<FirebaseObject<UserDeviceSimСardRelationData>> relaions =
@@ -171,28 +173,28 @@ public class DatabaseDeviceProvider : IDatabaseDeviceProvider
             return Results.Problem(statusCode: 500, title: "User not found");
 
         var relations = (await FindRelationByUserId(deviceGetRequest.UserId));
-        
-        if(!relations.Any()) 
+
+        if (!relations.Any())
             return Results.Problem(statusCode: 500, title: "Relations not found");
-        
-        var device = (await FindDevicesByUserId(deviceGetRequest.UserId)).
-            FirstOrDefault(x=>x.Object.DeviceGroup == deviceGetRequest.DeviceGroup
-                              && x.Object.DeviceSubgroup == deviceGetRequest.DeviceSubgroup);
+
+        var device = (await FindDevicesByUserId(deviceGetRequest.UserId)).FirstOrDefault(x =>
+            x.Object.DeviceGroup == deviceGetRequest.DeviceGroup
+            && x.Object.DeviceSubgroup == deviceGetRequest.DeviceSubgroup);
 
         if (device == default)
-             return Results.Problem(statusCode: 500, title: "Device not found");
+            return Results.Problem(statusCode: 500, title: "Device not found");
         var simcards = await FindSimcardMany(
             relations
-                .Where(x=> x.Object.DeviceId == device.Object.DeviceId)
-                .Select(x=>x.Object.SimCardId)
+                .Where(x => x.Object.DeviceId == device.Object.DeviceId)
+                .Select(x => x.Object.SimCardId)
                 .ToList());
-        if(simcards.Any())
+        if (simcards.Any())
             return Results.Problem(statusCode: 500, title: "SimCards not found");
-        
+
         return Results.Ok(new
         {
             Device = device.Object,
-            SimCards = simcards.Select(x=>x.Object).ToList()
+            SimCards = simcards.Select(x => x.Object).ToList()
         });
     }
 
@@ -307,7 +309,7 @@ public class DatabaseDeviceProvider : IDatabaseDeviceProvider
             .Where(s => s != null)
             .Cast<FirebaseObject<SimCardData>>()
             .ToList();
-    
+
     private async Task<List<FirebaseObject<SimCardData>>> FindSimcardMany(List<string> simcards)
         => (
                 await Task.WhenAll(
@@ -318,6 +320,16 @@ public class DatabaseDeviceProvider : IDatabaseDeviceProvider
             )
             .Where(s => s != null)
             .Cast<FirebaseObject<SimCardData>>()
+            .ToList();
+
+    public async Task<List<SimCardData>> GetSimCardsByDeviceId(string deviceId)
+        => (await FindSimcardMany(
+                    (await FindRelationByDeviceId(deviceId))
+                    .Select(x => x.Object.SimCardId)
+                    .ToList()
+                )
+            )
+            .Select(x => x.Object)
             .ToList();
 
     private async Task<IReadOnlyCollection<FirebaseObject<SimCardData>>> FindSimcarddd(string simcardId)
@@ -419,8 +431,7 @@ public class DatabaseDeviceProvider : IDatabaseDeviceProvider
             .OrderBy("DeviceId")
             .EqualTo(deviceId)
             .OnceAsync<UserDeviceSimСardRelationData>();
-    
-    
+
 
     private async Task<IReadOnlyCollection<FirebaseObject<UserDeviceSimСardRelationData>>>
         FindRelationByUserId(string userId)
@@ -430,8 +441,7 @@ public class DatabaseDeviceProvider : IDatabaseDeviceProvider
             .OrderBy("UserId")
             .EqualTo(userId)
             .OnceAsync<UserDeviceSimСardRelationData>();
-    
-    
+
 
     private async Task<ReadOnlyCollection<FirebaseObject<DeviceData>>> FindDevicesByUserId(string userId)
         => (await Task.WhenAll(
@@ -445,9 +455,11 @@ public class DatabaseDeviceProvider : IDatabaseDeviceProvider
             .Cast<FirebaseObject<DeviceData>>() // Explicitly cast to non-nullable type
             .ToList()
             .AsReadOnly();
-    
-    private async Task<bool> IsAlreadyExistDeviceWithSameGropAndSubgrup(string userId, int deviceGroup, int deviceSubgroup)
+
+    private async Task<bool> IsAlreadyExistDeviceWithSameGropAndSubgrup(string userId, int deviceGroup,
+        int deviceSubgroup)
     {
-        return (await FindDevicesByUserId(userId)).Any(device => device.Object.DeviceGroup == deviceGroup && device.Object.DeviceSubgroup == deviceSubgroup);
+        return (await FindDevicesByUserId(userId)).Any(device =>
+            device.Object.DeviceGroup == deviceGroup && device.Object.DeviceSubgroup == deviceSubgroup);
     }
 }

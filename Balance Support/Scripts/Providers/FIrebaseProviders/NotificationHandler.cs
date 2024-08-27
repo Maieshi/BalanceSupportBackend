@@ -12,24 +12,26 @@ using Balance_Support.Scripts.Extensions;
 using Balance_Support.SerializationClasses;
 using Balance_Support.DataClasses.Records.DeviceData;
 using Balance_Support.DataClasses.Records.NotificationData;
+using System.Text.RegularExpressions;
 
 namespace Balance_Support;
 
 public class NotificationHandler
 {
-    private readonly IDatabaseDeviceProvider provider;
+    private readonly DatabaseDeviceProvider provider;
 
-    public NotificationHandler(IDatabaseDeviceProvider provider)
+    public NotificationHandler(DatabaseDeviceProvider provider)
     {
         this.provider = provider;
     }
     
-    public async Task<IResult> GetNotification(NotificationRequest request)
+    public async Task<IResult> RegisterNotificationData(NotificationRequest request)
     {
-        var bank = await provider.GetBankBySimCardId(request.SimId);
-        if (string.IsNullOrEmpty(bank))
-            return Results.Problem(statusCode: 500, title: "Cannot find sim");
+        var match = Regex.Match(request.NotificationText, @"\b(?:MIR-|СЧЁТ|)(\d{4})\b");
         
+       var simcards = await provider.GetSimCardsByDeviceId(request.DeviceId);
+        
+       
         
         return Results.Ok();
     }

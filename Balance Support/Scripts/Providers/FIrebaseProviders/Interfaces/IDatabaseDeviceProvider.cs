@@ -6,6 +6,8 @@ public interface IDatabaseDeviceProvider
     public Task<IResult> RegisterDevice(DeviceRegisterRequest deviceRegisterRequest);
     public Task<IResult> UpdateDevice(DeviceUpdateRequest deviceRequestRequest);
     public Task<IResult> DeleteDevice(DeviceDeleteRequest deviceDeleteRequest);
+
+    public Task<IResult> GetDeviceByGroup(DeviceGetRequest deviceGetRequest);
     
     public  Task<string> GetBankBySimCardId(string simCardId);
     

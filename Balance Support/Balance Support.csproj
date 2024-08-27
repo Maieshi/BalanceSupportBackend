@@ -53,6 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DataClasses\Records\AccountData\" />
     <Folder Include="Scripts\Parsing\" />
     <Folder Include="Scripts\Providers\" />
   </ItemGroup>

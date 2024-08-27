@@ -52,6 +52,9 @@ app.MapPost("/todos", (ToDo todo) =>
     todos.Add(todo);
     return "todos";
 });
+
+#region  UserManagement
+
 app.MapPost("/Register",
     async (UserRegistrationData registration, IAuthUserProvider authProvider) =>
         ResultContainer
@@ -83,6 +86,8 @@ app.MapPost("/Mobile/Login",
             .GetResult()
 );
 
+
+
 app.MapPost("/Desktop/Login",
     async (UserLoginData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
         ResultContainer
@@ -107,6 +112,10 @@ app.MapPost("/Logout",
                     await authProvider.LogOutUser())
             .GetResult()
 );
+
+#endregion
+
+#region  DeviceManagement
 
 app.MapPost("/Desktop/Device/Register", async (DeviceRegisterRequest deviceRegisterData,IDatabaseDeviceProvider deviceProvider, HttpContext context) =>
     ResultContainer
@@ -134,6 +143,24 @@ app.MapPost("/Desktop/Device/Delete", async (DeviceDeleteRequest deviceRegisterD
         .Process(async ()=>await deviceProvider.DeleteDevice(deviceRegisterData))
         .GetResult()
 );
+
+app.MapGet("/Mobile/Device/Get", async (DeviceGetRequest deviceGetRequestData,IDatabaseDeviceProvider deviceProvider, HttpContext context) =>
+    ResultContainer
+        .Start()
+        .Validate<DeviceGetRequest, DeviceGetRequestvValidator>(deviceGetRequestData)
+        .Authorize(context)
+        .Process(async ()=>await deviceProvider.GetDeviceByGroup(deviceGetRequestData))
+        .GetResult()
+);
+
+#endregion
+
+#region  NotificationManagement
+
+
+
+#endregion
+
 
 
 app.Run();

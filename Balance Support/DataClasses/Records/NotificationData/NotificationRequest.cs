@@ -1,3 +1,3 @@
 namespace Balance_Support.DataClasses.Records.NotificationData;
 
-public record NotificationRequest(string DeviceGroup,  string NotificationText);
+public record NotificationRequest(string UserId, string DeviceId, string NotificationText);

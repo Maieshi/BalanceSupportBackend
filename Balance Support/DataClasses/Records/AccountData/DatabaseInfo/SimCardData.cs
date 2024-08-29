@@ -1,4 +1,4 @@
-namespace Balance_Support.DataClasses.Records.DeviceData;
+namespace Balance_Support.DataClasses.Records.AccountData;
 
 public record SimCardData(
     string SimCardId,

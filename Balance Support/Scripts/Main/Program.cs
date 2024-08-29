@@ -7,7 +7,7 @@ using Balance_Support.Interfaces;
 using Balance_Support.Scripts.Extensions;
 using System.ComponentModel.DataAnnotations;
 using Balance_Support.Scripts.Extensions;
-using Balance_Support.DataClasses.Records.DeviceData;
+using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.UserData;
 using Balance_Support.DataClasses.Validators;
 using Balance_Support.Scripts.Validators;
@@ -117,25 +117,25 @@ app.MapPost("/Logout",
 
 #region  DeviceManagement
 
-app.MapPost("/Desktop/Device/Register", async (DeviceRegisterRequest deviceRegisterData,IDatabaseDeviceProvider deviceProvider, HttpContext context) =>
+app.MapPost("/Desktop/Device/Register", async (DeviceRegisterRequest deviceRegisterData,IDatabaseAccountProvider deviceProvider, HttpContext context) =>
     ResultContainer
         .Start()
         .Validate<DeviceRegisterRequest, DeviceRegisterRequestValidator>(deviceRegisterData)
         .Authorize(context)
-        .Process(async ()=>await deviceProvider.RegisterDevice(deviceRegisterData))
+        .Process(async ()=>await deviceProvider.RegisterAccount(deviceRegisterData))
         .GetResult()
 );
 
-app.MapPost("/Desktop/Device/Update", async (DeviceUpdateRequest deviceRegisterData,IDatabaseDeviceProvider deviceProvider, HttpContext context) =>
+app.MapPost("/Desktop/Device/Update", async (DeviceUpdateRequest deviceRegisterData,IDatabaseAccountProvider deviceProvider, HttpContext context) =>
     ResultContainer
         .Start()
         .Validate<DeviceUpdateRequest, DeviceUpdateRequestValidator>(deviceRegisterData)
         .Authorize(context)
-        .Process(async ()=>await deviceProvider.UpdateDevice(deviceRegisterData))
+        .Process(async ()=>await deviceProvider.UpdateAccount(deviceRegisterData))
         .GetResult()
 );
 
-app.MapPost("/Desktop/Device/Delete", async (DeviceDeleteRequest deviceRegisterData,IDatabaseDeviceProvider deviceProvider, HttpContext context) =>
+app.MapPost("/Desktop/Device/Delete", async (DeviceDeleteRequest deviceRegisterData,IDatabaseAccountProvider deviceProvider, HttpContext context) =>
     ResultContainer
         .Start()
         .Validate<DeviceDeleteRequest, DeviceDeleteRequestValidator>(deviceRegisterData)
@@ -144,12 +144,12 @@ app.MapPost("/Desktop/Device/Delete", async (DeviceDeleteRequest deviceRegisterD
         .GetResult()
 );
 
-app.MapGet("/Mobile/Device/Get", async (DeviceGetRequest deviceGetRequestData,IDatabaseDeviceProvider deviceProvider, HttpContext context) =>
+app.MapGet("/Mobile/Device/Get", async (DeviceGetRequest deviceGetRequestData,IDatabaseAccountProvider deviceProvider, HttpContext context) =>
     ResultContainer
         .Start()
         .Validate<DeviceGetRequest, DeviceGetRequestvValidator>(deviceGetRequestData)
         .Authorize(context)
-        .Process(async ()=>await deviceProvider.GetDeviceByGroup(deviceGetRequestData))
+        .Process(async ()=>await deviceProvider.GetAccountsByGroupAndDeviceId(deviceGetRequestData))
         .GetResult()
 );
 

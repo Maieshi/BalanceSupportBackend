@@ -1,6 +1,6 @@
 using FluentValidation;
 
-using Balance_Support.DataClasses.Records.DeviceData;
+using Balance_Support.DataClasses.Records.AccountData;
 
 namespace Balance_Support.DataClasses.Validators;
 

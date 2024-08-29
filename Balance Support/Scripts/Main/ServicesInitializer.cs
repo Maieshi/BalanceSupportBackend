@@ -51,7 +51,7 @@ public static class ServicesInitializer
 
         services.AddSingleton<IAuthUserProvider, AuthUserProvider>();
         
-        services.AddSingleton<IDatabaseDeviceProvider, DatabaseDeviceProvider>();
+        services.AddSingleton<IDatabaseAccountProvider, DatabaseAccountProvider>();
 
         services.AddSingleton<CloudMessagingProvider>();
 
@@ -60,7 +60,7 @@ public static class ServicesInitializer
         var provider = services.BuildServiceProvider();
         // provider.GetService<IDatabaseDeviceProvider>().Test();
         // provider.GetService<CloudMessagingProvider>().Test();
-        provider.GetService<IDatabaseDeviceProvider>().Test();
+        provider.GetService<IDatabaseAccountProvider>().Test();
         
     }
     private static async Task<string> GetTokenByGoogleServices()

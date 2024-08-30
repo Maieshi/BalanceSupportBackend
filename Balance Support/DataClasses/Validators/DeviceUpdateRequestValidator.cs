@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Balance_Support.DataClasses.Validators;
 
-public class DeviceUpdateRequestValidator : AbstractValidator<DeviceUpdateRequest>
+public class DeviceUpdateRequestValidator : AbstractValidator<AccountUpdateRequest>
 {
     public DeviceUpdateRequestValidator()
     {

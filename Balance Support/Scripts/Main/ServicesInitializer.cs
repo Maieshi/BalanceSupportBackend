@@ -53,15 +53,22 @@ public static class ServicesInitializer
         
         services.AddSingleton<IDatabaseAccountProvider, DatabaseAccountProvider>();
 
-        services.AddSingleton<CloudMessagingProvider>();
+        services.AddSingleton<ICloudMessagingProvider, CloudMessagingProvider>();
+        
+        services.AddSingleton<IDatabaseTransactionProvider, DatabaseTransactionProvider>();
+
+        services.AddSingleton<INotificationHandler, NotificationHandler>();
 
         // services.AddSingleton<FbTest>();
         
         var provider = services.BuildServiceProvider();
         // provider.GetService<IDatabaseDeviceProvider>().Test();
         // provider.GetService<CloudMessagingProvider>().Test();
-        provider.GetService<IDatabaseAccountProvider>().Test();
+        // provider.GetService<IDatabaseAccountProvider>().Test();
+        // provider.GetService<ICloudMessagingProvider>().Test();
+        provider.GetService<INotificationHandler>().Test();
         
+
     }
     private static async Task<string> GetTokenByGoogleServices()
     {     

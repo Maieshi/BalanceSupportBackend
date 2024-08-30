@@ -2,7 +2,7 @@ using FluentValidation;
 using Balance_Support.DataClasses.Records.AccountData;
 namespace Balance_Support.DataClasses.Validators;
 
-public class DeviceRegisterRequestValidator: AbstractValidator<DeviceRegisterRequest>
+public class DeviceRegisterRequestValidator: AbstractValidator<AccountRegisterRequest>
 {
     public DeviceRegisterRequestValidator()
     {

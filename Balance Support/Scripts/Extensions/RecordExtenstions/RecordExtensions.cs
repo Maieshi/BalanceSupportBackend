@@ -13,7 +13,10 @@ public static class RecordExtensions
             AccountGroup: request.AccountGroup,
             DeviceId: request.DeviceId,
             SimSlot: request.SimSlot,
-            Description: request.Description
+            SimCardNumber: request.SimCardNumber,
+            BankCardNumber: request.BankCardNumber,
+            Description: request.Description,
+            BankType: request.BankType
         );
     }
 }

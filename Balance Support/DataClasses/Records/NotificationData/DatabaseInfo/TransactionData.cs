@@ -5,5 +5,6 @@ public record TransactionData(
      TransactionType TransactionType ,
      decimal Amount,
      decimal Balance,
+     DateTime Time,
      string Message
 );

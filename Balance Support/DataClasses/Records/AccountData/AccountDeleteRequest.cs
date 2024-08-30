@@ -1,5 +1,5 @@
 namespace Balance_Support.DataClasses.Records.AccountData;
 
-public record DeviceDeleteRequest(
+public record AccountDeleteRequest(
     string AccountId
 );

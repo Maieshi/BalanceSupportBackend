@@ -1,13 +1,11 @@
 using System.Diagnostics;
 using Balance_Support;
-using FireSharp;
-using FireSharp.Config;
-using FireSharp.Interfaces;
 using Balance_Support.Interfaces;
 using Balance_Support.Scripts.Extensions;
 using System.ComponentModel.DataAnnotations;
 using Balance_Support.Scripts.Extensions;
 using Balance_Support.DataClasses.Records.AccountData;
+using Balance_Support.DataClasses.Records.NotificationData;
 using Balance_Support.DataClasses.Records.UserData;
 using Balance_Support.DataClasses.Validators;
 using Balance_Support.Scripts.Validators;
@@ -26,22 +24,6 @@ ServicesInitializer.Initialize(builder.Services);
 var app = builder.Build();
 app.UseSession();
 var todos = new List<ToDo>();
-
-// const string DatabaseUrl = "https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/";
-// const string DatabaseSecret = "3J23Se6pRRrvuTiyPKSuLRbIB94GM4jtTqmuf6fe";
-//
-// IFirebaseClient client = new FirebaseClient(new FireSharp.Config.FirebaseConfig()
-// {
-//     AuthSecret = DatabaseSecret,
-//     BasePath = DatabaseUrl
-// });
-
-// DatabaseUserProvider databaseUserProvider = new(client);
-//
-// FirebaseAuthUserProvider authProvider = new(databaseUserProvider);
-//
-// CloudMessagingProvider cloudMessagingProvider = new CloudMessagingProvider();
-
 
 app.MapGet("/", () => "Hello World!");
 
@@ -66,11 +48,6 @@ app.MapPost("/Register",
                         registration.Password))
             .GetResult());
 
-// app.MapPost("/Mobile/Login",
-//     async (UserSignData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
-//         await authProvider.LogInUser(userSignData.UserRecord, userSignData.UserCred, userSignData.Password,
-//             LoginDeviceType.Mobile));
-
 app.MapPost("/Mobile/Login",
     (UserLoginData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
         ResultContainer
@@ -85,8 +62,6 @@ app.MapPost("/Mobile/Login",
                         LoginDeviceType.Mobile))
             .GetResult()
 );
-
-
 
 app.MapPost("/Desktop/Login",
     async (UserLoginData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
@@ -115,41 +90,41 @@ app.MapPost("/Logout",
 
 #endregion
 
-#region  DeviceManagement
+#region  AccountManagement
 
-app.MapPost("/Desktop/Device/Register", async (DeviceRegisterRequest deviceRegisterData,IDatabaseAccountProvider deviceProvider, HttpContext context) =>
+app.MapPost("/Desktop/Account/Register", async (AccountRegisterRequest deviceRegisterData,IDatabaseAccountProvider deviceProvider, HttpContext context) =>
     ResultContainer
         .Start()
-        .Validate<DeviceRegisterRequest, DeviceRegisterRequestValidator>(deviceRegisterData)
+        .Validate<AccountRegisterRequest, DeviceRegisterRequestValidator>(deviceRegisterData)
         .Authorize(context)
         .Process(async ()=>await deviceProvider.RegisterAccount(deviceRegisterData))
         .GetResult()
 );
 
-app.MapPost("/Desktop/Device/Update", async (DeviceUpdateRequest deviceRegisterData,IDatabaseAccountProvider deviceProvider, HttpContext context) =>
+app.MapPost("/Desktop/Account/Update", async (AccountUpdateRequest deviceRegisterData,IDatabaseAccountProvider deviceProvider, HttpContext context) =>
     ResultContainer
         .Start()
-        .Validate<DeviceUpdateRequest, DeviceUpdateRequestValidator>(deviceRegisterData)
+        .Validate<AccountUpdateRequest, DeviceUpdateRequestValidator>(deviceRegisterData)
         .Authorize(context)
         .Process(async ()=>await deviceProvider.UpdateAccount(deviceRegisterData))
         .GetResult()
 );
 
-app.MapPost("/Desktop/Device/Delete", async (DeviceDeleteRequest deviceRegisterData,IDatabaseAccountProvider deviceProvider, HttpContext context) =>
+app.MapPost("/Desktop/Account/Delete", async (AccountDeleteRequest deviceRegisterData,IDatabaseAccountProvider deviceProvider, HttpContext context) =>
     ResultContainer
         .Start()
-        .Validate<DeviceDeleteRequest, DeviceDeleteRequestValidator>(deviceRegisterData)
+        .Validate<AccountDeleteRequest, DeviceDeleteRequestValidator>(deviceRegisterData)
         .Authorize(context)
         .Process(async ()=>await deviceProvider.DeleteDevice(deviceRegisterData))
         .GetResult()
 );
 
-app.MapGet("/Mobile/Device/Get", async (DeviceGetRequest deviceGetRequestData,IDatabaseAccountProvider deviceProvider, HttpContext context) =>
+app.MapGet("/Mobile/Account/Get", async (AccountGetRequest deviceGetRequestData,IDatabaseAccountProvider deviceProvider, HttpContext context) =>
     ResultContainer
         .Start()
-        .Validate<DeviceGetRequest, DeviceGetRequestvValidator>(deviceGetRequestData)
+        .Validate<AccountGetRequest, DeviceGetRequestvValidator>(deviceGetRequestData)
         .Authorize(context)
-        .Process(async ()=>await deviceProvider.GetAccountsByGroupAndDeviceId(deviceGetRequestData))
+        .Process(async ()=>await deviceProvider.GetAccountsForDevice(deviceGetRequestData))
         .GetResult()
 );
 
@@ -157,7 +132,32 @@ app.MapGet("/Mobile/Device/Get", async (DeviceGetRequest deviceGetRequestData,ID
 
 #region  NotificationManagement
 
+app.MapGet("/Desktop/UserToken/Register", async (UserTokenRequest userTokenRequest,ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
+    ResultContainer
+        .Start()
+        .Validate<UserTokenRequest, UserTokenRequestValidator>(userTokenRequest)
+        .Authorize(context)
+        .Process(async ()=>await cloudMessagingProvider.RegisterUserToken(userTokenRequest))
+        .GetResult()
+);
 
+app.MapGet("/Desktop/UserToken/Update", async (UserTokenRequest userTokenRequest,ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
+    ResultContainer
+        .Start()
+        .Validate<UserTokenRequest, UserTokenRequestValidator>(userTokenRequest)
+        .Authorize(context)
+        .Process(async ()=>await cloudMessagingProvider.UpdateUserToken(userTokenRequest))
+        .GetResult()
+);
+
+app.MapGet("/Mobile/Notification/Handle", async (NotificationHandleRequest handleNotificationRequest,INotificationHandler notificationHandler, HttpContext context) =>
+    ResultContainer
+        .Start()
+        .Validate<NotificationHandleRequest, NotificationHandleRequestValidator>(handleNotificationRequest)
+        .Authorize(context)
+        .Process(async ()=>await notificationHandler.HandleNotification(handleNotificationRequest))
+        .GetResult()
+);
 
 #endregion
 

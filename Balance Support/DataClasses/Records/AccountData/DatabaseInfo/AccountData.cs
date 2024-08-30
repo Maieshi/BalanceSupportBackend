@@ -7,6 +7,9 @@ public record AccountDataRequest(
     int AccountGroup,
     int DeviceId,
     int SimSlot,
+    string SimCardNumber,
+    string BankCardNumber,
+    string BankType,
     string Description
 );
 
@@ -17,6 +20,9 @@ public record AccountData(
     int AccountGroup,
     int DeviceId,
     int SimSlot,
+    string SimCardNumber,
+    string BankCardNumber,
+    string BankType,
     string Description
 );
 

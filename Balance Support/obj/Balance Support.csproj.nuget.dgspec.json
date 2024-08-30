@@ -35,16 +35,17 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
-            "FireSharp": {
-              "target": "Package",
-              "version": "[2.0.4, )"
-            },
             "Firebase.Auth": {
               "target": "Package",
               "version": "[1.0.0, )"

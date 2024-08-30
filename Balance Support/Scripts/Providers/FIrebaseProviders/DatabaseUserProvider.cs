@@ -10,7 +10,6 @@ using Firebase.Database.Query;
 // using Google.Apis.Auth.OAuth2;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using FirebaseConfig = FireSharp.Config.FirebaseConfig;
 using System.Linq;
 using Balance_Support.Interfaces;
 using Balance_Support.SerializationClasses;

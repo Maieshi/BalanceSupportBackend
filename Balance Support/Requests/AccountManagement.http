@@ -1,0 +1,52 @@
+###
+POST http://localhost:5144/Desktop/Account/Register
+content-type: application/json
+
+{
+  "UserId": "sampleUserId",
+  "AccountData": {
+    "AccountNumber": "sampleAccountNumber",
+    "LastName": "sampleLastName",
+    "AccountGroup": 1,
+    "DeviceId": 1,
+    "SimSlot": 1,
+    "SimCardNumber": "sampleSimCardNumber",
+    "BankCardNumber": "sampleBankCardNumber",
+    "BankType": "sampleBankType",
+    "Description": "sampleDescription"
+  }
+}
+###
+POST http://localhost:5144/Desktop/Account/Update
+content-type: application/json
+
+{
+  "UserId": "sampleUserId",
+  "AccountId": "sampleAccountId",
+  "AccountDataRequest": {
+    "AccountNumber": "sampleAccountNumber",
+    "LastName": "sampleLastName",
+    "AccountGroup": 1,
+    "DeviceId": 1,
+    "SimSlot": 1,
+    "SimCardNumber": "sampleSimCardNumber",
+    "BankCardNumber": "sampleBankCardNumber",
+    "BankType": "sampleBankType",
+    "Description": "sampleDescription"
+  }
+}
+###
+POST http://localhost:5144/Desktop/Account/Delete
+content-type: application/json
+
+{
+  "AccountId": "sampleAccountId"
+}
+###
+GET http://localhost:5144/Mobile/Account/Get
+content-type: application/json
+
+{
+  "DeviceId": "sampleDeviceId",
+  "AccountType": "sampleAccountType"
+}

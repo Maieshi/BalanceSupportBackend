@@ -97,7 +97,7 @@ public class NotificationHandler: INotificationHandler
 
 // Deserialize JSON to AccountData object
 
-        var result = await HandleNotification(new NotificationHandleRequest("sDAmWae7RqMsmWIC74lVdLuQRpq1","sDAmWae7RqMsmWIC74lVdLuQRpq1","СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р"));
+        var result = await HandleNotification(new NotificationHandleRequest("sDAmWae7RqMsmWIC74lVdLuQRpq1","СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р"));
     }
 }
 

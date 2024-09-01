@@ -37,7 +37,7 @@ app.MapPost("/todos", (ToDo todo) =>
 
 #region  UserManagement
 
-app.MapPost("/Register",
+app.MapPost("User/Register",
     async (UserRegistrationData registration, IAuthUserProvider authProvider) =>
         ResultContainer
             .Start()
@@ -48,7 +48,7 @@ app.MapPost("/Register",
                         registration.Password))
             .GetResult());
 
-app.MapPost("/Mobile/Login",
+app.MapPost("/Mobile/User/Login",
     (UserLoginData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
         ResultContainer
             .Start()
@@ -63,7 +63,7 @@ app.MapPost("/Mobile/Login",
             .GetResult()
 );
 
-app.MapPost("/Desktop/Login",
+app.MapPost("/Desktop/User/Login",
     async (UserLoginData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
         ResultContainer
             .Start()
@@ -77,7 +77,7 @@ app.MapPost("/Desktop/Login",
             .GetResult()
 );
 
-app.MapPost("/Logout",
+app.MapPost("/User/Logout",
     async (IAuthUserProvider authProvider, HttpContext context) =>
         ResultContainer
             .Start()

@@ -1,0 +1,33 @@
+###
+POST http://localhost:5144/User/Register
+content-type: application/json
+
+{
+  "DisplayName":"myuser",
+  "Email" : "crazban1@mail.ru",
+  "Password": "testuser4testuser4"
+}
+###
+POST http://localhost:5144/Mobile/User/Login
+content-type: application/json
+
+{
+  "UserCred":"myuser",
+  "Password": "testuser4testuser4"
+}
+###
+POST http://localhost:5144/Desktop/User/Login
+content-type: application/json
+
+{
+  "UserCred":"myuser",
+  "Password": "testuser4testuser4"
+}
+###
+POST http://localhost:5144/User/Logout
+content-type: application/json
+
+{
+  "UserCred":"testuser3",
+  "Password": "44444123123123"
+}

@@ -1,0 +1,14 @@
+GET http://localhost:5144/
+###
+GET http://localhost:5144/todos/2
+###
+POST http://localhost:5144/todos
+content-type: application/json
+
+{ 
+  "id":1,  
+"name":"aaa",  
+"dueDate":"2024-01-01",  
+"isComplited":true
+}
+

@@ -8,7 +8,6 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Balance Support.pdb
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Firebase.Auth.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\FirebaseAdmin.dll
-C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\FireSharp.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Google.Api.Gax.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Google.Api.Gax.Rest.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Google.Apis.dll
@@ -18,16 +17,11 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Microsoft.AspNet.Identity.Owin.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Microsoft.AspNetCore.Connections.Abstractions.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Microsoft.AspNetCore.SignalR.Common.dll
-C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Microsoft.Threading.Tasks.Extensions.Desktop.dll
-C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Microsoft.Threading.Tasks.Extensions.dll
-C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Microsoft.Threading.Tasks.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Microsoft.Extensions.Features.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Microsoft.Extensions.Options.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Microsoft.Extensions.Primitives.dll
-C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\System.Net.Http.Extensions.dll
-C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\System.Net.Http.Primitives.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\System.ServiceModel.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Microsoft.Owin.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Microsoft.Owin.Security.dll
@@ -77,3 +71,7 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\FluentValidation.DependencyInjectionExtensions.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\Balance Support.MvcApplicationPartsAssemblyInfo.cs
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\Balance Support.sourcelink.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\Firebase.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\LiteDB.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\System.Reactive.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\win-x64\System.Runtime.InteropServices.WindowsRuntime.dll

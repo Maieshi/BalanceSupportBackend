@@ -24,6 +24,8 @@ ServicesInitializer.Initialize(builder.Services);
 
 var app = builder.Build();
 app.UseSession();
+app.UseAuthentication();
+app.UseAuthorization();
 var todos = new List<ToDo>();
 
 app.MapGet("/", () => "Hello World!");
@@ -54,7 +56,6 @@ app.MapPost("/Mobile/User/Login",
         ResultContainer
             .Start()
             .Validate<UserLoginData, UserLoginDataValidator>(userSignData)
-            .Authorize(context)
             .Process(
                 async () =>
                     await authProvider.LogInUser(
@@ -133,7 +134,7 @@ app.MapGet("/Mobile/Account/Get", async ([FromBody] AccountGetRequest deviceGetR
 
 #region NotificationManagement
 
-app.MapGet("/Desktop/UserToken/Register", async ([FromBody] UserTokenRequest userTokenRequest, ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
+app.MapPost("/Desktop/UserToken/Register", async ([FromBody] UserTokenRequest userTokenRequest, ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
     ResultContainer
         .Start()
         .Validate<UserTokenRequest, UserTokenRequestValidator>(userTokenRequest)
@@ -142,7 +143,7 @@ app.MapGet("/Desktop/UserToken/Register", async ([FromBody] UserTokenRequest use
         .GetResult()
 );
 
-app.MapGet("/Desktop/UserToken/Update", async ([FromBody] UserTokenRequest userTokenRequest, ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
+app.MapPost("/Desktop/UserToken/Update", async ([FromBody] UserTokenRequest userTokenRequest, ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
     ResultContainer
         .Start()
         .Validate<UserTokenRequest, UserTokenRequestValidator>(userTokenRequest)
@@ -151,7 +152,7 @@ app.MapGet("/Desktop/UserToken/Update", async ([FromBody] UserTokenRequest userT
         .GetResult()
 );
 
-app.MapGet("/Mobile/Notification/Handle", async ([FromBody] NotificationHandleRequest handleNotificationRequest, INotificationHandler notificationHandler, HttpContext context) =>
+app.MapPost("/Mobile/Notification/Handle", async ([FromBody] NotificationHandleRequest handleNotificationRequest, INotificationHandler notificationHandler, HttpContext context) =>
     ResultContainer
         .Start()
         .Validate<NotificationHandleRequest, NotificationHandleRequestValidator>(handleNotificationRequest)

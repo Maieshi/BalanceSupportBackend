@@ -3,36 +3,24 @@
   "WorkspaceRootPath": "C:\\Projects\\Asp. Net\\Balance Support\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\scripts\\main\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\scripts\\main\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\requests\\usermanagement.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
-      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\requests\\usermanagement.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\requests\\accountmanagement.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
-      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\requests\\accountmanagement.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\scripts\\providers\\firebaseproviders\\authuserprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\scripts\\providers\\firebaseproviders\\authuserprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\requests\\notification management.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
-      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\requests\\notification management.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\balance support.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\balance support.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\scripts\\providers\\firebaseproviders\\databaseuserprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\scripts\\providers\\firebaseproviders\\databaseuserprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\scripts\\providers\\firebaseproviders\\authuserprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\scripts\\providers\\firebaseproviders\\authuserprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\balance support.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\balance support.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\scripts\\main\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\scripts\\main\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\requests\\requests.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
+      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\requests\\requests.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
     }
   ],
   "DocumentGroupContainers": [
@@ -42,111 +30,71 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\appsettings.json",
-              "RelativeDocumentMoniker": "Balance Support\\appsettings.json",
-              "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\appsettings.json",
-              "RelativeToolTip": "Balance Support\\appsettings.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-08-13T16:08:13.288Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "AccountManagement.http",
-              "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Requests\\AccountManagement.http",
-              "RelativeDocumentMoniker": "Balance Support\\Requests\\AccountManagement.http",
-              "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Requests\\AccountManagement.http",
-              "RelativeToolTip": "Balance Support\\Requests\\AccountManagement.http",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2024-09-01T03:05:03.236Z",
+              "DocumentIndex": 0,
+              "Title": "Balance Support",
+              "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Balance Support.csproj",
+              "RelativeDocumentMoniker": "Balance Support\\Balance Support.csproj",
+              "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Balance Support.csproj",
+              "RelativeToolTip": "Balance Support\\Balance Support.csproj",
+              "ViewState": "AQIAAA8AAAAAAAAAAAAAAB8AAABDAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-09-01T12:51:36.455Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "UserManagement.http",
-              "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Requests\\UserManagement.http",
-              "RelativeDocumentMoniker": "Balance Support\\Requests\\UserManagement.http",
-              "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Requests\\UserManagement.http",
-              "RelativeToolTip": "Balance Support\\Requests\\UserManagement.http",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAiAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2024-09-01T02:58:49.937Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
               "Title": "DatabaseUserProvider.cs",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Providers\\FIrebaseProviders\\DatabaseUserProvider.cs",
               "RelativeDocumentMoniker": "Balance Support\\Scripts\\Providers\\FIrebaseProviders\\DatabaseUserProvider.cs",
               "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Providers\\FIrebaseProviders\\DatabaseUserProvider.cs",
               "RelativeToolTip": "Balance Support\\Scripts\\Providers\\FIrebaseProviders\\DatabaseUserProvider.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACgAAAAkAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-01T03:13:57.022Z",
+              "WhenOpened": "2024-09-01T09:18:04.86Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Main\\Program.cs",
-              "RelativeDocumentMoniker": "Balance Support\\Scripts\\Main\\Program.cs",
-              "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Main\\Program.cs",
-              "RelativeToolTip": "Balance Support\\Scripts\\Main\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAKcAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-30T12:36:53.54Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Notification Management.http",
-              "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Requests\\Notification Management.http",
-              "RelativeDocumentMoniker": "Balance Support\\Requests\\Notification Management.http",
-              "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Requests\\Notification Management.http",
-              "RelativeToolTip": "Balance Support\\Requests\\Notification Management.http",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2024-09-01T03:05:06.864Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "AuthUserProvider.cs",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Providers\\FIrebaseProviders\\AuthUserProvider.cs",
               "RelativeDocumentMoniker": "Balance Support\\Scripts\\Providers\\FIrebaseProviders\\AuthUserProvider.cs",
               "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Providers\\FIrebaseProviders\\AuthUserProvider.cs",
               "RelativeToolTip": "Balance Support\\Scripts\\Providers\\FIrebaseProviders\\AuthUserProvider.cs",
-              "ViewState": "AQIAACoAAAAAAAAAAAAYwDkAAAA6AAAA",
+              "ViewState": "AQIAAEMAAAAAAAAAAAAkwEwAAAA1AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-01T03:13:25.49Z",
+              "WhenOpened": "2024-09-01T08:44:08.648Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Balance Support.csproj",
-              "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Balance Support.csproj",
-              "RelativeDocumentMoniker": "Balance Support\\Balance Support.csproj",
-              "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Balance Support.csproj",
-              "RelativeToolTip": "Balance Support\\Balance Support.csproj",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-08-30T12:36:46.642Z"
+              "DocumentIndex": 4,
+              "Title": "Requests.http",
+              "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Requests\\Requests.http",
+              "RelativeDocumentMoniker": "Balance Support\\Requests\\Requests.http",
+              "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Requests\\Requests.http",
+              "RelativeToolTip": "Balance Support\\Requests\\Requests.http",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAYwB0AAAAUAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
+              "WhenOpened": "2024-09-01T04:55:11.012Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Main\\Program.cs",
+              "RelativeDocumentMoniker": "Balance Support\\Scripts\\Main\\Program.cs",
+              "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Main\\Program.cs",
+              "RelativeToolTip": "Balance Support\\Scripts\\Main\\Program.cs",
+              "ViewState": "AQIAAB4AAAAAAAAAAAAAADEAAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-30T12:36:53.54Z",
+              "EditorCaption": ""
             }
           ]
         }

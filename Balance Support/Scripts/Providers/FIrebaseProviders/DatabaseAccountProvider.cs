@@ -54,7 +54,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
 
             relaion = await RegisterRelations(accountRegisterRequest.UserId, userAccount);
 
-            return Results.Created($"Accounts", JsonConvert.SerializeObject(userAccount));
+            return Results.Created($"Accounts", userAccount.Object.AccountId);
         }
         catch (Exception ex)
         {
@@ -84,12 +84,9 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
     {
         try
         {
-            var relation = await FindRelationByAccountId(accountUpdateRequest.AccountId);
-
-
             var account = await FindAccountByAccountId(accountUpdateRequest.AccountId);
             if (account == null)
-                return Results.Problem(statusCode: 500, title: "Device not found");
+                return Results.Problem(statusCode: 500, title: "Account not found");
 
             if (account.Object.DeviceId != accountUpdateRequest.AccountDataRequest.DeviceId)
                 return Results.BadRequest("Cannot change device id");
@@ -105,7 +102,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
                 .Child(account.Key)
                 .PutAsync(accountUpdateRequest.AccountDataRequest.NewAccountData());
 
-            return Results.Ok($"Devices/{accountUpdateRequest.AccountId}");
+            return Results.Ok($"Accounts/{accountUpdateRequest.AccountId}");
         }
         catch (Exception ex)
         {

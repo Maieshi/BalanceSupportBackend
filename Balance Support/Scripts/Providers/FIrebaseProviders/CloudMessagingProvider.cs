@@ -28,17 +28,17 @@ namespace Balance_Support
                 {
                     return Results.Problem(statusCode: 500, title: "Token for this user  already registered");
                 }
+                return Results.Problem(statusCode: 500, title: "Token for this user  already registered");
                 
                 var result = await client
                     .Child("UserTokens")
                     .PostAsync(request);
                 
-                return Results.Ok(result.Key);
+                return Results.Ok();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                return Results.Problem(statusCode: 500, title: "Token registration error");
             }
         }
         
@@ -52,7 +52,7 @@ namespace Balance_Support
                 
                 if (string.IsNullOrEmpty(key))
                 {
-                    return Results.Problem(statusCode: 500, title: "Token for this user  already registered");
+                    return Results.Problem(statusCode: 500, title: "User not found");
                 }
                 
                 await client

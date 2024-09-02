@@ -42,7 +42,7 @@ public class DatabaseTransactionProvider:IDatabaseTransactionProvider
         var bank = await provider.GetAccountByUserIdAndBankCardNumber(userId,cardNumber);
         
         if (bank == default)
-            return Results.Problem(statusCode: 500, title: "Bank not found");
+            return Results.Problem(statusCode: 500, title: "Account not found");
 
 
         var transactionData = new TransactionData

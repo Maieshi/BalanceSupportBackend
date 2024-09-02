@@ -9,6 +9,7 @@ using Balance_Support.Scripts.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+
 namespace Balance_Support;
 
 public class AuthUserProvider : IAuthUserProvider
@@ -21,7 +22,8 @@ public class AuthUserProvider : IAuthUserProvider
 
     private IHttpContextAccessor httpContextAccessor;
 
-    public AuthUserProvider(IDatabaseUserProvider databaseUserProvider, IFirebaseAuthProvider provider, IHttpContextAccessor httpContextAccessor)
+    public AuthUserProvider(IDatabaseUserProvider databaseUserProvider, IFirebaseAuthProvider provider,
+        IHttpContextAccessor httpContextAccessor)
     {
         this.provider = provider;
         emailAttribute = new EmailAddressAttribute();
@@ -31,13 +33,13 @@ public class AuthUserProvider : IAuthUserProvider
 
     public async Task<IResult> RegisterNewUser(string username, string email, string pasword)
     {
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(pasword) ||
-            emailAttribute.IsValid(email) == false)
-        {
-            return
-                Results.BadRequest(
-                    $"Invalid email:{email}  username:{username} or password:{pasword}. Check your data");
-        }
+        //if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(pasword) ||
+        //    emailAttribute.IsValid(email) == false)
+        //{
+        //    return
+        //        Results.BadRequest(
+        //            $"Invalid email:{email}  username:{username} or password:{pasword}. Check your data");
+        //}
 
         if (await databaseUserProvider.IsEmailAlreadyRegistered(email))
             return Results.BadRequest("User already exists");
@@ -67,27 +69,25 @@ public class AuthUserProvider : IAuthUserProvider
     public async Task<IResult> LogInUser(string userCred, string password,
         LoginDeviceType deviceType)
     {
-        if (string.IsNullOrEmpty(userCred) || string.IsNullOrEmpty(password))
-        {
-            return Results.BadRequest($"Invalid email: {userCred} or password: {password}. Check your data.");
-        }
+        //if (string.IsNullOrEmpty(userCred) || string.IsNullOrEmpty(password))
+        //{
+        //    return Results.BadRequest($"Invalid email: {userCred} or password: {password}. Check your data.");
+        //}
 
         try
         {
-            var userEmail = await ResolveUserEmail(userCred);
-            if (userEmail == null)
-                return Results.Problem(detail: "Cannot find user in database", statusCode: 500, title: "User not found");
+            var user = await databaseUserProvider.GetUser(userCred);
+            if (user == null)
+                return Results.Problem(detail: "Cannot find user in database", statusCode: 500,
+                    title: "User not found");
+            string userEmail = emailAttribute.IsValid(userCred) ? userCred : user.Email;
 
             var authLink = await provider.SignInWithEmailAndPasswordAsync(userEmail, password);
 
             // Manage claims-based session
             await SignInUser(authLink, deviceType);
 
-            return Results.Ok(new
-            {
-                User = new { userEmail },
-                Token = authLink.FirebaseToken // Example: Returning token to client
-            });
+            return Results.Ok(new { user.Id, authLink.FirebaseToken });
         }
         catch (Exception ex)
         {
@@ -100,7 +100,7 @@ public class AuthUserProvider : IAuthUserProvider
         await httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return Results.Ok("User has been logged out successfully.");
     }
-    
+
     private async Task SignInUser(FirebaseAuthLink authLink, LoginDeviceType deviceType)
     {
         var expirationTime = DateTime.UtcNow.Add(GetSessionTimeout(deviceType));
@@ -111,7 +111,7 @@ public class AuthUserProvider : IAuthUserProvider
             new Claim("FirebaseToken", authLink.FirebaseToken),
             new Claim("SessionStartTime", DateTime.UtcNow.ToString("o")), // ISO 8601 format
             new Claim("DeviceType", deviceType.ToString()),
-            new Claim("ExpiresUtc", expirationTime.ToString("o")) 
+            new Claim("ExpiresUtc", expirationTime.ToString("o"))
         };
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -128,16 +128,13 @@ public class AuthUserProvider : IAuthUserProvider
             authProperties);
     }
 
-    private async Task<string> ResolveUserEmail(string userCred)
-    {
-        if (emailAttribute.IsValid(userCred))
-            return userCred;
-        
-        var user = await databaseUserProvider.GetUser(userCred);
+    //private async Task<string> ResolveUserEmail(string userCred)
+    //{
 
-        return user?.Email;
-    }
-    
+
+    //    return user?.Email;
+    //}
+
     private TimeSpan GetSessionTimeout(LoginDeviceType deviceType)
     {
         return deviceType switch

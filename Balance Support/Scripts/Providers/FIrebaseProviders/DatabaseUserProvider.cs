@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 // using Firebase.Auth;
 using Firebase.Auth;
 // using FireSharp;
@@ -38,30 +38,32 @@ public class DatabaseUserProvider : IDatabaseUserProvider
         }
     }
 
-    public async Task<UserAuthData> GetUser(string userCred)
+    public async Task<UserAuthData?> GetUser(string userCred)
     {
+        //TODO: перенести UserAuthData в records и сделать все GetUserBy... через FirebaseObject
         var userByDisplayName = await GetUserByDisplayName(userCred);
+
         if (userByDisplayName != null)
         {
-            return userByDisplayName;
+            return userByDisplayName.Object;
         }
 
         var userByEmail = await GetUserByEmail(userCred);
         if (userByEmail != null)
         {
-            return userByEmail;
+            return userByEmail.Object;
         }
 
         var userById = await GetUserById(userCred);
         if (userById != null)
         {
-            return userById;
+            return userById.Object;
         }
 
         var userByRecordId = await GetUserByRecordId(userCred);
         if (userByRecordId != null)
         {
-            return userByRecordId;
+            return userByRecordId.Object;
         }
 
 // Return null if no match is found
@@ -96,36 +98,36 @@ public class DatabaseUserProvider : IDatabaseUserProvider
 
     #region Private
 
-    private async Task<UserAuthData> GetUserByRecordId(string recordId)
-        => await client
+    private async Task<FirebaseObject<UserAuthData>?> GetUserByRecordId(string recordId)
+        => (await client
             .Child("Users")
             .Child(recordId)
-            .OnceSingleAsync<UserAuthData>();
+            .OnceAsync<UserAuthData>()).FirstOrDefault();
 
 
-    private async Task<UserAuthData> GetUserByEmail(string email)
-    =>await client
+    private async Task<FirebaseObject<UserAuthData>?> GetUserByEmail(string email)
+    =>(await client
                 .Child("Users")
                 .OrderBy("Email")
                 .EqualTo(email)
-                .OnceSingleAsync<UserAuthData>();
+                .OnceAsync<UserAuthData>()).FirstOrDefault();
         
     
 
-    private async Task<UserAuthData> GetUserByDisplayName(string DisplayName)
-    => await client
+    private async Task<FirebaseObject<UserAuthData>?> GetUserByDisplayName(string DisplayName)
+    => (await client
                 .Child("Users")
                 .OrderBy("DisplayName")
                 .EqualTo(DisplayName)
-                .OnceSingleAsync<UserAuthData>();
+                .OnceAsync<UserAuthData>()).FirstOrDefault();
       
 
-    private async Task<UserAuthData> GetUserById(string Id)
-    => await client
+    private async Task<FirebaseObject<UserAuthData>?> GetUserById(string Id)
+    => (await client
                 .Child("Users")
                 .OrderBy("Id")
                 .EqualTo(Id)
-                .OnceSingleAsync<UserAuthData>();
+                .OnceAsync<UserAuthData>()).FirstOrDefault();
         
 
     #endregion

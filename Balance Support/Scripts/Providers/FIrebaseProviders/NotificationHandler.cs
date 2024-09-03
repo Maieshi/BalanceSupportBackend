@@ -60,12 +60,12 @@ public class NotificationHandler: INotificationHandler
             _ => throw new ArgumentOutOfRangeException()
         };
         
-        var balanceMatch = Regex.Match(request.NotificationText, @"Баланс:\s*([\d\s]+(?:,\d{1,2})?)р");
-        var balanceMatch1 = Regex.Match(request.NotificationText, @"Баланс:\s*([\d\s]+(?:,\d{1,2})?\.\d{1,2})р");
-        var balanceMatch2 = Regex.Match(request.NotificationText, @"Баланс:\s*([\d\s]+(?:[,.]\d{1,2})?)р");
+        // var balanceMatch = Regex.Match(request.NotificationText, @"Баланс:\s*([\d\s]+(?:,\d{1,2})?)р");
+        var balanceMatch = Regex.Match(request.NotificationText, @"Баланс:\s*([\d\s]+(?:,\d{1,2})?\.\d{1,2})р");
+        // var balanceMatch2 = Regex.Match(request.NotificationText, @"Баланс:\s*([\d\s]+(?:[,.]\d{1,2})?)р");
         decimal balance = 0;
 
-        if (!balanceMatch1.Success && !decimal.TryParse(
+        if (!balanceMatch.Success && !decimal.TryParse(
                 balanceMatch.Groups[1].Value.Replace(" ", ""), 
                 System.Globalization.NumberStyles.Number, 
                 System.Globalization.CultureInfo.InvariantCulture, 

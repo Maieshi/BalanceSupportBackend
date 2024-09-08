@@ -28,8 +28,7 @@ namespace Balance_Support
                 {
                     return Results.Problem(statusCode: 500, title: "Token for this user  already registered");
                 }
-                return Results.Problem(statusCode: 500, title: "Token for this user  already registered");
-                
+               
                 var result = await client
                     .Child("UserTokens")
                     .PostAsync(request);

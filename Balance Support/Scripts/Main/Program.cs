@@ -10,37 +10,81 @@ using Balance_Support.DataClasses.Records.UserData;
 using Balance_Support.DataClasses.Validators;
 using Balance_Support.Scripts.Validators;
 using Microsoft.AspNetCore.Mvc;
+using Balance_Support.DataClasses.Records;
+using Microsoft.AspNetCore.Http.HttpResults;
+using LiteDB;
+using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromHours(24);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
+
 
 ServicesInitializer.Initialize(builder.Services);
 
 var app = builder.Build();
+app.UseCors("AllowLocalhost");
+app.UseHttpsRedirection();
 app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
+//app.MapControllers();
 var todos = new List<ToDo>();
 
 app.MapGet("/", () => "Hello World!");
-
-app.MapGet("/todos/{id}", (int id) => { return $"todos{id}"; });
-
-app.MapPost("/todos", ([FromBody] ToDo todo) =>
+app.MapGet("/todos/{id}", Results<Ok<ToDo>, NotFound> (int id) =>
+{
+    var targetTodo = todos.FirstOrDefault(x=>x.id==id);
+    return targetTodo is null
+        ? TypedResults.NotFound()
+        : TypedResults.Ok(targetTodo);
+});
+app.MapPost("/todos", (ToDo todo) =>
 {
     todos.Add(todo);
-    return "todos";
+    return TypedResults.Created($"/todos/{todo.id}", todo); ;
 });
+app.MapPost("/todosClass", (ToDoClass todo) =>
+{
+    var rec = new ToDo(todo.Id, todo.name, todo.isComplited);
+    todos.Add(rec);
+    return TypedResults.Created($"/todos/{rec.id}", rec);
+});
+
+
+app.MapGet("/testEmpty", () =>
+{
+    return "Success";
+});
+app.MapPost("/testRoute/{id}/{name}", (int id, string name) =>
+{
+    return $"Success {new TestModel(id, name)}";
+});
+app.MapPost("/testModel", (TestModel model) =>
+{
+    return "Success";
+});
+app.MapPost("/testModelFromBody", ([FromBody] TestModel model) =>
+{
+    return "Success";
+});
+app.MapPost("/testFromQuery", (int id, string name) =>
+{
+    var model = new TestModel(id, name);
+    return $"Success {model}";
+});
+app.MapPost("/testAcceptsModel", (TestModel model) =>
+{
+    return $"Success {model}";
+})
+.Accepts<TestModel>("application/json");
+app.MapPost("/testAcceptsModelFromBody", ([FromBody] TestModel model) =>
+{
+    return $"Success {model}";
+})
+.Accepts<TestModel>("application/json");
 
 #region UserManagement
 
-app.MapPost("User/Register",
+app.MapPost("/Desktop/User/Register",
     async ([FromBody] UserRegistrationData registration, IAuthUserProvider authProvider) =>
         ResultContainer
             .Start()
@@ -165,4 +209,14 @@ app.MapPost("/Mobile/Notification/Handle", async ([FromBody] NotificationHandleR
 
 app.Run();
 
-public record ToDo(int id, string name, DateTime dueDate, bool isComplited);
+public record ToDo(int id, string name, bool isComplited);
+
+public class ToDoClass
+{
+    public int Id { get; set; }
+
+    public string name { get; set; }
+
+    public bool isComplited { get; set; }
+}
+

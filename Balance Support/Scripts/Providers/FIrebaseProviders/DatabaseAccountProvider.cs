@@ -88,9 +88,6 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             if (account == null)
                 return Results.Problem(statusCode: 500, title: "Account not found");
 
-            if (account.Object.DeviceId != accountUpdateRequest.AccountDataRequest.DeviceId)
-                return Results.BadRequest("Cannot change device id");
-
             if (await IsAlreadyExistAccountWithGropAndDeviceId(accountUpdateRequest.UserId,
                     accountUpdateRequest.AccountDataRequest.AccountGroup,
                     accountUpdateRequest.AccountDataRequest.DeviceId, accountUpdateRequest.AccountDataRequest.SimSlot))

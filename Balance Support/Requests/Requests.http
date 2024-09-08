@@ -1,20 +1,65 @@
 ﻿GET http://localhost:5144/
 ###
-GET http://localhost:5144/todos/2
+GET http://localhost:5144/todos/1
 ###
 POST http://localhost:5144/todos
 content-type: application/json
 
 { 
   "id":1,  
-"name":"aaa",  
-"dueDate":"2024-01-01",  
+"name":"aaa",   
 "isComplited":true
 }
+###
+POST http://localhost:5144/todosClass
+content-type: application/json
 
+{ 
+  "id":2,  
+"name":"aaa",   
+"isComplited":true
+}
+###
+GET http://localhost:5144/testEmpty
+###
+POST http://localhost:5144/testRoute/1/Test
+###
+POST http://localhost:5144/testModel
+Content-Type: application/json
+
+{ 
+  "id": 1,  
+  "name": "Test"
+}
+###
+POST http://localhost:5144/testModelFromBody
+Content-Type: application/json
+
+{ 
+  "id": 1,  
+  "name": "Test"
+}
+###
+POST http://localhost:5144/testFromQuery?id=1&name=Test
+###
+POST http://localhost:5144/testAcceptsModel
+Content-Type: application/json
+
+{ 
+  "id": 1,  
+  "name": "Test"
+}
+###
+POST http://localhost:5144/testAcceptsModelFromBody
+Content-Type: application/json
+
+{ 
+  "id": 1,  
+  "name": "Test"
+}
 
 ###### UserManagement ######
-POST http://localhost:5144/User/Register
+POST http://localhost:5144/DesktopUser/Register
 content-type: application/json
 
 {

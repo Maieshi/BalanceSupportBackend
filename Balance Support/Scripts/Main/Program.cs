@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 ServicesInitializer.Initialize(builder);
 
 var app = builder.Build();

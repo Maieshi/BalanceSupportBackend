@@ -1,12 +1,14 @@
+using Balance_Support.DataClasses;
 using Balance_Support.SerializationClasses;
+// using Firebase.Auth;
 
 namespace Balance_Support.Interfaces;
 
 public interface IDatabaseUserProvider
 {
-    public Task<string> CreateNewUserAsync(UserAuthData newUser);
+    public Task<(bool IsSuccess, string? ErrorMessage)> CreateUserAsync(User newUser);
     
-    public Task<UserAuthData?> GetUser(string userCred);
+    public Task<User?> GetUser(string userCred);
     public Task<bool> IsEmailAlreadyRegistered(string email);
     
     public Task<bool> IsUserWithIdExist(string userId);

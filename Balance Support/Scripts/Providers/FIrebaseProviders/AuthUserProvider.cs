@@ -9,6 +9,7 @@ using Balance_Support.Scripts.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using User = Balance_Support.DataClasses.User;
 
 namespace Balance_Support;
 
@@ -57,13 +58,16 @@ public class AuthUserProvider : IAuthUserProvider
                     title: "An error occurred while creating the user");
         }
 
-        var newUser = await databaseUserProvider.CreateNewUserAsync(new UserAuthData()
+        var response = await databaseUserProvider.CreateUserAsync(new User()
             { Id = link.User.LocalId, Email = link.User.Email, DisplayName = link.User.DisplayName });
-        if (newUser == String.Empty)
-            return
-                Results.Problem(statusCode: 500,
-                    title: "An error occurred while pushing user to database ");
-        return (Results.Created($"/Users/{newUser}", newUser));
+        if (response.IsSuccess == false)
+        {
+            //TODO сделать удаление пользователя из базы данных
+            Results.Problem(statusCode: 500,
+                title: "An error occurred while pushing user to database ", detail: response.ErrorMessage);
+        }
+                
+        return (Results.Created($"/Users/{link.User.LocalId}", link.User));
     }
 
     public async Task<IResult> LogInUser(string userCred, string password,

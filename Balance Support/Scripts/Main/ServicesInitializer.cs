@@ -12,13 +12,19 @@ using Google.Apis.Auth.OAuth2;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 
 namespace Balance_Support;
 
 public static class ServicesInitializer
 {
-    public static void Initialize(IServiceCollection services)
+    public static void Initialize(WebApplicationBuilder builder)
     {
+        var services = builder.Services;
+        
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection"))); // Register EF Core DbContext with SQL Server
+        
         FirebaseAuthApiKey apiKey = JsonConvert.DeserializeObject<FirebaseAuthApiKey>(
             File.ReadAllText(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseAuthApiKey)));
 

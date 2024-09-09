@@ -6,4 +6,5 @@
   &lt;Assembly Path="C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\8.0.7\ref\net8.0\Microsoft.AspNetCore.Http.Abstractions.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Users\ilia\.nuget\packages\firesharp\2.0.4\lib\portable-net45+sl5+wp8+win8\FireSharp.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Users\ilia\.nuget\packages\firebaseadmin\3.0.0\lib\net6.0\FirebaseAdmin.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Users\ilia\.nuget\packages\litedb\4.1.4\lib\netstandard2.0\LiteDB.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>

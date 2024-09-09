@@ -18,10 +18,9 @@ using Microsoft.EntityFrameworkCore.Infrastructure; // Added for EF Core
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection"))); // Register EF Core DbContext with SQL Server
 
-ServicesInitializer.Initialize(builder.Services);
+
+ServicesInitializer.Initialize(builder);
 
 var app = builder.Build();
 

@@ -70,8 +70,7 @@
               "RelativeToolTip": "Balance Support\\Scripts\\Providers\\FIrebaseProviders\\DatabaseAccountProvider.cs",
               "ViewState": "AQIAAFEAAAAAAAAAAAAYwFgAAABUAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-06T11:46:06.956Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-06T11:46:06.956Z"
             },
             {
               "$type": "Document",
@@ -83,8 +82,7 @@
               "RelativeToolTip": "Balance Support\\Scripts\\Main\\ServicesInitializer.cs",
               "ViewState": "AQIAABYAAAAAAAAAAAAswDEAAAALAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-06T11:29:48.097Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-06T11:29:48.097Z"
             },
             {
               "$type": "Document",
@@ -96,8 +94,7 @@
               "RelativeToolTip": "Balance Support\\Balance Support.csproj",
               "ViewState": "AQIAAAwAAAAAAAAAAAAAAB8AAABDAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-09-01T12:51:36.455Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-01T12:51:36.455Z"
             },
             {
               "$type": "Document",
@@ -109,8 +106,7 @@
               "RelativeToolTip": "Balance Support\\Scripts\\Providers\\FIrebaseProviders\\DatabaseUserProvider.cs",
               "ViewState": "AQIAACQAAAAAAAAAAAAYwCgAAAAkAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-01T09:18:04.86Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-01T09:18:04.86Z"
             },
             {
               "$type": "Document",
@@ -120,7 +116,7 @@
               "RelativeDocumentMoniker": "Balance Support\\Scripts\\Main\\Program.cs",
               "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Main\\Program.cs",
               "RelativeToolTip": "Balance Support\\Scripts\\Main\\Program.cs",
-              "ViewState": "AQIAAAkAAAAAAAAAAIAwwBwAAAAXAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABwAAAAXAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-30T12:36:53.54Z",
               "EditorCaption": ""
@@ -135,8 +131,7 @@
               "RelativeToolTip": "Balance Support\\DataClasses\\Records\\NotificationData\\NotificationHandleRequest.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-07T09:51:01.982Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-07T09:51:01.982Z"
             },
             {
               "$type": "Document",
@@ -148,8 +143,7 @@
               "RelativeToolTip": "Balance Support\\Scripts\\Providers\\FIrebaseProviders\\DatabaseTransactionProvider.cs",
               "ViewState": "AQIAABwAAAAAAAAAAAAuwCIAAAAQAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-07T10:10:40.088Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-07T10:10:40.088Z"
             },
             {
               "$type": "Document",
@@ -185,8 +179,7 @@
               "RelativeToolTip": "Balance Support\\Scripts\\Providers\\FIrebaseProviders\\AuthUserProvider.cs",
               "ViewState": "AQIAACUAAAAAAAAAAAAUwEwAAAALAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-01T08:44:08.648Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-01T08:44:08.648Z"
             },
             {
               "$type": "Document",
@@ -210,8 +203,7 @@
               "RelativeToolTip": "Balance Support\\Scripts\\Providers\\FIrebaseProviders\\CloudMessagingProvider.cs",
               "ViewState": "AQIAAFQAAAAAAAAAAAAowB4AAAAPAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-04T11:44:49.223Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-04T11:44:49.223Z"
             }
           ]
         }

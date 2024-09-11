@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Balance_Support.DataClasses.DatabaseEntities;
+
 namespace Balance_Support.DataClasses;
 
 public class Transaction : BaseEntity

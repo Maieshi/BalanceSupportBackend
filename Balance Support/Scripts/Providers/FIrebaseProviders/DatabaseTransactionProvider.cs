@@ -8,24 +8,25 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using System.Linq;
+using Balance_Support.DataClasses;
 using Balance_Support.Interfaces;
 using Balance_Support.Scripts.Extensions;
 using Balance_Support.SerializationClasses;
 using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData.DatabaseInfo;
 using Balance_Support.Scripts.Extensions.RecordExtenstions;
-
+using Balance_Support.DataClasses.DatabaseEntities;
 namespace Balance_Support;
 
 public class DatabaseTransactionProvider:IDatabaseTransactionProvider
 {
-    private readonly FirebaseClient client;
+    // private readonly FirebaseClient client;
     private readonly IDatabaseAccountProvider provider;
     private readonly ICloudMessagingProvider cloudMessagingProvider;
 
-    public DatabaseTransactionProvider(FirebaseClient client, IDatabaseAccountProvider provider, ICloudMessagingProvider cloudMessagingProvider)
+    public DatabaseTransactionProvider( IDatabaseAccountProvider provider, ICloudMessagingProvider cloudMessagingProvider)
     {
-        this.client = client;
+        // this.client = client;
         this.provider = provider;
         this.cloudMessagingProvider = cloudMessagingProvider;
     }
@@ -39,23 +40,29 @@ public class DatabaseTransactionProvider:IDatabaseTransactionProvider
         string message
     )
     {
-        var bank = await provider.GetAccountByUserIdAndBankCardNumber(userId,cardNumber);
+        var account = await provider.GetAccountByUserIdAndBankCardNumber(userId,cardNumber);
         
-        if (bank == default)
+        if (account == default)
             return Results.Problem(statusCode: 500, title: "Account not found");
 
 
-        var transactionData = new TransactionData
-            (bank.Object.AccountId, transactionType, amount, balance, DateTime.Now, message);
-        
-        var transaction = await client
-            .Child("Transactions")
-            .PostAsync(transactionData);
 
+        
+        var transactionData = new Transaction()
+        {
+            TransactionType = (int)transactionType,
+            Amount = amount,
+            Balance = balance,
+            Message = message
+        };
+        
+            
+        
+        
 
         try
         {
-            var result = cloudMessagingProvider.SendMessage(userId, bank.Object, transactionData);
+            var result = cloudMessagingProvider.SendMessage(userId, account, transactionData);
         }
         catch (Exception e)
         {

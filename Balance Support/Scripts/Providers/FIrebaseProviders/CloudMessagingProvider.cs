@@ -7,6 +7,7 @@ using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
 using Firebase.Database;
 using Firebase.Database.Query;
+using Balance_Support.DataClasses.DatabaseEntities;
 namespace Balance_Support
 {
     public class CloudMessagingProvider:ICloudMessagingProvider
@@ -75,7 +76,7 @@ namespace Balance_Support
             .EqualTo(userId)
             .OnceAsync<UserTokenRequest>();
         
-        public async Task<string> SendMessage(string userId,AccountData account, TransactionData transactionData)
+        public async Task<string> SendMessage(string userId,Account account, TransactionData transactionData)
         {
             var user = (await FindUser(userId))?.SingleOrDefault();
             

@@ -1,36 +1,35 @@
 // using Firebase.Auth;
 
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using Firebase.Auth;
+using Balance_Support.DataClasses.Records.AccountData;
+using Balance_Support.Interfaces;
+using Balance_Support.Scripts.Extensions.RecordExtenstions;
+using Firebase.Database;
+using Firebase.Database.Query;
+using Microsoft.EntityFrameworkCore;
+using Balance_Support.DataClasses;
+using Balance_Support.DataClasses.DatabaseEntities;
+
 // using FireSharp;
 // using FireSharp.Interfaces;
 // using FireSharp.Response;
 // using FireSharp.Config;
-using Firebase.Database;
-using Firebase.Database.Query;
 // using Google.Apis.Auth.OAuth2;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Linq;
-using Balance_Support.Interfaces;
-using Balance_Support.Scripts.Extensions;
-using Balance_Support.SerializationClasses;
-using Balance_Support.DataClasses.Records.AccountData;
-using Balance_Support.DataClasses.Records.NotificationData.DatabaseInfo;
-using Balance_Support.Scripts.Extensions.RecordExtenstions;
 
 namespace Balance_Support;
 
 public class DatabaseAccountProvider : IDatabaseAccountProvider
 {
-    private FirebaseClient client;
-    private IDatabaseUserProvider userProvider;
+    private readonly ApplicationDbContext context;
+    // private readonly FirebaseClient client;
+    private readonly IDatabaseUserProvider userProvider;
 
-    public DatabaseAccountProvider(FirebaseClient client, IDatabaseUserProvider userProvider)
+    public DatabaseAccountProvider(FirebaseClient client, IDatabaseUserProvider userProvider,
+        ApplicationDbContext context)
     {
-        this.client = client;
+        // this.client = client;
         this.userProvider = userProvider;
+        this.context = context;
     }
 
     public async Task<IResult> RegisterAccount(AccountRegisterRequest accountRegisterRequest)
@@ -45,38 +44,34 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             return Results.Problem(statusCode: 500,
                 title: "One account with same group and device id already registered");
 
-        FirebaseObject<AccountData> userAccount = null;
-        FirebaseObject<UserAccountRelationData> relaion = null;
+        // FirebaseObject<AccountData> userAccount = null;
+        // FirebaseObject<UserAccountRelationData> relaion = null;
 
         try
         {
-            userAccount = await client.Child("Accounts").PostAsync(accountRegisterRequest.AccountData.NewAccountData());
-
-            relaion = await RegisterRelations(accountRegisterRequest.UserId, userAccount);
-
-            return Results.Created($"Accounts", userAccount.Object.AccountId);
+            var acc =  context.Accounts.Add(accountRegisterRequest.NewAccount());
+            await context.SaveChangesAsync();
+            
+            
+            return Results.Created("Accounts", acc.Entity);
         }
         catch (Exception ex)
         {
-            if (userAccount != null)
-            {
-                await client
-                    .Child("Devices")
-                    .Child(userAccount.Key)
-                    .DeleteAsync();
-            }
+            // if (userAccount != null)
+            //     await client
+            //         .Child("Devices")
+            //         .Child(userAccount.Key)
+            //         .DeleteAsync();
+            //
+            //
+            // if (relaion != null)
+            //     await client
+            //         .Child("Relations")
+            //         .Child("User-Account")
+            //         .DeleteAsync();
 
-
-            if (relaion != null)
-            {
-                await client
-                    .Child("Relations")
-                    .Child("User-Account")
-                    .DeleteAsync();
-            }
-
-            return Results.Problem(detail: ex.Message, statusCode: 500,
-                title: "An error occurred while registering device");
+            return Results.Problem(ex.Message, statusCode: 500,
+                title: "An error occurred while registering account");
         }
     }
 
@@ -94,16 +89,15 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
                 return Results.Problem(statusCode: 500,
                     title: "One account with same group and device id already registered");
 
-            await client
-                .Child("Devices")
-                .Child(account.Key)
-                .PutAsync(accountUpdateRequest.AccountDataRequest.NewAccountData());
+            account.UpdateAccount(accountUpdateRequest);
+            context.Accounts.Update(account);
+            await context.SaveChangesAsync();
 
             return Results.Ok($"Accounts/{accountUpdateRequest.AccountId}");
         }
         catch (Exception ex)
         {
-            return Results.Problem(detail: ex.Message, statusCode: 500,
+            return Results.Problem(ex.Message, statusCode: 500,
                 title: "An error occurred while updating device ");
         }
     }
@@ -117,22 +111,8 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             if (currentAccount == null)
                 return Results.Problem(statusCode: 500, title: "Account not found");
 
-            var relations = await FindRelationByAccountId(accountDeleteRequest.AccountId);
-            if (!relations.Any())
-                return Results.Problem(statusCode: 500, title: "Relation not found");
-
-            await client
-                .Child("Accounts")
-                .Child(currentAccount.Key)
-                .DeleteAsync();
-
-            await client
-                .Child("Relations")
-                .Child("User-Account")
-                .Child(currentAccount.Key)
-                .DeleteAsync();
-
-
+           context.Accounts.Remove(currentAccount);
+            await context.SaveChangesAsync();
             return Results.Ok($"Devices/{accountDeleteRequest.AccountId}");
         }
         catch (Exception e)
@@ -147,15 +127,11 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
         if (!await userProvider.IsUserWithIdExist(accountGetRequest.UserId))
             return Results.Problem(statusCode: 500, title: "User not found");
 
-        var relations = (await FindRelationByUserId(accountGetRequest.UserId));
-
-        if (!relations.Any())
-            return Results.Problem(statusCode: 500, title: "Relations not found");
-
         var accounts = (await FindAccountsByUserId(accountGetRequest.UserId))
             .Where(x =>
-                x.Object.AccountGroup == accountGetRequest.AccountGroup
-                && x.Object.DeviceId == accountGetRequest.DeviceId).ToList();
+                x.AccountGroup == accountGetRequest.AccountGroup
+                && x.DeviceId == accountGetRequest.DeviceId)
+            .ToList();
 
         if (accounts.Any())
             return Results.Problem(statusCode: 500, title: "Accounts not found");
@@ -163,7 +139,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
 
         return Results.Ok(new
         {
-            Accounts = accounts.Select(x => x.Object)
+            Accounts = accounts
         });
     }
 
@@ -185,95 +161,27 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
                 )));
     }
 
-    private async Task<FirebaseObject<UserAccountRelationData>> RegisterRelations(string userId,
-        FirebaseObject<AccountData> account)
-        => await client
-            .Child("Relations")
-            .Child("User-Account")
-            .PostAsync(new UserAccountRelationData(
-                userId,
-                account.Object.AccountId,
-                account.Key));
-
-
-    private async Task<bool> IsAccountExists(string accountId)
-        => await FindAccount(accountId) != null;
-
-    private async Task<AccountData?> FindAccount(string accountData)
-    {
-        var deviceInfo = await FindAccountByAccountId(accountData);
-        if (deviceInfo != default)
-            return deviceInfo.Object;
-
-        return default;
-
-        // deviceInfo = (await FindAccountByRecordId(accountData)==default)?;
-        // return deviceInfo?.Object;
-    }
-
-
-    private async Task<AccountData> FindAccountByRecordId(string recordId)
-    {
-        var a1 = await client
-            .Child("Accounts")
-            .Child(recordId)
-            .OnceSingleAsync<AccountData>();
-
-        return a1;
-    }
-
-
-    public async Task<FirebaseObject<AccountData>?> FindAccountByAccountId(string accountId)
-        => (await client
-            .Child("Accounts")
-            .OrderBy("AccountId")
-            .EqualTo(accountId)
-            .OnceAsync<AccountData>()).FirstOrDefault();
-
-
-    private async Task<IReadOnlyCollection<FirebaseObject<UserAccountRelationData>>>
-        FindRelationByAccountId(string deviceId)
-        => await client
-            .Child("Relations")
-            .Child("User-Account")
-            .OrderBy("AccountId")
-            .EqualTo(deviceId)
-            .OnceAsync<UserAccountRelationData>();
-
-
-    private async Task<IReadOnlyCollection<FirebaseObject<UserAccountRelationData>>>
-        FindRelationByUserId(string userId)
-        => await client
-            .Child("Relations")
-            .Child("User-Account")
-            .OrderBy("UserId")
-            .EqualTo(userId)
-            .OnceAsync<UserAccountRelationData>();
-
-
-    private async Task<ReadOnlyCollection<FirebaseObject<AccountData>>> FindAccountsByUserId(string userId)
-        => (await Task.WhenAll(
-                    (await FindRelationByUserId(userId))
-                    .Select(r => r.Object.AccountId)
-                    .Where(id => !string.IsNullOrEmpty(id))
-                    .Select(FindAccountByAccountId)
-                )
-            )
-            .Where(device => device != null)
-            .Cast<FirebaseObject<AccountData>>() // Explicitly cast to non-nullable type
-            .ToList()
-            .AsReadOnly();
-
-    public async Task<FirebaseObject<AccountData>?> GetAccountByUserIdAndBankCardNumber(string userId, string bankCardNumber)
-        => (await FindAccountsByUserId(userId))
+    public async Task<Account?> GetAccountByUserIdAndBankCardNumber(string userId,
+        string bankCardNumber)
+     =>(await FindAccountsByUserId(userId))
             .FirstOrDefault(x =>
-                string.Equals(x.Object.BankCardNumber, bankCardNumber));
+                string.Equals(x.BankCardNumber, bankCardNumber));
+    
+    public async Task<Account?> FindAccountByAccountId(string accountId)
+        => context.Accounts.Find(accountId);
+
+    private async Task<List<Account>> FindAccountsByUserId(string userId)
+        => await context.Accounts.Where(x => x.UserId == userId)
+            .ToListAsync();
 
     private async Task<bool> IsAlreadyExistAccountWithGropAndDeviceId(string userId, int accountGroup,
         int deviceId, int simSlot)
-    {
-        return (await FindAccountsByUserId(userId)).Any(device =>
-            device.Object.AccountGroup == accountGroup && device.Object.DeviceId == deviceId &&
-            device.Object.SimSlot == simSlot);
-    }
+        =>
+            (await context.Accounts.Where(acc =>
+                    acc.UserId == userId &&
+                    acc.AccountGroup == accountGroup &&
+                    acc.DeviceId == deviceId &&
+                    acc.SimSlot == simSlot)
+                .FirstOrDefaultAsync()) != null;
+
 }

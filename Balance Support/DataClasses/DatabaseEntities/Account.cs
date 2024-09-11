@@ -1,7 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Balance_Support.DataClasses.Records.AccountData;
 
-namespace Balance_Support.DataClasses;
+namespace Balance_Support.DataClasses.DatabaseEntities;
 
 public class Account : BaseEntity
 {
@@ -12,6 +13,7 @@ public class Account : BaseEntity
     public string LastName { get; set; }
 
     public int AccountGroup { get; set; }
+    public int DeviceId { get; set; }
     public int SimSlot { get; set; }
     
     [StringLength(50)]
@@ -32,4 +34,17 @@ public class Account : BaseEntity
     public string UserId { get; set; }  // Foreign key to User
 
     public User User { get; set; } // Navigation property
+
+    public void UpdateAccount(AccountUpdateRequest accountUpdateRequest)
+    {
+        AccountNumber = accountUpdateRequest.AccountDataRequest.AccountNumber;
+        LastName = accountUpdateRequest.AccountDataRequest.LastName;
+        AccountGroup = accountUpdateRequest.AccountDataRequest.AccountGroup;
+        DeviceId = accountUpdateRequest.AccountDataRequest.DeviceId;
+        SimSlot = accountUpdateRequest.AccountDataRequest.SimSlot;
+        SimCardNumber = accountUpdateRequest.AccountDataRequest.SimCardNumber;
+        BankCardNumber = accountUpdateRequest.AccountDataRequest.BankCardNumber;
+        BankType = accountUpdateRequest.AccountDataRequest.BankType;
+        Description = accountUpdateRequest.AccountDataRequest.Description;
+    }
 }

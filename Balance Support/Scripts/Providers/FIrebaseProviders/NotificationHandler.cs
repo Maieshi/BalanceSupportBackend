@@ -103,7 +103,7 @@ public class NotificationHandler: INotificationHandler
 
 public enum TransactionType
 {
-    Crediting,
-    Debiting
+    Crediting=0,
+    Debiting =1
 }
 

@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Balance_Support.DataClasses;
+using Balance_Support.DataClasses.DatabaseEntities;
+
 public class ApplicationDbContext : DbContext
 {
     public virtual DbSet<User> Users { get; set; }

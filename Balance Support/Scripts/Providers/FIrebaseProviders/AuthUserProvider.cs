@@ -40,13 +40,13 @@ public class AuthUserProvider : IAuthUserProvider
         //    return
         //        Results.BadRequest(
         //            $"Invalid email:{email}  username:{username} or password:{pasword}. Check your data");
+            
         //}
-
+        //Todo: check aslo if user with username already exists
         if (await databaseUserProvider.IsEmailAlreadyRegistered(email))
             return Results.BadRequest("User already exists");
 
         FirebaseAuthLink link;
-
         try
         {
             link = await provider.CreateUserWithEmailAndPasswordAsync(email, pasword, username, true);

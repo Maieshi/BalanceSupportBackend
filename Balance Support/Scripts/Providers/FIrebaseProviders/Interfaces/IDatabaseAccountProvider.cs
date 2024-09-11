@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using Balance_Support.DataClasses.DatabaseEntities;
 using Balance_Support.DataClasses.Records.AccountData;
 using Firebase.Database;
 
@@ -11,6 +12,6 @@ public interface IDatabaseAccountProvider
     public Task<IResult> DeleteDevice(AccountDeleteRequest accountDeleteRequest);
     public Task<IResult> GetAccountsForDevice(AccountGetRequest accountGetRequest);
 
-    public Task<FirebaseObject<AccountData>?> GetAccountByUserIdAndBankCardNumber(string userId, string bankCardNumber);
+    public Task<Account?> GetAccountByUserIdAndBankCardNumber(string userId, string bankCardNumber);
     public void Test();
 }

@@ -65,12 +65,13 @@ public static class ServicesInitializer
             new FirebaseAuthProvider(new Firebase.Auth.FirebaseConfig(apiKey.ApiKey))
         );
 
-        services.AddSingleton<IDatabaseUserProvider, DatabaseUserProvider>();
-        services.AddSingleton<IAuthUserProvider, AuthUserProvider>();
-        services.AddSingleton<IDatabaseAccountProvider, DatabaseAccountProvider>();
-        services.AddSingleton<ICloudMessagingProvider, CloudMessagingProvider>();
-        services.AddSingleton<IDatabaseTransactionProvider, DatabaseTransactionProvider>();
-        services.AddSingleton<INotificationHandler, NotificationHandler>();
+        services.AddScoped<IDatabaseUserProvider, DatabaseUserProvider>();
+        services.AddScoped<IAuthUserProvider, AuthUserProvider>();
+        services.AddScoped<IDatabaseAccountProvider, DatabaseAccountProvider>();
+        services.AddScoped<ICloudMessagingProvider, CloudMessagingProvider>();
+        services.AddScoped<IDatabaseTransactionProvider, DatabaseTransactionProvider>();
+        services.AddScoped<INotificationHandler, NotificationHandler>();
+        services.AddScoped<FirebaseToSqlServerMigrator>();
 
         // Add Authentication services
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -84,7 +85,8 @@ public static class ServicesInitializer
         services.AddAuthorization();
 
         // Example of building service provider (not recommended in most cases for normal DI usage)
-        //var provider = services.BuildServiceProvider();
+        var provider = services.BuildServiceProvider();
+        provider.GetService<FirebaseToSqlServerMigrator>().Migrate();
         //provider.GetService<INotificationHandler>().Test();
     }
 

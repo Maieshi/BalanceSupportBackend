@@ -20,13 +20,11 @@ namespace Balance_Support;
 
 public class DatabaseTransactionProvider:IDatabaseTransactionProvider
 {
-    // private readonly FirebaseClient client;
     private readonly IDatabaseAccountProvider provider;
     private readonly ICloudMessagingProvider cloudMessagingProvider;
 
-    public DatabaseTransactionProvider( IDatabaseAccountProvider provider, ICloudMessagingProvider cloudMessagingProvider)
+    public DatabaseTransactionProvider(IDatabaseAccountProvider provider, ICloudMessagingProvider cloudMessagingProvider)
     {
-        // this.client = client;
         this.provider = provider;
         this.cloudMessagingProvider = cloudMessagingProvider;
     }
@@ -69,6 +67,6 @@ public class DatabaseTransactionProvider:IDatabaseTransactionProvider
             return Results.Problem(statusCode: 500, title: "Cannot send message to user");
         }
         
-        return Results.Created($"Transactions", JsonConvert.SerializeObject(transaction));
+        return Results.Created($"Transactions", JsonConvert.SerializeObject(transactionData));
     }
 }

@@ -1,0 +1,456 @@
+{
+  "Accounts": {
+    "-O5U_Kl9iOfnH201c7K_": {
+      "AccountGroup": 3,
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "AccountNumber": "123456789",
+      "BankCardNumber": "3684",
+      "BankType": "SberBank",
+      "Description": "Very rich person",
+      "DeviceId": 3,
+      "LastName": "Ivaniv",
+      "SimCardNumber": "+88005553535",
+      "SimSlot": 1
+    },
+    "-O5gcG6FezRjF6-XK_fV": {
+      "AccountGroup": 1,
+      "AccountId": "08263acd-baad-46f1-9623-353651f264b9",
+      "AccountNumber": "sampleAccountNumber",
+      "BankCardNumber": "1488",
+      "BankType": "Sbebank",
+      "Description": "sampleDescription",
+      "DeviceId": 1,
+      "LastName": "sampleLastName",
+      "SimCardNumber": "+88005553535",
+      "SimSlot": 1
+    },
+    "-O6-dGyB3CJWdtDstJFg": {
+      "AccountGroup": 1,
+      "AccountId": "e3b2d90a-fcb2-4c5e-b466-a91acfe483b7",
+      "AccountNumber": "sampleAccountNumber",
+      "BankCardNumber": "1488",
+      "BankType": "Sbebank",
+      "Description": "sampleDescription",
+      "DeviceId": 1,
+      "LastName": "sampleLastName",
+      "SimCardNumber": "+88005553535",
+      "SimSlot": 1
+    },
+    "-O6J_be-D9vk2qmTAIbi": {
+      "AccountGroup": 1,
+      "AccountId": "deb6a761-8ec8-4d58-83ba-06aee7edf893",
+      "AccountNumber": "SampleAccountNumber",
+      "BankCardNumber": "1488",
+      "BankType": "Sbebank",
+      "Description": "sampleDescription",
+      "DeviceId": 1,
+      "LastName": "sampleLastName",
+      "SimCardNumber": "+88005553535",
+      "SimSlot": 1
+    },
+    "-O6RkaFJemDYD8Q7mfTx": {
+      "AccountGroup": 2,
+      "AccountId": "c6cb14fe-543b-4103-8609-e921f5281418",
+      "AccountNumber": "sampleAccountNumber",
+      "BankCardNumber": "1488",
+      "BankType": "Sbebank",
+      "Description": "sampleDescription",
+      "DeviceId": 1,
+      "LastName": "sampleLastName",
+      "SimCardNumber": "+88005553535",
+      "SimSlot": 1
+    },
+    "-O6V3RkqCzWcMEKxpB21": {
+      "AccountGroup": 4,
+      "AccountId": "9cbd18fb-8ff5-4a4f-a1a8-e24776e2b01b",
+      "AccountNumber": "sampleAccountNumber",
+      "BankCardNumber": "1488",
+      "BankType": "Sbebank",
+      "Description": "sampleDescription",
+      "DeviceId": 1,
+      "LastName": "sampleLastName",
+      "SimCardNumber": "+88005553535",
+      "SimSlot": 1
+    },
+    "-O6V4yMZQ11CC-ylUECo": {
+      "AccountGroup": 5,
+      "AccountId": "042ba50a-8043-4085-a35b-5781204a2634",
+      "AccountNumber": "sampleAccountNumber",
+      "BankCardNumber": "1488",
+      "BankType": "Sbebank",
+      "Description": "sampleDescription",
+      "DeviceId": 1,
+      "LastName": "sampleLastName",
+      "SimCardNumber": "+88005553535",
+      "SimSlot": 1
+    },
+    "-O6W6HWJetu3GnQQPNt_": {
+      "AccountGroup": 4,
+      "AccountId": "a446b370-c4c4-474a-8cb4-05a6269fdff6",
+      "AccountNumber": "sampleAccountNumber",
+      "BankCardNumber": "1488",
+      "BankType": "Sbebank",
+      "Description": "sampleDescription",
+      "DeviceId": 1,
+      "LastName": "sampleLastName",
+      "SimCardNumber": "+88005553535",
+      "SimSlot": 1
+    }
+  },
+  "Devices": {
+    "-O6-dGyB3CJWdtDstJFg": {
+      "AccountGroup": 2,
+      "AccountId": "e0710ecf-0bb6-4891-aa33-149c4ccffe83",
+      "AccountNumber": "sampleAccountNumber",
+      "BankCardNumber": "1488",
+      "BankType": "Sbebank",
+      "Description": "sampleDescription",
+      "DeviceId": 1,
+      "LastName": "sampleLastName",
+      "SimCardNumber": "+88005553535",
+      "SimSlot": 1
+    }
+  },
+  "Relations": {
+    "User-Account": {
+      "-O5U_NsI8bmPhpTs9yui": {
+        "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+        "AccountRecordId": "-O5U_Kl9iOfnH201c7K_",
+        "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1"
+      },
+      "-O5gcGLLYY2wRPx7gYSa": {
+        "AccountId": "08263acd-baad-46f1-9623-353651f264b9",
+        "AccountRecordId": "-O5gcG6FezRjF6-XK_fV",
+        "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1"
+      },
+      "-O5vmzAhnv6I9qABEwik": {
+        "AccountId": "9c268b7c-b49e-4a73-a611-36d3484b853c",
+        "AccountRecordId": "-O5vmywq9wK5UsGg_fk0",
+        "UserId": "Xgs8ggFREQSjyC9wop9tQYzwvBz1"
+      },
+      "-O6-dHDn_9nNvGiOYyQY": {
+        "AccountId": "e3b2d90a-fcb2-4c5e-b466-a91acfe483b7",
+        "AccountRecordId": "-O6-dGyB3CJWdtDstJFg",
+        "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1"
+      },
+      "-O6J_bksPadFvOLD9Gi9": {
+        "AccountId": "deb6a761-8ec8-4d58-83ba-06aee7edf893",
+        "AccountRecordId": "-O6J_be-D9vk2qmTAIbi",
+        "UserId": "Xgs8ggFREQSjyC9wop9tQYzwvBz1"
+      },
+      "-O6RkaM2Bg5M2950k__3": {
+        "AccountId": "c6cb14fe-543b-4103-8609-e921f5281418",
+        "AccountRecordId": "-O6RkaFJemDYD8Q7mfTx",
+        "UserId": "Xgs8ggFREQSjyC9wop9tQYzwvBz1"
+      },
+      "-O6V3Rsc5VWYhEwiRNDP": {
+        "AccountId": "9cbd18fb-8ff5-4a4f-a1a8-e24776e2b01b",
+        "AccountRecordId": "-O6V3RkqCzWcMEKxpB21",
+        "UserId": "Xgs8ggFREQSjyC9wop9tQYzwvBz1"
+      },
+      "-O6V4yU4gHMuFUIBy4jq": {
+        "AccountId": "042ba50a-8043-4085-a35b-5781204a2634",
+        "AccountRecordId": "-O6V4yMZQ11CC-ylUECo",
+        "UserId": "Xgs8ggFREQSjyC9wop9tQYzwvBz1"
+      },
+      "-O6W6HcEm08hhKh16GEE": {
+        "AccountId": "a446b370-c4c4-474a-8cb4-05a6269fdff6",
+        "AccountRecordId": "-O6W6HWJetu3GnQQPNt_",
+        "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1"
+      }
+    }
+  },
+  "Transactions": {
+    "-O5XIhQtt_wxm02ZWbD_": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-08-30T15:02:38.4827765+07:00",
+      "TransactionType": 0
+    },
+    "-O5XJzkFAcqZg3RQQrpF": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-08-30T15:07:47.5073689+07:00",
+      "TransactionType": 0
+    },
+    "-O5f_7zZ8gXV1JPbI3s3": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T10:15:25.7834473+07:00",
+      "TransactionType": 0
+    },
+    "-O5f_dUd9p3Wmk0-P_-i": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T10:17:38.9106329+07:00",
+      "TransactionType": 0
+    },
+    "-O5f_hwVmTJXPJUK2r13": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T10:17:57.140726+07:00",
+      "TransactionType": 0
+    },
+    "-O5faLWrhOATj1u9IYYo": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T10:20:43.3641273+07:00",
+      "TransactionType": 0
+    },
+    "-O5faZbuEPCGHKrRkTIW": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T10:21:41.0998975+07:00",
+      "TransactionType": 0
+    },
+    "-O5fbcfjpNZl8zeLpHvq": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T10:26:19.8759988+07:00",
+      "TransactionType": 0
+    },
+    "-O5fczY57reDJ-NZ0mjH": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T10:32:15.6733117+07:00",
+      "TransactionType": 0
+    },
+    "-O5fd29GXSnae47JjBD3": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T10:32:30.470881+07:00",
+      "TransactionType": 0
+    },
+    "-O5fdeqvth0aOY-DcUO9": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T10:35:13.071053+07:00",
+      "TransactionType": 0
+    },
+    "-O5felaOMNGEkOWmGAL9": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T10:40:02.8269808+07:00",
+      "TransactionType": 0
+    },
+    "-O5ff2qwcVSZCrXHJ5H7": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T10:41:17.6126866+07:00",
+      "TransactionType": 0
+    },
+    "-O5fgiTO4UCauTHo--I-": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T10:48:34.3203258+07:00",
+      "TransactionType": 0
+    },
+    "-O5fiuFVHNqhZyQaOcEL": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T10:58:06.8640102+07:00",
+      "TransactionType": 0
+    },
+    "-O5fkUtmKb84CiBfYDSR": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T11:05:03.1974265+07:00",
+      "TransactionType": 0
+    },
+    "-O5flAK9MngcvkAzSNrH": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T11:08:01.0779591+07:00",
+      "TransactionType": 0
+    },
+    "-O5fmo6hFIASgIEmXx4s": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T11:15:10.3050635+07:00",
+      "TransactionType": 0
+    },
+    "-O5fpBDRyiFQNaGVT9QW": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T11:25:33.3261955+07:00",
+      "TransactionType": 0
+    },
+    "-O5fqc1xdihZ38oY8ezg": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T11:31:49.427965+07:00",
+      "TransactionType": 0
+    },
+    "-O5fqyCnMEvKfxdeDOLM": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T11:33:20.2307143+07:00",
+      "TransactionType": 0
+    },
+    "-O5fr7_L01iD-xhnmrZy": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T11:34:02.7008916+07:00",
+      "TransactionType": 0
+    },
+    "-O5frsxPkxPluHYOiAKq": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T11:37:20.8493066+07:00",
+      "TransactionType": 0
+    },
+    "-O5ft0OgfYN0cFgWdZLe": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T11:42:17.5681879+07:00",
+      "TransactionType": 0
+    },
+    "-O5gb6775xCp6nPnglmn": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T15:03:39.6407136+07:00",
+      "TransactionType": 0
+    },
+    "-O5gc8OFmxjB01b9bUGh": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T15:08:11.0764267+07:00",
+      "TransactionType": 0
+    },
+    "-O5gd_h60rNjN9pX-a8h": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 9148,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 15:21 зачисление 9148р Альфа Банк Баланс: 12 992.36р",
+      "Time": "2024-09-01T15:14:29.177044+07:00",
+      "TransactionType": 0
+    },
+    "-O5ghow7FW0vs9evDNGu": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 3900,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 16:00 перевод 3900р Комиссия 19.50р Баланс: 69.40р",
+      "Time": "2024-09-01T15:33:00.1563081+07:00",
+      "TransactionType": 1
+    },
+    "-O5vnE-pxfbTYRLea8v5": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 3900,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 16:00 перевод 3900р Комиссия 19.50р Баланс: 69.40р",
+      "Time": "2024-09-04T13:50:55.9186979+07:00",
+      "TransactionType": 1
+    },
+    "-O5vnJaa6O81DrnuuMKC": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 3900,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 16:00 перевод 3900р Комиссия 19.50р Баланс: 69.40р",
+      "Time": "2024-09-04T13:51:18.8223523+07:00",
+      "TransactionType": 1
+    },
+    "-O6-dLYj4qZVyl6K9tyn": {
+      "AccountId": "802fcd49-e45e-43a2-a025-63cc9d6036cd",
+      "Amount": 3900,
+      "Balance": 0,
+      "Message": "СЧЁТ3684 16:00 перевод 3900р Комиссия 19.50р Баланс: 69.40р",
+      "Time": "2024-09-05T12:25:51.4652931+07:00",
+      "TransactionType": 1
+    }
+  },
+  "UserTokens": {
+    "-O5UhTwWhY9H1FoIREWF": {
+      "Token": "dTV7g3pyn4lEEevviVZ2aX:APA91bE3fI5w9T-HlQzv5k-3nikr9Rcfkwy-QPdsgvZp109JCXPIA5C4QqW8ulCG0V15IgEXekjU7t7YX2pTF2Tl-MGvuOzLfJxQuACHDHUiXptfDZJdbQyS6A7bvhMQACULPmBZY3nb\\",
+      "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1"
+    }
+  },
+  "Users": {
+    "-O3Yly5O5gBeLic7_rAW": {
+      "DisplayName": "testuser1",
+      "Email": "testuser1@gmail.com",
+      "Id": "6vuruhuHAHeLLPSvRM1NBuuwiG12"
+    },
+    "-O3mWdEUhpSNc1Htdqad": {
+      "DisplayName": "testuser5",
+      "Email": "testuser5@gmail.com",
+      "Id": "0GzAeIRWFIdfxaMlSygp8ysmgMm1"
+    },
+    "-O3mXeMxEv6cPYkxwKCu": {
+      "DisplayName": "testuser3",
+      "Email": "testuser3@gmail.com",
+      "Id": "Xgs8ggFREQSjyC9wop9tQYzwvBz1"
+    },
+    "-O3maIo2pxxgYDR7iUVz": {
+      "DisplayName": "myuser",
+      "Email": "crazban1@mail.ru",
+      "Id": "sDAmWae7RqMsmWIC74lVdLuQRpq1"
+    },
+    "-O4yv6iF6-xduEz_OS6_": {
+      "DisplayName": "testuser6",
+      "Email": "testuser6@gmail",
+      "Id": "safsdgsdfg"
+    },
+    "-O53rqa4tU5hJ804dcNX": {
+      "DisplayName": "aaaaaUser",
+      "Email": "aaaaa@gmail.com",
+      "Id": "aaaaa"
+    },
+    "-O6BFT3QbiuALoTSxbZz": {
+      "DisplayName": "myuser1",
+      "Email": "crazban2@mail.ru",
+      "Id": "2mWvzdKEIyXWAyO1QPbDL7jw6PF2"
+    }
+  }
+}

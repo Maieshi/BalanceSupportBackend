@@ -21,13 +21,10 @@ namespace Balance_Support;
 public class DatabaseAccountProvider : IDatabaseAccountProvider
 {
     private readonly ApplicationDbContext context;
-    // private readonly FirebaseClient client;
     private readonly IDatabaseUserProvider userProvider;
 
-    public DatabaseAccountProvider(FirebaseClient client, IDatabaseUserProvider userProvider,
-        ApplicationDbContext context)
+    public DatabaseAccountProvider(IDatabaseUserProvider userProvider, ApplicationDbContext context)
     {
-        // this.client = client;
         this.userProvider = userProvider;
         this.context = context;
     }

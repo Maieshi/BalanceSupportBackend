@@ -1,4 +1,5 @@
-﻿using Balance_Support.DataClasses.Records.AccountData;
+﻿using Balance_Support.DataClasses;
+using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData;
 using Balance_Support.DataClasses.Records.NotificationData.DatabaseInfo;
 using Balance_Support.Interfaces;
@@ -76,7 +77,7 @@ namespace Balance_Support
             .EqualTo(userId)
             .OnceAsync<UserTokenRequest>();
         
-        public async Task<string> SendMessage(string userId,Account account, TransactionData transactionData)
+        public async Task<string> SendMessage(string userId,Account account, Transaction transactionData)
         {
             var user = (await FindUser(userId))?.SingleOrDefault();
             

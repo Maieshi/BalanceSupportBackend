@@ -1,3 +1,4 @@
+using Balance_Support.DataClasses;
 using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData.DatabaseInfo;
 using Balance_Support.DataClasses.Records.NotificationData;
@@ -8,7 +9,7 @@ public interface ICloudMessagingProvider
 {
     public Task<IResult> RegisterUserToken(UserTokenRequest request);
     public Task<IResult> UpdateUserToken(UserTokenRequest request);
-    public Task<string> SendMessage(string userId, Account account, TransactionData transactionData);
+    public Task<string> SendMessage(string userId, Account account, Transaction transactionData);
 
     public void Test();
 }

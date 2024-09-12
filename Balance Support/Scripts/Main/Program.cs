@@ -28,6 +28,7 @@ app.UseAuthorization();
 //app.MapControllers();
 var todos = new List<ToDo>();
 
+#region testovaya huinya
 app.MapGet("/", () => "Hello World!");
 app.MapGet("/todos/{id}", Results<Ok<ToDo>, NotFound> (int id) =>
 {
@@ -80,6 +81,7 @@ app.MapPost("/testAcceptsModelFromBody", ([FromBody] TestModel model) =>
     return $"Success {model}";
 })
 .Accepts<TestModel>("application/json");
+#endregion
 
 #region UserManagement
 

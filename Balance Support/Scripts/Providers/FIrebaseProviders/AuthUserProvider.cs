@@ -9,6 +9,7 @@ using Balance_Support.Scripts.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Balance_Support;
 
@@ -66,7 +67,7 @@ public class AuthUserProvider : IAuthUserProvider
         return (Results.Created($"/Users/{newUser}", newUser));
     }
 
-    public async Task<IResult> LogInUser(string userCred, string password,
+    public async Task<IResult> LogInUser(HttpContext context,string userCred, string password,
         LoginDeviceType deviceType)
     {
         //if (string.IsNullOrEmpty(userCred) || string.IsNullOrEmpty(password))
@@ -85,7 +86,7 @@ public class AuthUserProvider : IAuthUserProvider
             var authLink = await provider.SignInWithEmailAndPasswordAsync(userEmail, password);
 
             // Manage claims-based session
-            await SignInUser(authLink, deviceType);
+            await SignInUserV2(userCred, password, context);
 
             return Results.Ok(new { user.Id, authLink.FirebaseToken });
         }
@@ -104,6 +105,7 @@ public class AuthUserProvider : IAuthUserProvider
     private async Task SignInUser(FirebaseAuthLink authLink, LoginDeviceType deviceType)
     {
         var expirationTime = DateTime.UtcNow.Add(GetSessionTimeout(deviceType));
+      
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, authLink.User.LocalId),
@@ -119,13 +121,44 @@ public class AuthUserProvider : IAuthUserProvider
         var authProperties = new AuthenticationProperties
         {
             IsPersistent = true, // Keep the user logged in across sessions
-            ExpiresUtc = DateTime.UtcNow.Add(GetSessionTimeout(deviceType))
+            ExpiresUtc = DateTime.UtcNow.Add(GetSessionTimeout(deviceType)),
+            AllowRefresh = true,
+            RedirectUri = "/",
+            Items = {
+        { ".AuthScheme", CookieAuthenticationDefaults.AuthenticationScheme }
+    }
         };
 
         await httpContextAccessor.HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(claimsIdentity),
             authProperties);
+    }
+
+    public async Task SignInUserV2(string username, string password, HttpContext httpContext)
+    {
+       
+
+        // Create the claims for the user
+        var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, username),
+        new Claim(ClaimTypes.Role, "User") // Add roles if needed
+    };
+
+        // Create the identity and principal
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+        // Sign in the user and create the authentication cookie
+        await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal,
+            new AuthenticationProperties
+            {
+                IsPersistent = true, // Make the session persistent (i.e., cookie will persist across sessions)
+                ExpiresUtc = DateTime.UtcNow.AddDays(7) // Set cookie expiration time
+            });
+
+       
     }
 
     //private async Task<string> ResolveUserEmail(string userCred)

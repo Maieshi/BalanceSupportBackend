@@ -40,7 +40,7 @@ public class ResultContainer
         if (!isAuthorized)
         {
             _isCancelled = true;
-            _result = Results.Unauthorized();
+            _result = Results.BadRequest(context.User?.Claims);
         }
 
         return this;

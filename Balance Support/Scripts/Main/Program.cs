@@ -14,6 +14,8 @@ using Balance_Support.DataClasses.Records;
 using Microsoft.AspNetCore.Http.HttpResults;
 using LiteDB;
 using System.Threading.Tasks;
+using Firebase.Auth;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 ServicesInitializer.Initialize(builder.Services);
 
 var app = builder.Build();
-app.UseCors("AllowLocalhost");
+app.UseCors("AllowClientDomain");
 app.UseHttpsRedirection();
 app.UseSession();
 app.UseAuthentication();
@@ -30,6 +32,8 @@ app.UseAuthorization();
 var todos = new List<ToDo>();
 
 app.MapGet("/", () => "Hello World!");
+app.MapGet("/GetContext", (HttpContext context) =>TypedResults.Ok(new UserDto(context.User)) );
+app.MapPost("/PostContext", (HttpContext context) => TypedResults.Ok(new UserDto(context.User)));
 app.MapGet("/todos/{id}", Results<Ok<ToDo>, NotFound> (int id) =>
 {
     var targetTodo = todos.FirstOrDefault(x=>x.id==id);
@@ -102,7 +106,7 @@ app.MapPost("/Mobile/User/Login",
             .Validate<UserLoginData, UserLoginDataValidator>(userSignData)
             .Process(
                 async () =>
-                    await authProvider.LogInUser(
+                    await authProvider.LogInUser(context,
                         userSignData.UserCred,
                         userSignData.Password,
                         LoginDeviceType.Mobile))
@@ -116,7 +120,7 @@ app.MapPost("/Desktop/User/Login",
             .Validate<UserLoginData, UserLoginDataValidator>(userSignData)
             .Process(
                 async () =>
-                    await authProvider.LogInUser(
+                    await authProvider.LogInUser(context,
                         userSignData.UserCred,
                         userSignData.Password,
                         LoginDeviceType.Desktop))
@@ -220,3 +224,63 @@ public class ToDoClass
     public bool isComplited { get; set; }
 }
 
+public class UserDto
+{
+    public bool IsAuthenticated { get; set; }
+    public string? Name { get; set; }
+    public IEnumerable<ClaimDto> Claims { get; set; }
+    public IEnumerable<IdentityDto> Identities { get; set; }
+    public IdentityDto Identity { get; set; }
+
+    public UserDto(ClaimsPrincipal claimsPrincipal)
+    {
+        IsAuthenticated = claimsPrincipal.Identity?.IsAuthenticated ?? false;
+        Name = claimsPrincipal.Identity?.Name;
+        Claims = MapClaims(claimsPrincipal.Claims);
+
+        // Assuming you want to map identities from ClaimsPrincipal
+        // ClaimsPrincipal does not directly provide access to multiple identities
+        // but you can map the main identity
+        Identity = new IdentityDto
+        {
+            Name = claimsPrincipal.Identity?.Name,
+            AuthenticationType = claimsPrincipal.Identity?.AuthenticationType,
+            IsAuthenticated = claimsPrincipal.Identity?.IsAuthenticated ?? false
+        };
+
+        // Identities in ClaimsPrincipal are generally not directly accessible
+        // You may need additional logic if you have multiple identities in your use case
+        Identities = new List<IdentityDto> { Identity };
+    }
+
+    private IEnumerable<ClaimDto> MapClaims(IEnumerable<Claim> claims)
+    {
+        foreach (var claim in claims)
+        {
+            yield return new ClaimDto
+            {
+                Type = claim.Type,
+                Value = claim.Value
+            };
+        }
+    }
+
+    public class ClaimDto
+    {
+        public string? Type { get; set; }
+        public string? Value { get; set; }
+    }
+
+    public class IdentityDto
+    {
+        public string AuthenticationType { get; set; }
+        public bool IsAuthenticated { get; set; }
+        public string? Name { get; set; }
+        public string NameClaimType { get; set; }
+        public string RoleClaimType { get; set; }
+        public object Actor { get; set; }
+        public object BootstrapContext { get; set; }
+        public string Label { get; set; }
+        public IEnumerable<ClaimDto> Claims { get; set; } = new List<ClaimDto>();
+    }
+}

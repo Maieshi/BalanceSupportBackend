@@ -2,6 +2,10 @@
 ###
 GET http://localhost:5144/todos/1
 ###
+GET http://localhost:5144/GetContext
+###
+POST http://localhost:5144/PostContext
+###
 POST http://localhost:5144/todos
 content-type: application/json
 
@@ -59,7 +63,7 @@ Content-Type: application/json
 }
 
 ###### UserManagement ######
-POST http://localhost:5144/DesktopUser/Register
+POST http://localhost:5144/Desktop/User/Register
 content-type: application/json
 
 {

@@ -142,22 +142,43 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
         }
     }
 
-    public async Task<IResult> GetAccountsForDevice(AccountGetRequest accountGetRequest)
+    public async Task<IResult> GetAccountsForDevice(AccountGetForDeviceRequest accountGetForDeviceRequest)
     {
-        if (!await userProvider.IsUserWithIdExist(accountGetRequest.UserId))
+        if (!await userProvider.IsUserWithIdExist(accountGetForDeviceRequest.UserId))
             return Results.Problem(statusCode: 500, title: "User not found");
 
-        var relations = (await FindRelationByUserId(accountGetRequest.UserId));
+        var relations = (await FindRelationByUserId(accountGetForDeviceRequest.UserId));
 
         if (!relations.Any())
             return Results.Problem(statusCode: 500, title: "Relations not found");
 
-        var accounts = (await FindAccountsByUserId(accountGetRequest.UserId))
+        var accounts = (await FindAccountsByUserId(accountGetForDeviceRequest.UserId))
             .Where(x =>
-                x.Object.AccountGroup == accountGetRequest.AccountGroup
-                && x.Object.DeviceId == accountGetRequest.DeviceId).ToList();
+                x.Object.AccountGroup == accountGetForDeviceRequest.AccountGroup
+                && x.Object.DeviceId == accountGetForDeviceRequest.DeviceId).ToList();
 
-        if (accounts.Any())
+        if (!accounts.Any())
+            return Results.Problem(statusCode: 500, title: "Accounts not found");
+
+
+        return Results.Ok(new
+        {
+            Accounts = accounts.Select(x => x.Object)
+        });
+    }
+
+    public async Task<IResult> GetAllAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest)
+    {
+        if (!await userProvider.IsUserWithIdExist(accountGetAllForUserRequest.UserId))
+            return Results.Problem(statusCode: 500, title: "User not found");
+
+        var relations = (await FindRelationByUserId(accountGetAllForUserRequest.UserId));
+
+        if (!relations.Any())
+            return Results.Problem(statusCode: 500, title: "Relations not found");
+
+        var accounts = await FindAccountsByUserId(accountGetAllForUserRequest.UserId);
+        if (!accounts.Any())
             return Results.Problem(statusCode: 500, title: "Accounts not found");
 
 
@@ -264,7 +285,8 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             .ToList()
             .AsReadOnly();
 
-    public async Task<FirebaseObject<AccountData>?> GetAccountByUserIdAndBankCardNumber(string userId, string bankCardNumber)
+    public async Task<FirebaseObject<AccountData>?> GetAccountByUserIdAndBankCardNumber(string userId,
+        string bankCardNumber)
         => (await FindAccountsByUserId(userId))
             .FirstOrDefault(x =>
                 string.Equals(x.Object.BankCardNumber, bankCardNumber));

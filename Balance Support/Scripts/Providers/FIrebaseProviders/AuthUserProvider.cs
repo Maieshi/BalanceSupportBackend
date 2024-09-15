@@ -67,7 +67,7 @@ public class AuthUserProvider : IAuthUserProvider
         return (Results.Created($"/Users/{newUser}", newUser));
     }
 
-    public async Task<IResult> LogInUser(HttpContext context,string userCred, string password,
+    public async Task<IResult> LogInUser(HttpContext context, string userCred, string password,
         LoginDeviceType deviceType)
     {
         //if (string.IsNullOrEmpty(userCred) || string.IsNullOrEmpty(password))
@@ -105,7 +105,7 @@ public class AuthUserProvider : IAuthUserProvider
     private async Task SignInUser(FirebaseAuthLink authLink, LoginDeviceType deviceType)
     {
         var expirationTime = DateTime.UtcNow.Add(GetSessionTimeout(deviceType));
-      
+
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, authLink.User.LocalId),
@@ -124,9 +124,10 @@ public class AuthUserProvider : IAuthUserProvider
             ExpiresUtc = DateTime.UtcNow.Add(GetSessionTimeout(deviceType)),
             AllowRefresh = true,
             RedirectUri = "/",
-            Items = {
-        { ".AuthScheme", CookieAuthenticationDefaults.AuthenticationScheme }
-    }
+            Items =
+            {
+                { ".AuthScheme", CookieAuthenticationDefaults.AuthenticationScheme }
+            }
         };
 
         await httpContextAccessor.HttpContext.SignInAsync(
@@ -137,14 +138,12 @@ public class AuthUserProvider : IAuthUserProvider
 
     public async Task SignInUserV2(string username, string password, HttpContext httpContext)
     {
-       
-
         // Create the claims for the user
         var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.Name, username),
-        new Claim(ClaimTypes.Role, "User") // Add roles if needed
-    };
+        {
+            new Claim(ClaimTypes.Name, username),
+            new Claim(ClaimTypes.Role, "User") // Add roles if needed
+        };
 
         // Create the identity and principal
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -157,8 +156,6 @@ public class AuthUserProvider : IAuthUserProvider
                 IsPersistent = true, // Make the session persistent (i.e., cookie will persist across sessions)
                 ExpiresUtc = DateTime.UtcNow.AddDays(7) // Set cookie expiration time
             });
-
-       
     }
 
     //private async Task<string> ResolveUserEmail(string userCred)

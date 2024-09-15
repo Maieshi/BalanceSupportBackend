@@ -142,13 +142,11 @@ content-type: application/json
   "AccountId": "sampleAccountId"
 }
 ###
-GET http://localhost:5144/Mobile/Account/Get
-content-type: application/json
+GET http://localhost:5144/Mobile/Account/GetForDevice/sDAmWae7RqMsmWIC74lVdLuQRpq1/3/3
 
-{
-  "DeviceId": "sampleDeviceId",
-  "AccountType": "sampleAccountType"
-}
+###
+GET http://localhost:5144/Desktop/Account/GetAllForUser/sDAmWae7RqMsmWIC74lVdLuQRpq1
+
 
 
 ###### NotificationManagement ######
@@ -158,6 +156,14 @@ content-type: application/json
 {
   "UserId": "sampleUserId",
   "Token": "sampleToken"
+}
+###
+POST http://localhost:5144/Desktop/Transaction/Get
+content-type: application/json
+
+{
+  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "Amount": 10
 }
 ###
 POST http://localhost:5144/Desktop/UserToken/Update

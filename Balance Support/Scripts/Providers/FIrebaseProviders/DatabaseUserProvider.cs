@@ -106,29 +106,27 @@ public class DatabaseUserProvider : IDatabaseUserProvider
 
 
     private async Task<FirebaseObject<UserAuthData>?> GetUserByEmail(string email)
-    =>(await client
-                .Child("Users")
-                .OrderBy("Email")
-                .EqualTo(email)
-                .OnceAsync<UserAuthData>()).FirstOrDefault();
-        
-    
+        => (await client
+            .Child("Users")
+            .OrderBy("Email")
+            .EqualTo(email)
+            .OnceAsync<UserAuthData>()).FirstOrDefault();
+
 
     private async Task<FirebaseObject<UserAuthData>?> GetUserByDisplayName(string DisplayName)
-    => (await client
-                .Child("Users")
-                .OrderBy("DisplayName")
-                .EqualTo(DisplayName)
-                .OnceAsync<UserAuthData>()).FirstOrDefault();
-      
+        => (await client
+            .Child("Users")
+            .OrderBy("DisplayName")
+            .EqualTo(DisplayName)
+            .OnceAsync<UserAuthData>()).FirstOrDefault();
+
 
     private async Task<FirebaseObject<UserAuthData>?> GetUserById(string Id)
-    => (await client
-                .Child("Users")
-                .OrderBy("Id")
-                .EqualTo(Id)
-                .OnceAsync<UserAuthData>()).FirstOrDefault();
-        
+        => (await client
+            .Child("Users")
+            .OrderBy("Id")
+            .EqualTo(Id)
+            .OnceAsync<UserAuthData>()).FirstOrDefault();
 
     #endregion
 }

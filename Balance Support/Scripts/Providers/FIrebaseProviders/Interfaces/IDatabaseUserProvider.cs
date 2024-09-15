@@ -1,6 +1,5 @@
 using Balance_Support.DataClasses;
 using Balance_Support.SerializationClasses;
-// using Firebase.Auth;
 
 namespace Balance_Support.Interfaces;
 

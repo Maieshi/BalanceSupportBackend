@@ -1,8 +1,5 @@
-using System.Diagnostics;
 using Balance_Support;
 using Balance_Support.Interfaces;
-using Balance_Support.Scripts.Extensions;
-using System.ComponentModel.DataAnnotations;
 using Balance_Support.Scripts.Extensions;
 using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData;
@@ -12,15 +9,14 @@ using Balance_Support.Scripts.Validators;
 using Microsoft.AspNetCore.Mvc;
 using Balance_Support.DataClasses.Records;
 using Microsoft.AspNetCore.Http.HttpResults;
-using LiteDB;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
 ServicesInitializer.Initialize(builder);
 
 var app = builder.Build();
-app.UseCors("AllowLocalhost");
+app.UseCors("AllowClientDomain");
 app.UseHttpsRedirection();
 app.UseSession();
 app.UseAuthentication();
@@ -30,9 +26,11 @@ var todos = new List<ToDo>();
 
 #region testovaya huinya
 app.MapGet("/", () => "Hello World!");
+app.MapGet("/GetContext", (HttpContext context) => TypedResults.Ok(new UserDto(context.User)));
+app.MapPost("/PostContext", (HttpContext context) => TypedResults.Ok(new UserDto(context.User)));
 app.MapGet("/todos/{id}", Results<Ok<ToDo>, NotFound> (int id) =>
 {
-    var targetTodo = todos.FirstOrDefault(x=>x.id==id);
+    var targetTodo = todos.FirstOrDefault(x => x.id == id);
     return targetTodo is null
         ? TypedResults.NotFound()
         : TypedResults.Ok(targetTodo);
@@ -40,7 +38,8 @@ app.MapGet("/todos/{id}", Results<Ok<ToDo>, NotFound> (int id) =>
 app.MapPost("/todos", (ToDo todo) =>
 {
     todos.Add(todo);
-    return TypedResults.Created($"/todos/{todo.id}", todo); ;
+    return TypedResults.Created($"/todos/{todo.id}", todo);
+    ;
 });
 app.MapPost("/todosClass", (ToDoClass todo) =>
 {
@@ -50,22 +49,10 @@ app.MapPost("/todosClass", (ToDoClass todo) =>
 });
 
 
-app.MapGet("/testEmpty", () =>
-{
-    return "Success";
-});
-app.MapPost("/testRoute/{id}/{name}", (int id, string name) =>
-{
-    return $"Success {new TestModel(id, name)}";
-});
-app.MapPost("/testModel", (TestModel model) =>
-{
-    return "Success";
-});
-app.MapPost("/testModelFromBody", ([FromBody] TestModel model) =>
-{
-    return "Success";
-});
+app.MapGet("/testEmpty", () => { return "Success"; });
+app.MapPost("/testRoute/{id}/{name}", (int id, string name) => { return $"Success {new TestModel(id, name)}"; });
+app.MapPost("/testModel", (TestModel model) => { return "Success"; });
+app.MapPost("/testModelFromBody", ([FromBody] TestModel model) => { return "Success"; });
 app.MapPost("/testFromQuery", (int id, string name) =>
 {
     var model = new TestModel(id, name);
@@ -82,19 +69,23 @@ app.MapPost("/testAcceptsModelFromBody", ([FromBody] TestModel model) =>
 })
 .Accepts<TestModel>("application/json");
 #endregion
+app.MapPost("/testAcceptsModel", (TestModel model) => { return $"Success {model}"; })
+    .Accepts<TestModel>("application/json");
+app.MapPost("/testAcceptsModelFromBody", ([FromBody] TestModel model) => { return $"Success {model}"; })
+    .Accepts<TestModel>("application/json");
 
 #region UserManagement
 
 app.MapPost("/Desktop/User/Register",
     async ([FromBody] UserRegistrationData registration, IAuthUserProvider authProvider) =>
-        ResultContainer
-            .Start()
-            .Validate<UserRegistrationData, UserRegistrationDataValidator>(registration)
-            .Process(
-                async () =>
-                    await authProvider.RegisterNewUser(registration.DisplayName, registration.Email,
-                        registration.Password))
-            .GetResult());
+    ResultContainer
+        .Start()
+        .Validate<UserRegistrationData, UserRegistrationDataValidator>(registration)
+        .Process(
+            async () =>
+                await authProvider.RegisterNewUser(registration.DisplayName, registration.Email,
+                    registration.Password))
+        .GetResult());
 
 app.MapPost("/Mobile/User/Login",
     ([FromBody] UserLoginData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
@@ -103,7 +94,7 @@ app.MapPost("/Mobile/User/Login",
             .Validate<UserLoginData, UserLoginDataValidator>(userSignData)
             .Process(
                 async () =>
-                    await authProvider.LogInUser(
+                    await authProvider.LogInUser(context,
                         userSignData.UserCred,
                         userSignData.Password,
                         LoginDeviceType.Mobile))
@@ -112,16 +103,16 @@ app.MapPost("/Mobile/User/Login",
 
 app.MapPost("/Desktop/User/Login",
     async ([FromBody] UserLoginData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
-        ResultContainer
-            .Start()
-            .Validate<UserLoginData, UserLoginDataValidator>(userSignData)
-            .Process(
-                async () =>
-                    await authProvider.LogInUser(
-                        userSignData.UserCred,
-                        userSignData.Password,
-                        LoginDeviceType.Desktop))
-            .GetResult()
+    ResultContainer
+        .Start()
+        .Validate<UserLoginData, UserLoginDataValidator>(userSignData)
+        .Process(
+            async () =>
+                await authProvider.LogInUser(context,
+                    userSignData.UserCred,
+                    userSignData.Password,
+                    LoginDeviceType.Desktop))
+        .GetResult()
 );
 
 app.MapPost("/User/Logout",
@@ -139,7 +130,8 @@ app.MapPost("/User/Logout",
 
 #region AccountManagement
 
-app.MapPost("/Desktop/Account/Register", async ([FromBody] AccountRegisterRequest deviceRegisterData, IDatabaseAccountProvider deviceProvider, HttpContext context) =>
+app.MapPost("/Desktop/Account/Register", async ([FromBody] AccountRegisterRequest deviceRegisterData,
+        IDatabaseAccountProvider deviceProvider, HttpContext context) =>
     ResultContainer
         .Start()
         .Validate<AccountRegisterRequest, DeviceRegisterRequestValidator>(deviceRegisterData)
@@ -148,7 +140,8 @@ app.MapPost("/Desktop/Account/Register", async ([FromBody] AccountRegisterReques
         .GetResult()
 );
 
-app.MapPost("/Desktop/Account/Update", async ([FromBody] AccountUpdateRequest deviceRegisterData, IDatabaseAccountProvider deviceProvider, HttpContext context) =>
+app.MapPost("/Desktop/Account/Update", async ([FromBody] AccountUpdateRequest deviceRegisterData,
+        IDatabaseAccountProvider deviceProvider, HttpContext context) =>
     ResultContainer
         .Start()
         .Validate<AccountUpdateRequest, DeviceUpdateRequestValidator>(deviceRegisterData)
@@ -157,7 +150,8 @@ app.MapPost("/Desktop/Account/Update", async ([FromBody] AccountUpdateRequest de
         .GetResult()
 );
 
-app.MapPost("/Desktop/Account/Delete", async ([FromBody] AccountDeleteRequest deviceRegisterData, IDatabaseAccountProvider deviceProvider, HttpContext context) =>
+app.MapPost("/Desktop/Account/Delete", async ([FromBody] AccountDeleteRequest deviceRegisterData,
+        IDatabaseAccountProvider deviceProvider, HttpContext context) =>
     ResultContainer
         .Start()
         .Validate<AccountDeleteRequest, DeviceDeleteRequestValidator>(deviceRegisterData)
@@ -166,20 +160,43 @@ app.MapPost("/Desktop/Account/Delete", async ([FromBody] AccountDeleteRequest de
         .GetResult()
 );
 
-app.MapGet("/Mobile/Account/Get", async ([FromBody] AccountGetRequest deviceGetRequestData, IDatabaseAccountProvider deviceProvider, HttpContext context) =>
-    ResultContainer
-        .Start()
-        .Validate<AccountGetRequest, DeviceGetRequestvValidator>(deviceGetRequestData)
-        .Authorize(context)
-        .Process(async () => await deviceProvider.GetAccountsForDevice(deviceGetRequestData))
-        .GetResult()
-);
+app.MapGet("/Mobile/Account/GetForDevice/{userId}/{accountGroup:int}/{deviceId:int}",
+    async (string userId, int accountGroup, int deviceId,
+        IDatabaseAccountProvider deviceProvider, HttpContext context) =>
+    {
+        // Create the request object from the URL parameters
+        var deviceGetRequestData = new AccountGetForDeviceRequest(userId, accountGroup, deviceId);
+
+        // Process the request using the same logic
+        return  ResultContainer
+            .Start()
+            .Validate<AccountGetForDeviceRequest, AccountGetForDeviceRequestValidator>(deviceGetRequestData)
+            .Authorize(context)
+            .Process(async () => await deviceProvider.GetAccountsForDevice(deviceGetRequestData))
+            .GetResult();
+    });
+
+app.MapGet("/Desktop/Account/GetAllForUser/{userId}", 
+    async (string userId, IDatabaseAccountProvider deviceProvider, HttpContext context) =>
+    {
+        // Create the request object from the URL parameter
+        var getAllForUserRequest = new AccountGetAllForUserRequest(userId);
+
+        // Process the request using the same logic
+        return  ResultContainer
+            .Start()
+            .Validate<AccountGetAllForUserRequest, AccountGetAllForUserRequestValidator>(getAllForUserRequest)
+            .Authorize(context)
+            .Process(async () => await deviceProvider.GetAllAccountsForUser(getAllForUserRequest))
+            .GetResult();
+    });
 
 #endregion
 
 #region NotificationManagement
 
-app.MapPost("/Desktop/UserToken/Register", async ([FromBody] UserTokenRequest userTokenRequest, ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
+app.MapPost("/Desktop/UserToken/Register", async ([FromBody] UserTokenRequest userTokenRequest,
+        ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
     ResultContainer
         .Start()
         .Validate<UserTokenRequest, UserTokenRequestValidator>(userTokenRequest)
@@ -188,7 +205,20 @@ app.MapPost("/Desktop/UserToken/Register", async ([FromBody] UserTokenRequest us
         .GetResult()
 );
 
-app.MapPost("/Desktop/UserToken/Update", async ([FromBody] UserTokenRequest userTokenRequest, ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
+app.MapPost("/Desktop/Transaction/Get", async ([FromBody] GetTransactionRequest getTransactionRequest,
+        IDatabaseTransactionProvider transactionProvider, HttpContext context) =>
+    ResultContainer
+        .Start()
+        .Validate<GetTransactionRequest, GetTransactionRequestValidatior>(getTransactionRequest)
+        .Authorize(context)
+        .Process(async () =>
+            await transactionProvider.GetTransactionsForUser(getTransactionRequest.UserId,
+                getTransactionRequest.Amount))
+        .GetResult()
+);
+
+app.MapPost("/Desktop/UserToken/Update", async ([FromBody] UserTokenRequest userTokenRequest,
+        ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
     ResultContainer
         .Start()
         .Validate<UserTokenRequest, UserTokenRequestValidator>(userTokenRequest)
@@ -197,7 +227,8 @@ app.MapPost("/Desktop/UserToken/Update", async ([FromBody] UserTokenRequest user
         .GetResult()
 );
 
-app.MapPost("/Mobile/Notification/Handle", async ([FromBody] NotificationHandleRequest handleNotificationRequest, INotificationHandler notificationHandler, HttpContext context) =>
+app.MapPost("/Mobile/Notification/Handle", async ([FromBody] NotificationHandleRequest handleNotificationRequest,
+        INotificationHandler notificationHandler, HttpContext context) =>
     ResultContainer
         .Start()
         .Validate<NotificationHandleRequest, NotificationHandleRequestValidator>(handleNotificationRequest)
@@ -210,8 +241,6 @@ app.MapPost("/Mobile/Notification/Handle", async ([FromBody] NotificationHandleR
 
 app.Run();
 
-public record ToDo(int id, string name, bool isComplited);
-
 public class ToDoClass
 {
     public int Id { get; set; }
@@ -221,3 +250,65 @@ public class ToDoClass
     public bool isComplited { get; set; }
 }
 
+public record ToDo(int id, string name, bool isComplited);
+
+public class UserDto
+{
+    public bool IsAuthenticated { get; set; }
+    public string? Name { get; set; }
+    public IEnumerable<ClaimDto> Claims { get; set; }
+    public IEnumerable<IdentityDto> Identities { get; set; }
+    public IdentityDto Identity { get; set; }
+
+    public UserDto(ClaimsPrincipal claimsPrincipal)
+    {
+        IsAuthenticated = claimsPrincipal.Identity?.IsAuthenticated ?? false;
+        Name = claimsPrincipal.Identity?.Name;
+        Claims = MapClaims(claimsPrincipal.Claims);
+
+        // Assuming you want to map identities from ClaimsPrincipal
+        // ClaimsPrincipal does not directly provide access to multiple identities
+        // but you can map the main identity
+        Identity = new IdentityDto
+        {
+            Name = claimsPrincipal.Identity?.Name,
+            AuthenticationType = claimsPrincipal.Identity?.AuthenticationType,
+            IsAuthenticated = claimsPrincipal.Identity?.IsAuthenticated ?? false
+        };
+
+        // Identities in ClaimsPrincipal are generally not directly accessible
+        // You may need additional logic if you have multiple identities in your use case
+        Identities = new List<IdentityDto> { Identity };
+    }
+
+    private IEnumerable<ClaimDto> MapClaims(IEnumerable<Claim> claims)
+    {
+        foreach (var claim in claims)
+        {
+            yield return new ClaimDto
+            {
+                Type = claim.Type,
+                Value = claim.Value
+            };
+        }
+    }
+
+    public class ClaimDto
+    {
+        public string? Type { get; set; }
+        public string? Value { get; set; }
+    }
+
+    public class IdentityDto
+    {
+        public string AuthenticationType { get; set; }
+        public bool IsAuthenticated { get; set; }
+        public string? Name { get; set; }
+        public string NameClaimType { get; set; }
+        public string RoleClaimType { get; set; }
+        public object Actor { get; set; }
+        public object BootstrapContext { get; set; }
+        public string Label { get; set; }
+        public IEnumerable<ClaimDto> Claims { get; set; } = new List<ClaimDto>();
+    }
+}

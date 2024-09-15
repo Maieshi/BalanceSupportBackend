@@ -60,7 +60,7 @@ public class DatabaseTransactionProvider:IDatabaseTransactionProvider
 
         try
         {
-            var result = cloudMessagingProvider.SendMessage(userId, account, transactionData);
+            var result = cloudMessagingProvider.SendMessage(userId, bank.Object, transactionData);
         }
         catch (Exception e)
         {
@@ -68,5 +68,30 @@ public class DatabaseTransactionProvider:IDatabaseTransactionProvider
         }
         
         return Results.Created($"Transactions", JsonConvert.SerializeObject(transactionData));
+    }
+    
+    public async Task<IResult> GetTransactionsForUser(string userId, int amount)
+    {
+        var transactions = (await client
+                .Child("Transactions")
+                .OrderBy("UserId")
+                .EqualTo(userId)
+                .LimitToFirst(amount)
+                .OnceAsync<TransactionData>())
+            .Where(device => device != null);
+        
+        var distinctAccountIds = transactions.Select(transaction => transaction.Object.AccountId).Distinct().ToList();
+        
+        var accounts = (await Task.WhenAll(
+            distinctAccountIds.Select(id => accountProvider.FindAccountByAccountId(id))
+        )).Where(x=>x!=null).Cast<FirebaseObject<AccountData>>();
+            // Explicitly cast to non-nullable type
+            foreach (var transaction in transactions)
+            {
+                var account = accounts.FirstOrDefault(x=>x.Object.AccountId == transaction.Object.AccountId);
+                if(account!=null)
+                await cloudMessagingProvider.SendMessage(userId,account.Object, transaction.Object);
+            }
+        return Results.Ok();
     }
 }

@@ -52,6 +52,16 @@ public class DatabaseUserProvider : IDatabaseUserProvider
         =>
             await FindUserByEmail(email) != null;
 
+            // If any result is returned, the email is already registered
+            return usersByEmail.Any();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+
+        return false;
+    }
 
     public async Task<bool> IsUserWithIdExist(string userId)
     {

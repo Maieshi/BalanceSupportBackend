@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-namespace Balance_Support.DataClasses;
+
+namespace Balance_Support.DataClasses.DatabaseEntities;
 
 public class UserToken : BaseEntity
 {

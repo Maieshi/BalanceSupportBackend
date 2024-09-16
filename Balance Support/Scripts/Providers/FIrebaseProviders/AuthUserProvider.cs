@@ -3,12 +3,14 @@ using Balance_Support.Interfaces;
 using Firebase.Auth;
 using FirebaseAuthException = FirebaseAdmin.Auth.FirebaseAuthException;
 using Balance_Support.SerializationClasses;
+using Balance_Support.DataClasses;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Balance_Support.Scripts.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using User = Balance_Support.DataClasses.DatabaseEntities.User;
 
 namespace Balance_Support;
 

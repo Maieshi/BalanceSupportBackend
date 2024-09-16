@@ -1,4 +1,5 @@
 using Balance_Support.DataClasses;
+using Balance_Support.DataClasses.DatabaseEntities;
 using Balance_Support.SerializationClasses;
 
 namespace Balance_Support.Interfaces;

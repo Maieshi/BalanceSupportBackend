@@ -73,7 +73,7 @@ public static class ServicesInitializer
         {
             options.AddPolicy("AllowClientDomain", builder =>
             {
-                builder.WithOrigins("http://localhost:5173", "https://balance-support.vercel.app") // Client domain
+                builder.WithOrigins("http://localhost:5173", "https://balance-support.vercel.app","https://localhost:7158") // Client domain
                        .AllowAnyHeader()
                        .AllowAnyMethod()
                        .AllowCredentials(); // Allow cookies to be sent in requests
@@ -113,7 +113,7 @@ public static class ServicesInitializer
 
         // Example of building service provider (not recommended in most cases for normal DI usage)
         var provider = services.BuildServiceProvider();
-        provider.GetService<FirebaseToSqlServerMigrator>().Migrate();
+        // provider.GetService<FirebaseToSqlServerMigrator>().Migrate();
         //provider.GetService<INotificationHandler>().Test();
     } 
 

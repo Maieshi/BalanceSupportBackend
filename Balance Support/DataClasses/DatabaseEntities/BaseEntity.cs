@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Balance_Support.DataClasses;
+namespace Balance_Support.DataClasses.DatabaseEntities;
 
 public class BaseEntity
 {

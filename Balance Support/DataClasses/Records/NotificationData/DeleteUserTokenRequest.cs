@@ -1,3 +1,4 @@
+
 namespace Balance_Support.DataClasses.Records.NotificationData;
 
-public record UserTokenRequest(string UserId, string Token);
+public record  DeleteUserTokenRequest(string UserId);

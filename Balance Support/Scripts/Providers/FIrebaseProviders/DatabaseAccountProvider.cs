@@ -119,7 +119,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
         }
     }
 
-    public async Task<IResult> GetAccountsForDevice(AccountGetRequest accountGetRequest)
+    public async Task<IResult> GetAccountsForDevice(AccountGetForDeviceRequest accountGetRequest)
     {
         if (!await userProvider.IsUserWithIdExist(accountGetRequest.UserId))
             return Results.Problem(statusCode: 500, title: "User not found");
@@ -132,8 +132,22 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
 
         if (accounts.Any())
             return Results.Problem(statusCode: 500, title: "Accounts not found");
-
-
+        
+        return Results.Ok(new
+        {
+            Accounts = accounts
+        });
+    }
+    
+    public async Task<IResult> GetAllAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest)
+    {
+        if (!await userProvider.IsUserWithIdExist(accountGetAllForUserRequest.UserId))
+            return Results.Problem(statusCode: 500, title: "User not found");
+        
+        var accounts = await FindAccountsByUserId(accountGetAllForUserRequest.UserId);
+        if (accounts.Any())
+            return Results.Problem(statusCode: 500, title: "Accounts not found");
+        
         return Results.Ok(new
         {
             Accounts = accounts
@@ -165,7 +179,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
                 string.Equals(x.BankCardNumber, bankCardNumber));
     
     public async Task<Account?> FindAccountByAccountId(string accountId)
-        => context.Accounts.Find(accountId);
+        => await context.Accounts.FindAsync(accountId);
 
     private async Task<List<Account>> FindAccountsByUserId(string userId)
         => await context.Accounts.Where(x => x.UserId == userId)

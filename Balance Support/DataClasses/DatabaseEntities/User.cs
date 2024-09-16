@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using Balance_Support.DataClasses.DatabaseEntities;
 
-namespace Balance_Support.DataClasses;
+namespace Balance_Support.DataClasses.DatabaseEntities;
 
 public class User : BaseEntity
 {
@@ -11,4 +10,6 @@ public class User : BaseEntity
 
     public ICollection<Account> Accounts { get; set; } // Navigation property
     public ICollection<UserToken> UserTokens { get; set; } // Navigation property
+
+    public ICollection<Transaction> Transactions { get; set; }
 }

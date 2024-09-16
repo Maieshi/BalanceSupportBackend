@@ -25,16 +25,11 @@ app.UseAuthorization();
 var todos = new List<ToDo>();
 
 #region testovaya huinya
+
 app.MapGet("/", () => "Hello World!");
 app.MapGet("/GetContext", (HttpContext context) => TypedResults.Ok(new UserDto(context.User)));
 app.MapPost("/PostContext", (HttpContext context) => TypedResults.Ok(new UserDto(context.User)));
-app.MapGet("/todos/{id}", Results<Ok<ToDo>, NotFound> (int id) =>
-{
-    var targetTodo = todos.FirstOrDefault(x => x.id == id);
-    return targetTodo is null
-        ? TypedResults.NotFound()
-        : TypedResults.Ok(targetTodo);
-});
+ 
 app.MapPost("/todos", (ToDo todo) =>
 {
     todos.Add(todo);
@@ -58,17 +53,13 @@ app.MapPost("/testFromQuery", (int id, string name) =>
     var model = new TestModel(id, name);
     return $"Success {model}";
 });
-app.MapPost("/testAcceptsModel", (TestModel model) =>
-{
-    return $"Success {model}";
-})
-.Accepts<TestModel>("application/json");
-app.MapPost("/testAcceptsModelFromBody", ([FromBody] TestModel model) =>
-{
-    return $"Success {model}";
-})
-.Accepts<TestModel>("application/json");
+app.MapPost("/testAcceptsModel", (TestModel model) => { return $"Success {model}"; })
+    .Accepts<TestModel>("application/json");
+app.MapPost("/testAcceptsModelFromBody", ([FromBody] TestModel model) => { return $"Success {model}"; })
+    .Accepts<TestModel>("application/json");
+
 #endregion
+
 app.MapPost("/testAcceptsModel", (TestModel model) => { return $"Success {model}"; })
     .Accepts<TestModel>("application/json");
 app.MapPost("/testAcceptsModelFromBody", ([FromBody] TestModel model) => { return $"Success {model}"; })
@@ -164,11 +155,11 @@ app.MapGet("/Mobile/Account/GetForDevice/{userId}/{accountGroup:int}/{deviceId:i
     async (string userId, int accountGroup, int deviceId,
         IDatabaseAccountProvider deviceProvider, HttpContext context) =>
     {
-        // Create the request object from the URL parameters
+        // Create the request object from the URL parameters 
         var deviceGetRequestData = new AccountGetForDeviceRequest(userId, accountGroup, deviceId);
 
         // Process the request using the same logic
-        return  ResultContainer
+        return ResultContainer
             .Start()
             .Validate<AccountGetForDeviceRequest, AccountGetForDeviceRequestValidator>(deviceGetRequestData)
             .Authorize(context)
@@ -176,14 +167,14 @@ app.MapGet("/Mobile/Account/GetForDevice/{userId}/{accountGroup:int}/{deviceId:i
             .GetResult();
     });
 
-app.MapGet("/Desktop/Account/GetAllForUser/{userId}", 
+app.MapGet("/Desktop/Account/GetAllForUser/{userId}",
     async (string userId, IDatabaseAccountProvider deviceProvider, HttpContext context) =>
     {
         // Create the request object from the URL parameter
         var getAllForUserRequest = new AccountGetAllForUserRequest(userId);
 
         // Process the request using the same logic
-        return  ResultContainer
+        return ResultContainer
             .Start()
             .Validate<AccountGetAllForUserRequest, AccountGetAllForUserRequestValidator>(getAllForUserRequest)
             .Authorize(context)
@@ -195,13 +186,13 @@ app.MapGet("/Desktop/Account/GetAllForUser/{userId}",
 
 #region NotificationManagement
 
-app.MapPost("/Desktop/UserToken/Register", async ([FromBody] UserTokenRequest userTokenRequest,
+app.MapPost("/Desktop/UserToken/Register", async ([FromBody] SetUserTokenRequest userTokenRequest,
         ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
     ResultContainer
         .Start()
-        .Validate<UserTokenRequest, UserTokenRequestValidator>(userTokenRequest)
+        .Validate<SetUserTokenRequest, SetUserTokenRequestValidator>(userTokenRequest)
         .Authorize(context)
-        .Process(async () => await cloudMessagingProvider.RegisterUserToken(userTokenRequest))
+        .Process(async () => await cloudMessagingProvider.SetUserToken(userTokenRequest))
         .GetResult()
 );
 
@@ -217,13 +208,24 @@ app.MapPost("/Desktop/Transaction/Get", async ([FromBody] GetTransactionRequest 
         .GetResult()
 );
 
-app.MapPost("/Desktop/UserToken/Update", async ([FromBody] UserTokenRequest userTokenRequest,
+app.MapPost("/Desktop/UserToken/Delete", async ([FromBody] DeleteUserTokenRequest userTokenRequest,
         ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
     ResultContainer
         .Start()
-        .Validate<UserTokenRequest, UserTokenRequestValidator>(userTokenRequest)
+        .Validate<DeleteUserTokenRequest, DeleteUserTokenRequestValidator>(userTokenRequest)
         .Authorize(context)
-        .Process(async () => await cloudMessagingProvider.UpdateUserToken(userTokenRequest))
+        .Process(async () => await cloudMessagingProvider.DeleteUserToken(userTokenRequest))
+        .GetResult()
+);
+
+
+app.MapPost("/Desktop/UserToken/Set", async ([FromBody] SetUserTokenRequest userTokenRequest,
+        ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
+    ResultContainer
+        .Start()
+        .Validate<SetUserTokenRequest, SetUserTokenRequestValidator>(userTokenRequest)
+        .Authorize(context)
+        .Process(async () => await cloudMessagingProvider.SetUserToken(userTokenRequest))
         .GetResult()
 );
 

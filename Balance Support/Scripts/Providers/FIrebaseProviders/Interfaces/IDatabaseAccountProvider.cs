@@ -10,8 +10,8 @@ public interface IDatabaseAccountProvider
     public Task<IResult> RegisterAccount(AccountRegisterRequest accountRegisterRequest);
     public Task<IResult> UpdateAccount(AccountUpdateRequest accountUpdateRequest);
     public Task<IResult> DeleteDevice(AccountDeleteRequest accountDeleteRequest);
-    public Task<IResult> GetAccountsForDevice(AccountGetRequest accountGetRequest);
-
+    public Task<IResult> GetAccountsForDevice(AccountGetForDeviceRequest accountGetRequest);
+    public Task<IResult> GetAllAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest);
     public Task<Account?> GetAccountByUserIdAndBankCardNumber(string userId, string bankCardNumber);
     public void Test();
 }

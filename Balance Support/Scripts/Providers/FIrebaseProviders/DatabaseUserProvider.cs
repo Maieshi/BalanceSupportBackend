@@ -1,9 +1,6 @@
-﻿using Firebase.Database;
-using Firebase.Database.Query;
-using Balance_Support.Interfaces;
-using Balance_Support.SerializationClasses;
+﻿using Balance_Support.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using User = Balance_Support.DataClasses.User;
+using User = Balance_Support.DataClasses.DatabaseEntities.User;
 
 namespace Balance_Support;
 
@@ -12,7 +9,7 @@ public class DatabaseUserProvider : IDatabaseUserProvider
     // private FirebaseClient client;
     private readonly ApplicationDbContext context;
 
-    public DatabaseUserProvider( ApplicationDbContext context)
+    public DatabaseUserProvider(ApplicationDbContext context)
     {
         // this.client = client;
         this.context = context;
@@ -42,45 +39,44 @@ public class DatabaseUserProvider : IDatabaseUserProvider
             return (false, $"An unexpected error occurred: {ex.Message}");
         }
     }
-    
+
     public async Task<User?> GetUser(string userCred)
-        => await context.Users
+    {
+        return await context.Users
             .Where(u => u.Email == userCred || u.DisplayName == userCred || u.Id == userCred)
             .FirstOrDefaultAsync();
+    }
 
     public async Task<bool> IsEmailAlreadyRegistered(string email)
-        =>
-            await FindUserByEmail(email) != null;
-
-            // If any result is returned, the email is already registered
-            return usersByEmail.Any();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
-
-        return false;
+    {
+        return await FindUserByEmail(email) != null;
     }
 
     public async Task<bool> IsUserWithIdExist(string userId)
     {
-        return (await FindUserById(userId)) != null;
+        return await FindUserById(userId) != null;
     }
+
 
     #region Private
 
     private async Task<User?> FindUser(User user)
-        => await context.Users
+    {
+        return await context.Users
             .FirstOrDefaultAsync(u => u.Id == user.Id || u.Email == user.Email || u.DisplayName == user.DisplayName);
+    }
 
     private async Task<User?> FindUserByEmail(string email)
-        => await context.Users
+    {
+        return await context.Users
             .FirstOrDefaultAsync(u => u.Email == email);
-    
+    }
+
     private async Task<User?> FindUserById(string id)
-        => await context.Users
+    {
+        return await context.Users
             .FirstOrDefaultAsync(u => u.Id == id);
-    
+    }
+
     #endregion
 }

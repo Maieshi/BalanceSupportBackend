@@ -29,7 +29,7 @@ public class ResultContainer
         return this;
     }
 
-    public ResultContainer Authorize(HttpContext context, ContextStrategy strategy =null)
+    public ResultContainer Authorize(HttpContext context, ContextStrategy? strategy =null)
     {
         if (_isCancelled) return this;
 

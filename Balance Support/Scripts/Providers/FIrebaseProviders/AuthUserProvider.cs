@@ -3,13 +3,14 @@ using Balance_Support.Interfaces;
 using Firebase.Auth;
 using FirebaseAuthException = FirebaseAdmin.Auth.FirebaseAuthException;
 using Balance_Support.SerializationClasses;
+using Balance_Support.DataClasses;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Balance_Support.Scripts.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using User = Balance_Support.DataClasses.DatabaseEntities.User;
 
 namespace Balance_Support;
 
@@ -40,9 +41,10 @@ public class AuthUserProvider : IAuthUserProvider
         //    return
         //        Results.BadRequest(
         //            $"Invalid email:{email}  username:{username} or password:{pasword}. Check your data");
+            
         //}
-
-        if (await databaseUserProvider.IsEmailAlreadyRegistered(email))
+        
+        if (await databaseUserProvider.IsEmailAlreadyRegistered(email)||await databaseUserProvider.IsUserWithUsernameExist(username))
             return Results.BadRequest("User already exists");
 
         FirebaseAuthLink link;
@@ -58,13 +60,16 @@ public class AuthUserProvider : IAuthUserProvider
                     title: "An error occurred while creating the user");
         }
 
-        var newUser = await databaseUserProvider.CreateNewUserAsync(new UserAuthData()
+        var response = await databaseUserProvider.CreateUserAsync(new User()
             { Id = link.User.LocalId, Email = link.User.Email, DisplayName = link.User.DisplayName });
-        if (newUser == String.Empty)
-            return
-                Results.Problem(statusCode: 500,
-                    title: "An error occurred while pushing user to database ");
-        return (Results.Created($"/Users/{newUser}", newUser));
+        if (response.IsSuccess == false)
+        {
+            //TODO сделать удаление пользователя из базы данных
+            Results.Problem(statusCode: 500,
+                title: "An error occurred while pushing user to database ", detail: response.ErrorMessage);
+        }
+                
+        return (Results.Created($"/Users/{link.User.LocalId}", link.User));
     }
 
     public async Task<IResult> LogInUser(HttpContext context, string userCred, string password,
@@ -105,7 +110,6 @@ public class AuthUserProvider : IAuthUserProvider
     private async Task SignInUser(FirebaseAuthLink authLink, LoginDeviceType deviceType)
     {
         var expirationTime = DateTime.UtcNow.Add(GetSessionTimeout(deviceType));
-
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, authLink.User.LocalId),
@@ -157,14 +161,6 @@ public class AuthUserProvider : IAuthUserProvider
                 ExpiresUtc = DateTime.UtcNow.AddDays(7) // Set cookie expiration time
             });
     }
-
-    //private async Task<string> ResolveUserEmail(string userCred)
-    //{
-
-
-    //    return user?.Email;
-    //}
-
     private TimeSpan GetSessionTimeout(LoginDeviceType deviceType)
     {
         return deviceType switch

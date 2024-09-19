@@ -2,33 +2,28 @@
 // using FireSharp.Response;
 // using FireSharp.Config;
 
-using Firebase.Database;
-using Firebase.Database.Query;
-// using Google.Apis.Auth.OAuth2;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Linq;
+using Balance_Support.DataClasses;
+using Balance_Support.DataClasses.DatabaseEntities;
 using Balance_Support.Interfaces;
-using Balance_Support.Scripts.Extensions;
-using Balance_Support.SerializationClasses;
-using Balance_Support.DataClasses.Records.AccountData;
-using Balance_Support.DataClasses.Records.NotificationData.DatabaseInfo;
-using Balance_Support.Scripts.Extensions.RecordExtenstions;
+using FirebaseAdmin.Messaging;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+// using Google.Apis.Auth.OAuth2;
 
 namespace Balance_Support;
 
 public class DatabaseTransactionProvider : IDatabaseTransactionProvider
 {
-    private readonly FirebaseClient client;
-    private readonly IDatabaseAccountProvider accountProvider;
     private readonly ICloudMessagingProvider cloudMessagingProvider;
+    private readonly ApplicationDbContext context;
+    private readonly IDatabaseAccountProvider accountProvider;
 
-    public DatabaseTransactionProvider(FirebaseClient client, IDatabaseAccountProvider accountProvider,
-        ICloudMessagingProvider cloudMessagingProvider)
+    public DatabaseTransactionProvider(IDatabaseAccountProvider accountProvider,
+        ICloudMessagingProvider cloudMessagingProvider, ApplicationDbContext context)
     {
-        this.client = client;
         this.accountProvider = accountProvider;
         this.cloudMessagingProvider = cloudMessagingProvider;
+        this.context = context;
     }
 
     public async Task<IResult> RegisterNewTransaction(
@@ -40,54 +35,67 @@ public class DatabaseTransactionProvider : IDatabaseTransactionProvider
         string message
     )
     {
-        var bank = await accountProvider.GetAccountByUserIdAndBankCardNumber(userId, cardNumber);
+        var account = await accountProvider.GetAccountByUserIdAndBankCardNumber(userId, cardNumber);
 
-        if (bank == default)
+        if (account == default)
             return Results.Problem(statusCode: 500, title: "Account not found");
 
 
-        var transactionData = new TransactionData
-            (userId,bank.Object.AccountId, transactionType, amount, balance, DateTime.Now, message);
-
-        var transaction = await client
-            .Child("Transactions")
-            .PostAsync(transactionData);
-
+        var transactionData = new Transaction
+        {
+            Id = Guid.NewGuid().ToString(),
+            UserId = userId,
+            TransactionType = (int)transactionType,
+            Amount = amount,
+            Balance = balance,
+            Message = message,
+            AccountId = account.Id,
+            Time = DateTime.Now
+        };
 
         try
         {
-            var result = cloudMessagingProvider.SendMessage(userId, bank.Object, transactionData);
+            context.Transactions.Add(transactionData);
+            await context.SaveChangesAsync();
+            var result = cloudMessagingProvider.SendMessage(userId, account, transactionData);
         }
-        catch (Exception e)
+        catch (FirebaseMessagingException e)
         {
             return Results.Problem(statusCode: 500, title: "Cannot send message to user");
         }
+        catch (ArgumentNullException e)
+        {
+            return Results.Problem(statusCode: 500, title: "Cannot send message to user");
+        }
+        catch (ArgumentException e)
+        {
+            return Results.Problem(statusCode: 500, title: "Cannot send message to user");
+        }
+        catch (DbUpdateException e)
+        {
+            return Results.Problem(statusCode: 500, title: "Cannot put transaction to database");
+        }
+        catch (OperationCanceledException e)
+        {
+            return Results.Problem(statusCode: 500, title: "Cannot put transaction to database");
+        }
 
-        return Results.Created($"Transactions", JsonConvert.SerializeObject(transaction));
+        return Results.Created("Transactions", JsonConvert.SerializeObject(transactionData));
     }
-    
+
     public async Task<IResult> GetTransactionsForUser(string userId, int amount)
     {
-        var transactions = (await client
-                .Child("Transactions")
-                .OrderBy("UserId")
-                .EqualTo(userId)
-                .LimitToFirst(amount)
-                .OnceAsync<TransactionData>())
-            .Where(device => device != null);
+        var transactions = context.Transactions.Where(x => x.UserId == userId);
+
+        var distinctAccountIds = transactions.Select(transaction => transaction.AccountId).Distinct().ToList();
         
-        var distinctAccountIds = transactions.Select(transaction => transaction.Object.AccountId).Distinct().ToList();
-        
-        var accounts = (await Task.WhenAll(
-            distinctAccountIds.Select(id => accountProvider.FindAccountByAccountId(id))
-        )).Where(x=>x!=null).Cast<FirebaseObject<AccountData>>();
-            // Explicitly cast to non-nullable type
-            foreach (var transaction in transactions)
-            {
-                var account = accounts.FirstOrDefault(x=>x.Object.AccountId == transaction.Object.AccountId);
-                if(account!=null)
-                await cloudMessagingProvider.SendMessage(userId,account.Object, transaction.Object);
-            }
+        var accounts = await Task.WhenAll(distinctAccountIds.Select(id => context.Accounts.FirstOrDefaultAsync(a => a.Id == id)));
+        foreach (var transaction in transactions)
+        {
+            var account = accounts.FirstOrDefault(x=>x.Id == transaction.AccountId);
+            if(account!=null)
+            await cloudMessagingProvider.SendMessage(userId,account, transaction);
+        }
         return Results.Ok();
     }
 }

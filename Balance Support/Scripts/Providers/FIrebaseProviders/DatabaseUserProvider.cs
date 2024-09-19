@@ -1,132 +1,77 @@
-﻿using System.Diagnostics;
-// using Firebase.Auth;
-using Firebase.Auth;
-// using FireSharp;
-// using FireSharp.Interfaces;
-// using FireSharp.Response;
-// using FireSharp.Config;
-using Firebase.Database;
-using Firebase.Database.Query;
-// using Google.Apis.Auth.OAuth2;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Linq;
-using Balance_Support.Interfaces;
-using Balance_Support.SerializationClasses;
+﻿using Balance_Support.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using User = Balance_Support.DataClasses.DatabaseEntities.User;
 
 namespace Balance_Support;
 
 public class DatabaseUserProvider : IDatabaseUserProvider
 {
-    private FirebaseClient client;
+    // private FirebaseClient client;
+    private readonly ApplicationDbContext context;
 
-    public DatabaseUserProvider(FirebaseClient client)
+    public DatabaseUserProvider(ApplicationDbContext context)
     {
-        this.client = client;
+        // this.client = client;
+        this.context = context;
     }
 
-    public async Task<string> CreateNewUserAsync(UserAuthData newUser)
+    public async Task<(bool IsSuccess, string? ErrorMessage)> CreateUserAsync(User newUser)
     {
         try
         {
-            var postResponse = await client.Child("Users").PostAsync(newUser);
-            return postResponse.Key;
+            // Add the new user to the DbContext
+            context.Users.Add(newUser);
+
+            // Save the changes to the database
+            await context.SaveChangesAsync();
+
+            // Indicate success
+            return (true, null); // No error message needed on success
         }
-        catch (Exception e)
+        catch (DbUpdateException ex)
         {
-            return String.Empty;
+            // Handle database-related errors
+            return (false, $"Error while saving user: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            // Handle any general errors
+            return (false, $"An unexpected error occurred: {ex.Message}");
         }
     }
 
-    public async Task<UserAuthData?> GetUser(string userCred)
-    {
-        //TODO: перенести UserAuthData в records и сделать все GetUserBy... через FirebaseObject
-        var userByDisplayName = await GetUserByDisplayName(userCred);
-
-        if (userByDisplayName != null)
-        {
-            return userByDisplayName.Object;
-        }
-
-        var userByEmail = await GetUserByEmail(userCred);
-        if (userByEmail != null)
-        {
-            return userByEmail.Object;
-        }
-
-        var userById = await GetUserById(userCred);
-        if (userById != null)
-        {
-            return userById.Object;
-        }
-
-        var userByRecordId = await GetUserByRecordId(userCred);
-        if (userByRecordId != null)
-        {
-            return userByRecordId.Object;
-        }
-
-// Return null if no match is found
-        return null;
-    }
-
+    public async Task<User?> GetUser(string userCred)
+    => await context.Users
+            .Where(u => u.Email == userCred || u.DisplayName == userCred || u.Id == userCred)
+            .FirstOrDefaultAsync();
+    
     public async Task<bool> IsEmailAlreadyRegistered(string email)
-    {
-        try
-        {
-            var usersByEmail = await client
-                .Child("Users")
-                .OrderBy("Email")
-                .EqualTo(email)
-                .OnceAsync<UserAuthData>();
-
-            // If any result is returned, the email is already registered
-            return usersByEmail.Any();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
-
-        return false;
-    }
-
+    => await FindUserByEmail(email) != null;
+    
     public async Task<bool> IsUserWithIdExist(string userId)
-    {
-        return (await GetUserById(userId)) != null;
-    }
+    => await FindUserById(userId) != null;
+
+    public async Task<bool> IsUserWithUsernameExist(string userName)
+    =>await FindUserByUsername(userName) != null;
+    
 
     #region Private
 
-    private async Task<FirebaseObject<UserAuthData>?> GetUserByRecordId(string recordId)
-        => (await client
-            .Child("Users")
-            .Child(recordId)
-            .OnceAsync<UserAuthData>()).FirstOrDefault();
+    private async Task<User?> FindUser(User user)
+        => await context.Users
+            .FirstOrDefaultAsync(u => u.Id == user.Id || u.Email == user.Email || u.DisplayName == user.DisplayName);
 
+    private async Task<User?> FindUserByEmail(string email)
+        => await context.Users
+            .FirstOrDefaultAsync(u => u.Email == email);
 
-    private async Task<FirebaseObject<UserAuthData>?> GetUserByEmail(string email)
-        => (await client
-            .Child("Users")
-            .OrderBy("Email")
-            .EqualTo(email)
-            .OnceAsync<UserAuthData>()).FirstOrDefault();
+    private async Task<User?> FindUserById(string id)
+        => await context.Users
+            .FirstOrDefaultAsync(u => u.Id == id);
 
-
-    private async Task<FirebaseObject<UserAuthData>?> GetUserByDisplayName(string DisplayName)
-        => (await client
-            .Child("Users")
-            .OrderBy("DisplayName")
-            .EqualTo(DisplayName)
-            .OnceAsync<UserAuthData>()).FirstOrDefault();
-
-
-    private async Task<FirebaseObject<UserAuthData>?> GetUserById(string Id)
-        => (await client
-            .Child("Users")
-            .OrderBy("Id")
-            .EqualTo(Id)
-            .OnceAsync<UserAuthData>()).FirstOrDefault();
+    private async Task<User?> FindUserByUsername(string displayName)
+        => await context.Users
+            .FirstOrDefaultAsync(u => u.DisplayName == displayName);
 
     #endregion
 }

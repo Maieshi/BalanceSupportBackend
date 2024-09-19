@@ -1,3 +1,4 @@
+
 // using FireSharp;
 // using FireSharp.Interfaces;
 // using FireSharp.Response;
@@ -60,9 +61,7 @@ public class NotificationHandler : INotificationHandler
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        // var balanceMatch = Regex.Match(request.NotificationText, @"Баланс:\s*([\d\s]+(?:,\d{1,2})?)р");
         var balanceMatch = Regex.Match(request.NotificationText, @"Баланс:\s*([\d\s]+(?:,\d{1,2})?\.\d{1,2})р");
-        // var balanceMatch2 = Regex.Match(request.NotificationText, @"Баланс:\s*([\d\s]+(?:[,.]\d{1,2})?)р");
         decimal balance = 0;
 
         if (!balanceMatch.Success && !decimal.TryParse(
@@ -104,6 +103,7 @@ public class NotificationHandler : INotificationHandler
 
 public enum TransactionType
 {
-    Crediting,
-    Debiting
+    Crediting=0,
+    Debiting =1
 }
+

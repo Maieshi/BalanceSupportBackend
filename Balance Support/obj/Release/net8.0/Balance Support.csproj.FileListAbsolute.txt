@@ -77,3 +77,21 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\Firebase
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\LiteDB.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\System.Reactive.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\bin\Release\net8.0\System.Runtime.InteropServices.WindowsRuntime.dll
+C:\Users\ilia\Downloads\current build\net8.0\publish\web.config
+C:\Users\ilia\Downloads\current build\net8.0\appsettings.Development.json
+C:\Users\ilia\Downloads\current build\net8.0\appsettings.json
+C:\Users\ilia\Downloads\current build\net8.0\Config.json
+C:\Users\ilia\Downloads\current build\net8.0\publish\appsettings.Development.json
+C:\Users\ilia\Downloads\current build\net8.0\publish\appsettings.json
+C:\Users\ilia\Downloads\current build\net8.0\publish\Balance Support.deps.json
+C:\Users\ilia\Downloads\current build\net8.0\publish\Balance Support.runtimeconfig.json
+C:\Users\ilia\Downloads\current build\net8.0\publish\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json
+C:\Users\ilia\Downloads\current build\net8.0\publish\Config.json
+C:\Users\ilia\Downloads\current build\net8.0\Third-party configs\Firebase\FirebaseAuthApiKey.json
+C:\Users\ilia\Downloads\current build\net8.0\Third-party configs\Firebase\FirebaseDatabaseClientConfig.json
+C:\Users\ilia\Downloads\current build\net8.0\Balance Support.exe
+C:\Users\ilia\Downloads\current build\net8.0\Third-party configs\Firebase\FirebaseCloudMessaging.json
+C:\Users\ilia\Downloads\current build\net8.0\Balance Support.deps.json
+C:\Users\ilia\Downloads\current build\net8.0\Balance Support.runtimeconfig.json
+C:\Users\ilia\Downloads\current build\net8.0\Balance Support.dll
+C:\Users\ilia\Downloads\current build\net8.0\Balance Support.pdb

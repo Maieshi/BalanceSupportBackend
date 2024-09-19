@@ -249,20 +249,25 @@ public class UserDto
     public IEnumerable<IdentityDto> Identities { get; set; }
     public IdentityDto Identity { get; set; }
 
+    private DateTimeOffset expiresUtc { get; set; }
+
     public UserDto(ClaimsPrincipal claimsPrincipal)
     {
         IsAuthenticated = claimsPrincipal.Identity?.IsAuthenticated ?? false;
         Name = claimsPrincipal.Identity?.Name;
         Claims = MapClaims(claimsPrincipal.Claims);
-
+        var value = claimsPrincipal?.FindFirst("exp")?.Value;
+        if (value != null)
+            expiresUtc = DateTimeOffset.FromUnixTimeSeconds(long.Parse(value));
         // Assuming you want to map identities from ClaimsPrincipal
         // ClaimsPrincipal does not directly provide access to multiple identities
         // but you can map the main identity
-        Identity = new IdentityDto
+        Identity = new IdentityDto()
         {
             Name = claimsPrincipal.Identity?.Name,
             AuthenticationType = claimsPrincipal.Identity?.AuthenticationType,
-            IsAuthenticated = claimsPrincipal.Identity?.IsAuthenticated ?? false
+            IsAuthenticated = claimsPrincipal.Identity?.IsAuthenticated ?? false,
+            expiresUtc = this.expiresUtc 
         };
 
         // Identities in ClaimsPrincipal are generally not directly accessible
@@ -292,6 +297,8 @@ public class UserDto
     {
         public string AuthenticationType { get; set; }
         public bool IsAuthenticated { get; set; }
+        
+        public DateTimeOffset expiresUtc{ get; set; }
         public string? Name { get; set; }
         public string NameClaimType { get; set; }
         public string RoleClaimType { get; set; }

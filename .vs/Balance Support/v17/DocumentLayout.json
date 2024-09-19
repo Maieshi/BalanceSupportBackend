@@ -84,7 +84,7 @@
               "RelativeDocumentMoniker": "Balance Support\\Scripts\\Main\\Program.cs",
               "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Main\\Program.cs",
               "RelativeToolTip": "Balance Support\\Scripts\\Main\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAKIAAAAfAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAHcAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-30T12:36:53.54Z",
               "IsPinned": true,
@@ -115,8 +115,7 @@
               "ViewState": "AQIAAKgAAAAAAAAAAAA7wAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
               "WhenOpened": "2024-09-15T16:57:50.68Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Bookmark",
@@ -182,8 +181,7 @@
               "RelativeToolTip": "Balance Support\\Scripts\\Extensions\\AuthorizationStrategies\\DefaultContextStrategy.cs",
               "ViewState": "AQIAAAMAAAAAAAAAAAAuwBQAAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-13T14:45:28.82Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-13T14:45:28.82Z"
             },
             {
               "$type": "Document",
@@ -284,6 +282,10 @@
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-09-04T11:44:49.223Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d84ee353-0bef-5a41-a649-8f89aca5d84d}"
             }
           ]
         }

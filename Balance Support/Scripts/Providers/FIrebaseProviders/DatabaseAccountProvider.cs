@@ -41,9 +41,6 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             return Results.Problem(statusCode: 500,
                 title: "One account with same group and device id already registered");
 
-        // FirebaseObject<AccountData> userAccount = null;
-        // FirebaseObject<UserAccountRelationData> relaion = null;
-
         try
         {
             var acc =  context.Accounts.Add(accountRegisterRequest.NewAccount());
@@ -54,19 +51,6 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
         }
         catch (Exception ex)
         {
-            // if (userAccount != null)
-            //     await client
-            //         .Child("Devices")
-            //         .Child(userAccount.Key)
-            //         .DeleteAsync();
-            //
-            //
-            // if (relaion != null)
-            //     await client
-            //         .Child("Relations")
-            //         .Child("User-Account")
-            //         .DeleteAsync();
-
             return Results.Problem(ex.Message, statusCode: 500,
                 title: "An error occurred while registering account");
         }

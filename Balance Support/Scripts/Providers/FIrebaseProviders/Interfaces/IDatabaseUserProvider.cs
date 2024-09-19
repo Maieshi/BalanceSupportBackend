@@ -12,9 +12,7 @@ public interface IDatabaseUserProvider
     public Task<bool> IsEmailAlreadyRegistered(string email);
     
     public Task<bool> IsUserWithIdExist(string userId);
-    // public bool TryGetUser(string userCred, out UserAuthData user);
-    //
-    // public bool TryGetUser(string recordId, out UserAuthData user);
 
-    //TODO:add IsUserExist
+    public Task<bool> IsUserWithUsernameExist(string userName);
+    
 }

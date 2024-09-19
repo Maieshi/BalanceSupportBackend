@@ -44,6 +44,7 @@ public class DatabaseTransactionProvider : IDatabaseTransactionProvider
         var transactionData = new Transaction
         {
             Id = Guid.NewGuid().ToString(),
+            UserId = userId,
             TransactionType = (int)transactionType,
             Amount = amount,
             Balance = balance,

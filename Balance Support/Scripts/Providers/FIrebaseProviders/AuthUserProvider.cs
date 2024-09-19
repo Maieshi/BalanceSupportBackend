@@ -43,8 +43,8 @@ public class AuthUserProvider : IAuthUserProvider
         //            $"Invalid email:{email}  username:{username} or password:{pasword}. Check your data");
             
         //}
-        //Todo: check aslo if user with username already exists
-        if (await databaseUserProvider.IsEmailAlreadyRegistered(email))
+        
+        if (await databaseUserProvider.IsEmailAlreadyRegistered(email)||await databaseUserProvider.IsUserWithUsernameExist(username))
             return Results.BadRequest("User already exists");
 
         FirebaseAuthLink link;
@@ -161,14 +161,6 @@ public class AuthUserProvider : IAuthUserProvider
                 ExpiresUtc = DateTime.UtcNow.AddDays(7) // Set cookie expiration time
             });
     }
-
-    //private async Task<string> ResolveUserEmail(string userCred)
-    //{
-
-
-    //    return user?.Email;
-    //}
-
     private TimeSpan GetSessionTimeout(LoginDeviceType deviceType)
     {
         return deviceType switch

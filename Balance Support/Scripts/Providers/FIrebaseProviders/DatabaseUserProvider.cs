@@ -41,42 +41,37 @@ public class DatabaseUserProvider : IDatabaseUserProvider
     }
 
     public async Task<User?> GetUser(string userCred)
-    {
-        return await context.Users
+    => await context.Users
             .Where(u => u.Email == userCred || u.DisplayName == userCred || u.Id == userCred)
             .FirstOrDefaultAsync();
-    }
-
+    
     public async Task<bool> IsEmailAlreadyRegistered(string email)
-    {
-        return await FindUserByEmail(email) != null;
-    }
-
+    => await FindUserByEmail(email) != null;
+    
     public async Task<bool> IsUserWithIdExist(string userId)
-    {
-        return await FindUserById(userId) != null;
-    }
+    => await FindUserById(userId) != null;
 
+    public async Task<bool> IsUserWithUsernameExist(string userName)
+    =>await FindUserByUsername(userName) != null;
+    
 
     #region Private
 
     private async Task<User?> FindUser(User user)
-    {
-        return await context.Users
+        => await context.Users
             .FirstOrDefaultAsync(u => u.Id == user.Id || u.Email == user.Email || u.DisplayName == user.DisplayName);
-    }
 
     private async Task<User?> FindUserByEmail(string email)
-    {
-        return await context.Users
+        => await context.Users
             .FirstOrDefaultAsync(u => u.Email == email);
-    }
 
     private async Task<User?> FindUserById(string id)
-    {
-        return await context.Users
+        => await context.Users
             .FirstOrDefaultAsync(u => u.Id == id);
-    }
+
+    private async Task<User?> FindUserByUsername(string displayName)
+        => await context.Users
+            .FirstOrDefaultAsync(u => u.DisplayName == displayName);
 
     #endregion
 }

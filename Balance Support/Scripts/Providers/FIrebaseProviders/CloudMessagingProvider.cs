@@ -41,6 +41,7 @@ public class CloudMessagingProvider : ICloudMessagingProvider
             else
                 context.UserTokens.Add(new UserToken
                 {
+                    Id = Guid.NewGuid().ToString(),
                     UserId = request.UserId,
                     Token = request.Token
                 });

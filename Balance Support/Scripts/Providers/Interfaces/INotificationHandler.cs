@@ -1,6 +1,6 @@
 using Balance_Support.DataClasses.Records.NotificationData;
 
-namespace Balance_Support.Interfaces;
+namespace Balance_Support.Scripts.Providers.Interfaces;
 
 public interface INotificationHandler
 {

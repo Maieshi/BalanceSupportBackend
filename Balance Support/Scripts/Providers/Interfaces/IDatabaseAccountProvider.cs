@@ -1,9 +1,7 @@
-using System.Collections.ObjectModel;
 using Balance_Support.DataClasses.DatabaseEntities;
 using Balance_Support.DataClasses.Records.AccountData;
-using Firebase.Database;
 
-namespace Balance_Support.Interfaces;
+namespace Balance_Support.Scripts.Providers.Interfaces;
 
 public interface IDatabaseAccountProvider
 {

@@ -3,7 +3,7 @@ using Firebase.Database;
 using Firebase.Database.Query;
 using Google.Apis.Auth.OAuth2;
 
-namespace Balance_Support;
+namespace Balance_Support.Scripts.Providers;
 
 public class FbTest
 {

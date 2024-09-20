@@ -1,3 +1,5 @@
+using Balance_Support.Scripts.Providers;
+
 namespace Balance_Support.DataClasses.Records.NotificationData.DatabaseInfo;
 
 public record TransactionData(

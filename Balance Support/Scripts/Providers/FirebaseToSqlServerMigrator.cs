@@ -1,14 +1,5 @@
-using Balance_Support.DataClasses;
+namespace Balance_Support.Scripts.Providers;
 
-namespace Balance_Support;
-using System;
-using System.IO;
-using System.Text.Json;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Balance_Support.DataClasses.DatabaseEntities;
-using Balance_Support.DataClasses.Records;
 public class FirebaseToSqlServerMigrator
 {
     private readonly ApplicationDbContext context;

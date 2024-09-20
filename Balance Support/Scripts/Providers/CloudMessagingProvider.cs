@@ -1,11 +1,11 @@
 ﻿using Balance_Support.DataClasses.DatabaseEntities;
 using Balance_Support.DataClasses.Records.NotificationData;
-using Balance_Support.Interfaces;
+using Balance_Support.Scripts.Providers.Interfaces;
 using Firebase.Database;
 using FirebaseAdmin.Messaging;
 using Microsoft.EntityFrameworkCore;
 
-namespace Balance_Support;
+namespace Balance_Support.Scripts.Providers;
 
 public class CloudMessagingProvider : ICloudMessagingProvider
 {

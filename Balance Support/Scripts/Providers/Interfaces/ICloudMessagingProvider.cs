@@ -1,9 +1,7 @@
-using Balance_Support.DataClasses;
-using Balance_Support.DataClasses.Records.AccountData;
-using Balance_Support.DataClasses.Records.NotificationData.DatabaseInfo;
-using Balance_Support.DataClasses.Records.NotificationData;
 using Balance_Support.DataClasses.DatabaseEntities;
-namespace Balance_Support.Interfaces;
+using Balance_Support.DataClasses.Records.NotificationData;
+
+namespace Balance_Support.Scripts.Providers.Interfaces;
 
 public interface ICloudMessagingProvider
 {

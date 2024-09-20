@@ -4,8 +4,9 @@ using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData;
 using Balance_Support.DataClasses.Records.UserData;
 using Balance_Support.DataClasses.Validators;
-using Balance_Support.Interfaces;
 using Balance_Support.Scripts.Extensions;
+using Balance_Support.Scripts.Providers;
+using Balance_Support.Scripts.Providers.Interfaces;
 using Balance_Support.Scripts.Validators;
 using Microsoft.AspNetCore.Mvc;
 

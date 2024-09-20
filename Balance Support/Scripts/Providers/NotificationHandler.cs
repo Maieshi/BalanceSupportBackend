@@ -1,24 +1,9 @@
-
-// using FireSharp;
-// using FireSharp.Interfaces;
-// using FireSharp.Response;
-// using FireSharp.Config;
-
-using System.IO.Enumeration;
-using Firebase.Database;
-using Firebase.Database.Query;
-// using Google.Apis.Auth.OAuth2;
-using Newtonsoft.Json;
-using Balance_Support.Interfaces;
-using Balance_Support.Scripts.Extensions;
-using Balance_Support.SerializationClasses;
-using Balance_Support.DataClasses.Records.AccountData;
-using Balance_Support.DataClasses.Records.NotificationData;
 using System.Text.RegularExpressions;
-using Balance_Support.DataClasses.Records.NotificationData.DatabaseInfo;
-using FirebaseAdmin.Messaging;
+using Balance_Support.DataClasses.Records.NotificationData;
+using Balance_Support.Scripts.Providers.Interfaces;
+using Firebase.Database;
 
-namespace Balance_Support;
+namespace Balance_Support.Scripts.Providers;
 
 public class NotificationHandler : INotificationHandler
 {

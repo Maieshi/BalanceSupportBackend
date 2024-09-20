@@ -2,15 +2,15 @@
 // using FireSharp.Response;
 // using FireSharp.Config;
 
-using Balance_Support.DataClasses;
 using Balance_Support.DataClasses.DatabaseEntities;
-using Balance_Support.Interfaces;
+using Balance_Support.Scripts.Providers.Interfaces;
 using FirebaseAdmin.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+
 // using Google.Apis.Auth.OAuth2;
 
-namespace Balance_Support;
+namespace Balance_Support.Scripts.Providers;
 
 public class DatabaseTransactionProvider : IDatabaseTransactionProvider
 {

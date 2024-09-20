@@ -1,6 +1,7 @@
 using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData;
-using Balance_Support.Interfaces;
+using Balance_Support.Scripts.Providers;
+using Balance_Support.Scripts.Providers.Interfaces;
 using Balance_Support.SerializationClasses;
 using Firebase.Auth;
 using Firebase.Database;

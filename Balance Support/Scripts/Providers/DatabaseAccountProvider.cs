@@ -1,14 +1,10 @@
 // using Firebase.Auth;
 
-using System.Collections.ObjectModel;
-using Balance_Support.DataClasses.Records.AccountData;
-using Balance_Support.Interfaces;
-using Balance_Support.Scripts.Extensions.RecordExtenstions;
-using Firebase.Database;
-using Firebase.Database.Query;
-using Microsoft.EntityFrameworkCore;
-using Balance_Support.DataClasses;
 using Balance_Support.DataClasses.DatabaseEntities;
+using Balance_Support.DataClasses.Records.AccountData;
+using Balance_Support.Scripts.Extensions.RecordExtenstions;
+using Balance_Support.Scripts.Providers.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 // using FireSharp;
 // using FireSharp.Interfaces;
@@ -16,7 +12,7 @@ using Balance_Support.DataClasses.DatabaseEntities;
 // using FireSharp.Config;
 // using Google.Apis.Auth.OAuth2;
 
-namespace Balance_Support;
+namespace Balance_Support.Scripts.Providers;
 
 public class DatabaseAccountProvider : IDatabaseAccountProvider
 {

@@ -1,18 +1,13 @@
 using System.ComponentModel.DataAnnotations;
-using Balance_Support.Interfaces;
-using Firebase.Auth;
-using FirebaseAuthException = FirebaseAdmin.Auth.FirebaseAuthException;
-using Balance_Support.SerializationClasses;
-using Balance_Support.DataClasses;
-using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
-using Balance_Support.Scripts.Extensions;
+using Balance_Support.Scripts.Providers.Interfaces;
+using Firebase.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
+using FirebaseAuthException = FirebaseAdmin.Auth.FirebaseAuthException;
 using User = Balance_Support.DataClasses.DatabaseEntities.User;
 
-namespace Balance_Support;
+namespace Balance_Support.Scripts.Providers;
 
 public class AuthUserProvider : IAuthUserProvider
 {

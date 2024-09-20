@@ -1,8 +1,8 @@
-﻿using Balance_Support.Interfaces;
+﻿using Balance_Support.Scripts.Providers.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using User = Balance_Support.DataClasses.DatabaseEntities.User;
 
-namespace Balance_Support;
+namespace Balance_Support.Scripts.Providers;
 
 public class DatabaseUserProvider : IDatabaseUserProvider
 {

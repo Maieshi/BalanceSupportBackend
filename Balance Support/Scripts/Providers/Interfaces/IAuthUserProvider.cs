@@ -1,4 +1,4 @@
-namespace Balance_Support.Interfaces;
+namespace Balance_Support.Scripts.Providers.Interfaces;
 
 public interface IAuthUserProvider
 {

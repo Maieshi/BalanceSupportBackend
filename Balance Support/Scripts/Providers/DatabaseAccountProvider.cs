@@ -1,16 +1,8 @@
-// using Firebase.Auth;
-
 using Balance_Support.DataClasses.DatabaseEntities;
 using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.Scripts.Extensions.RecordExtenstions;
 using Balance_Support.Scripts.Providers.Interfaces;
 using Microsoft.EntityFrameworkCore;
-
-// using FireSharp;
-// using FireSharp.Interfaces;
-// using FireSharp.Response;
-// using FireSharp.Config;
-// using Google.Apis.Auth.OAuth2;
 
 namespace Balance_Support.Scripts.Providers;
 
@@ -29,19 +21,17 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
     {
         if (!await userProvider.IsUserWithIdExist(accountRegisterRequest.UserId))
             return Results.Problem(statusCode: 500, title: "User not found");
-
+            //TODO: check if account with same account number exists for this user
 
         if (await IsAlreadyExistAccountWithGropAndDeviceId(accountRegisterRequest.UserId,
                 accountRegisterRequest.AccountData.AccountGroup, accountRegisterRequest.AccountData.DeviceId,
                 accountRegisterRequest.AccountData.SimSlot))
             return Results.Problem(statusCode: 500,
                 title: "One account with same group and device id already registered");
-
         try
         {
             var acc =  context.Accounts.Add(accountRegisterRequest.NewAccount());
             await context.SaveChangesAsync();
-            
             
             return Results.Created("Accounts", acc.Entity);
         }
@@ -110,7 +100,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
                 && x.DeviceId == accountGetRequest.DeviceId)
             .ToList();
 
-        if (accounts.Any())
+        if (!accounts.Any())
             return Results.Problem(statusCode: 500, title: "Accounts not found");
         
         return Results.Ok(new
@@ -125,7 +115,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             return Results.Problem(statusCode: 500, title: "User not found");
         
         var accounts = await FindAccountsByUserId(accountGetAllForUserRequest.UserId);
-        if (accounts.Any())
+        if (!accounts.Any())
             return Results.Problem(statusCode: 500, title: "Accounts not found");
         
         return Results.Ok(new
@@ -133,6 +123,9 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             Accounts = accounts
         });
     }
+
+    public async Task<Account?> GetAccountByUserIdAndAccountNumber(string userId, string accountNumber)
+        =>await context.Accounts.Where(x => x.UserId == userId && x.AccountNumber == accountNumber).FirstOrDefaultAsync();
 
     public async void Test()
     {

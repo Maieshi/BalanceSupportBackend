@@ -1,4 +1,5 @@
-﻿ 
+﻿######### Testovaya huinya
+
 GET https://localhost:5001/
 ###
 GET https://localhost:5001/todos/1
@@ -63,7 +64,8 @@ Content-Type: application/json
   "name": "Test"
 }
 
-###### UserManagement ######
+######### User
+
 POST https://localhost:5001/Desktop/User/Register
 content-type: application/json
 
@@ -72,6 +74,7 @@ content-type: application/json
   "Email" : "crazban1@mail.ru",
   "Password": "testuser4testuser4"
 }
+
 ###
 POST https://localhost:5001/Mobile/User/Login
 content-type: application/json
@@ -97,8 +100,22 @@ content-type: application/json
   "Password": "44444123123123"
 }
 
+######### UserSettings
 
-###### AccountManagement ######
+GET https://localhost:5001/Desktop/UserSettings/Get/sDAmWae7RqMsmWIC74lVdLuQRpq1
+###
+
+POST https://localhost:5001/Desktop/UserSettings/Update
+content-type: application/json
+
+{
+  "UserId": "Xgs8ggFREQSjyC9wop9tQYzwvBz1",
+  "SelectedGroup":3,
+  "RowsCount":100
+}
+
+######### Account
+
 POST https://localhost:5001/Desktop/Account/Register
 content-type: application/json
 
@@ -150,32 +167,27 @@ GET https://localhost:5001/Desktop/Account/GetAllForUser/sDAmWae7RqMsmWIC74lVdLu
 
 
 
-###### NotificationManagement ######
-POST https://localhost:5001/Desktop/UserToken/Register
-content-type: application/json
+######### UserToken
 
-{
-  "UserId": "sampleUserId",
-  "Token": "sampleToken"
-}
-###
-POST https://localhost:5001/Desktop/Transaction/Get
+POST https://localhost:5001/Desktop/UserToken/Set
 content-type: application/json
 
 {
   "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
-  "Amount": 10
+  "Token": "sampleToken"
 }
+
 ###
-POST https://localhost:5001/Desktop/UserToken/Update
+POST https://localhost:5001/Desktop/UserToken/Delete
 content-type: application/json
 
 {
-  "UserId": "sampleUserId",
-  "Token": "sampleToken"
+  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1"
 }
-###
-POST https://localhost:5001/Mobile/Notification/Handle
+
+######### Transaction
+
+POST https://localhost:5001/Mobile/Transaction/HandleNew
 content-type: application/json
 
 {
@@ -183,3 +195,25 @@ content-type: application/json
   "NotificationText": "СЧЁТ3684 16:00 перевод 3900р Комиссия 19.50р Баланс: 69.40р"
 }
 
+###
+POST https://localhost:5001/Desktop/Transaction/GetMessages
+content-type: application/json
+
+{
+  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "SearchText":"",
+  "AccountNumber":"123456789",
+  "StartingDate":"2024-09-19T00:42:30.647Z",
+  "EndingDate":"2024-09-21T00:42:30.647Z",
+  "MessageType":-1,
+  "Amount":100
+}
+
+###
+POST https://localhost:5001/Desktop/Transaction/GetTransactions
+content-type: application/json
+
+{
+  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "Amount":100
+}

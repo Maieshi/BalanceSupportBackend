@@ -64,24 +64,24 @@ public static class AppInitializer
 
         #endregion
 
-        #region UserManagement
+        #region User
 
         app.MapPost("/Desktop/User/Register",
-            async ([FromBody] UserRegistrationData registration, IAuthUserProvider authProvider) =>
+            async ([FromBody] UserRegisterRequest userRegisterRequest, IAuthUserProvider authProvider) =>
             ResultContainer
                 .Start()
-                .Validate<UserRegistrationData, UserRegistrationDataValidator>(registration)
+                .Validate<UserRegisterRequest, UserRegisterRequestValidator>(userRegisterRequest)
                 .Process(
                     async () =>
-                        await authProvider.RegisterNewUser(registration.DisplayName, registration.Email,
-                            registration.Password))
+                        await authProvider.RegisterNewUser(userRegisterRequest.DisplayName, userRegisterRequest.Email,
+                            userRegisterRequest.Password))
                 .GetResult());
 
         app.MapPost("/Mobile/User/Login",
-            ([FromBody] UserLoginData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
+            ([FromBody] UserLoginRequest userSignData, IAuthUserProvider authProvider, HttpContext context) =>
                 ResultContainer
                     .Start()
-                    .Validate<UserLoginData, UserLoginDataValidator>(userSignData)
+                    .Validate<UserLoginRequest, UserLoginRequestValidator>(userSignData)
                     .Process(
                         async () =>
                             await authProvider.LogInUser(context,
@@ -92,10 +92,10 @@ public static class AppInitializer
         );
 
         app.MapPost("/Desktop/User/Login",
-            async ([FromBody] UserLoginData userSignData, IAuthUserProvider authProvider, HttpContext context) =>
+            async ([FromBody] UserLoginRequest userSignData, IAuthUserProvider authProvider, HttpContext context) =>
             ResultContainer
                 .Start()
-                .Validate<UserLoginData, UserLoginDataValidator>(userSignData)
+                .Validate<UserLoginRequest, UserLoginRequestValidator>(userSignData)
                 .Process(
                     async () =>
                         await authProvider.LogInUser(context,
@@ -118,7 +118,43 @@ public static class AppInitializer
 
         #endregion
 
-        #region AccountManagement
+        #region UserSettings
+
+        app.MapGet("/Desktop/UserSettings/Get/{userID}",
+            async (string userId, IDatabaseUserSettingsProvider provider,
+                HttpContext context) =>
+            {
+                var getRequest = new UserSettingsGetRequest(userId);
+                
+                return ResultContainer
+                    .Start()
+                    .Authorize(context)
+                    .Validate<UserSettingsGetRequest, UserSettingsGetRequestValidator>(getRequest)
+                    .Process(
+                        async () =>
+                            await provider.GetUserSettings(getRequest)
+                    )
+                    .GetResult();
+            }
+        );
+
+        app.MapPost("/Desktop/UserSettings/Update",
+            async ([FromBody] UserSettingsUpdateRequest updateRequest, IDatabaseUserSettingsProvider provider,
+                    HttpContext context) =>
+                ResultContainer
+                    .Start()
+                    .Authorize(context)
+                    .Validate<UserSettingsUpdateRequest, UserSettingsUpdateRequestValidator>(updateRequest)
+                    .Process(
+                        async () =>
+                            await provider.UpdateUserSettings(updateRequest)
+                    )
+                    .GetResult()
+        );
+
+        #endregion
+
+        #region Account
 
         app.MapPost("/Desktop/Account/Register", async ([FromBody] AccountRegisterRequest deviceRegisterData,
                 IDatabaseAccountProvider deviceProvider, HttpContext context) =>
@@ -183,40 +219,7 @@ public static class AppInitializer
 
         #endregion
 
-        #region NotificationManagement
-
-        app.MapPost("/Desktop/UserToken/Register", async ([FromBody] SetUserTokenRequest userTokenRequest,
-                ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
-            ResultContainer
-                .Start()
-                .Validate<SetUserTokenRequest, SetUserTokenRequestValidator>(userTokenRequest)
-                .Authorize(context)
-                .Process(async () => await cloudMessagingProvider.SetUserToken(userTokenRequest))
-                .GetResult()
-        );
-
-        app.MapPost("/Desktop/Transaction/Get", async ([FromBody] GetTransactionRequest getTransactionRequest,
-                IDatabaseTransactionProvider transactionProvider, HttpContext context) =>
-            ResultContainer
-                .Start()
-                .Validate<GetTransactionRequest, GetTransactionRequestValidatior>(getTransactionRequest)
-                .Authorize(context)
-                .Process(async () =>
-                    await transactionProvider.GetTransactionsForUser(getTransactionRequest.UserId,
-                        getTransactionRequest.Amount))
-                .GetResult()
-        );
-
-        app.MapPost("/Desktop/UserToken/Delete", async ([FromBody] DeleteUserTokenRequest userTokenRequest,
-                ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
-            ResultContainer
-                .Start()
-                .Validate<DeleteUserTokenRequest, DeleteUserTokenRequestValidator>(userTokenRequest)
-                .Authorize(context)
-                .Process(async () => await cloudMessagingProvider.DeleteUserToken(userTokenRequest))
-                .GetResult()
-        );
-
+        #region UserToken
 
         app.MapPost("/Desktop/UserToken/Set", async ([FromBody] SetUserTokenRequest userTokenRequest,
                 ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
@@ -228,7 +231,20 @@ public static class AppInitializer
                 .GetResult()
         );
 
-        app.MapPost("/Mobile/Notification/Handle", async (
+        app.MapPost("/Desktop/UserToken/Delete", async ([FromBody] DeleteUserTokenRequest userTokenRequest,
+                ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
+            ResultContainer
+                .Start()
+                .Validate<DeleteUserTokenRequest, UserTokenDeleteRequestValidator>(userTokenRequest)
+                .Authorize(context)
+                .Process(async () => await cloudMessagingProvider.DeleteUserToken(userTokenRequest))
+                .GetResult()
+        );
+        #endregion
+        
+        #region Transaction
+
+        app.MapPost("/Mobile/Transaction/HandleNew", async (
                 [FromBody] NotificationHandleRequest handleNotificationRequest,
                 INotificationHandler notificationHandler, HttpContext context) =>
             ResultContainer
@@ -238,9 +254,39 @@ public static class AppInitializer
                 .Process(async () => await notificationHandler.HandleNotification(handleNotificationRequest))
                 .GetResult()
         );
-//TODO: create new endpoint filtration and validation
+
+
+        app.MapPost("/Desktop/Transaction/GetMessages", async (
+                [FromBody] MessagesGetRequest getMessagesRequest,
+                IDatabaseTransactionProvider databaseTransactionProvider, HttpContext context) =>
+            ResultContainer
+                .Start()
+                .Validate<MessagesGetRequest, MessagesGetRequestValidator>(getMessagesRequest)
+                .Authorize(context)
+                .Process(async () => await databaseTransactionProvider.GetMessages(getMessagesRequest))
+                .GetResult()
+        );
+
+        app.MapPost("/Desktop/Transaction/GetTransactions", async (
+                [FromBody] TransactionGetRequest getTransactionRequest,
+                IDatabaseTransactionProvider transactionProvider, HttpContext context) =>
+            ResultContainer
+                .Start()
+                .Validate<TransactionGetRequest, TransactionGetRequestValidatior>(getTransactionRequest)
+                .Authorize(context)
+                .Process(async () =>
+                    await transactionProvider.GetTransactionsForUser(getTransactionRequest))
+                .GetResult()
+        );
 
         #endregion
+        
+        
+//TODO: create new endpoint filtration and validation
+//TODO: try to rebuild project to mvc
+//TODO: split notification handling to parser(mb static) that returns transaction and transaction handler
+//TODO: try to upgrade architecture and make the code less cohesive
+
     }
 }
 

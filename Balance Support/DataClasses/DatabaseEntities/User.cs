@@ -11,5 +11,6 @@ public class User : BaseEntity
     public ICollection<Account> Accounts { get; set; } // Navigation property
     public ICollection<UserToken> UserTokens { get; set; } // Navigation property
 
+    public UserSettings UserSettings { get; set; }
     public ICollection<Transaction> Transactions { get; set; }
 }

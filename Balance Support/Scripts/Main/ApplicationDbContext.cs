@@ -8,7 +8,7 @@ public class ApplicationDbContext : DbContext
     public virtual DbSet<Account> Accounts { get; set; }
     public virtual DbSet<Transaction> Transactions { get; set; }
     public virtual DbSet<UserToken> UserTokens { get; set; }
-
+    public virtual DbSet<UserSettings> UserSettings { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
@@ -31,6 +31,11 @@ public class ApplicationDbContext : DbContext
             .HasMaxLength(50);
 
         modelBuilder.Entity<User>()
+            .HasOne(u => u.UserSettings)
+            .WithOne(us => us.User)
+            .HasForeignKey<UserSettings>(us => us.UserId);
+
+        modelBuilder.Entity<User>()
             .HasMany(u => u.Accounts)
             .WithOne(a => a.User)
             .HasForeignKey(a => a.UserId);
@@ -41,7 +46,22 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(ut => ut.UserId);
 
         #endregion
+        
+        #region UserSettings
+        
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.Id)
+            .ValueGeneratedOnAdd(); // Ensure ID is generated on add
 
+        modelBuilder.Entity<UserSettings>().Property(us => us.SelectedGroup)
+            .HasDefaultValue(1); // Set a default value if needed
+
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.RowCount)
+            .HasDefaultValue(100); // Set a default value if needed
+        
+        #endregion
+        
         #region Account
 
         modelBuilder.Entity<Account>()

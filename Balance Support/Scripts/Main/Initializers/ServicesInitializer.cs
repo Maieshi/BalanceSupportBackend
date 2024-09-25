@@ -100,13 +100,16 @@ public static class ServicesInitializer
         services.AddScoped<ICloudMessagingProvider, CloudMessagingProvider>();
         services.AddScoped<IDatabaseTransactionProvider, DatabaseTransactionProvider>();
         services.AddScoped<INotificationHandler, NotificationHandler>();
-        services.AddScoped<FirebaseToSqlServerMigrator>();
+        services.AddScoped<IDatabaseUserSettingsProvider, DatabaseUserSettingsProvider>();
+        
+        // services.AddScoped<FirebaseToSqlServerMigrator>();
 
         var provider = services.BuildServiceProvider();
         
+        //TODO: split providers to smaller interfaces to provide only functions that needed and make like container.BindInterfaces() 
         // await provider.GetService<IDatabaseUserProvider>().CreateUserAsync(new User
         //     { Id = "testId", DisplayName = "testUser", Email = "userMail@gmail.com" });
-        
+
         // await provider.GetService<IDatabaseAccountProvider>().RegisterAccount(
         //     new AccountRegisterRequest(
         //         "testId",
@@ -122,12 +125,12 @@ public static class ServicesInitializer
         //             "asdfasdfasdf")
         //     )
         // );
-        
+
         // await provider.GetService<INotificationHandler>().HandleNotification(new NotificationHandleRequest(
         //     "testId",
         //     "MIR-1234 14:32 зачисление 2800р Sovcombank Баланс: 16 325.95р"
         // ));
-        
+
     }
 
     private static async Task<string> GetTokenByGoogleServices()

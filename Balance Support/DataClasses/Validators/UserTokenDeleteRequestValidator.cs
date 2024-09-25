@@ -2,9 +2,9 @@ using FluentValidation;
 using Balance_Support.DataClasses.Records.NotificationData;
 namespace Balance_Support.DataClasses.Validators;
 
-public class DeleteUserTokenRequestValidator:AbstractValidator<DeleteUserTokenRequest>
+public class UserTokenDeleteRequestValidator:AbstractValidator<DeleteUserTokenRequest>
 {
-    public DeleteUserTokenRequestValidator()
+    public UserTokenDeleteRequestValidator()
     {
         RuleFor(x => x.UserId).NotEmpty();
     }

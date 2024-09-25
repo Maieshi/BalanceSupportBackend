@@ -9,7 +9,9 @@ public interface ICloudMessagingProvider
 
     public Task<IResult> DeleteUserToken(DeleteUserTokenRequest request);
     
-    public Task<string> SendMessage(string userId, Account account, Transaction transactionData);
+    public Task<string> SendTransaction(string userId, Account account, Transaction transactionData);
+
+    public Task<IResult> SendMessages(string userId, List<Transaction> transactions, List<Account> accounts);
 
     public void Test();
 }

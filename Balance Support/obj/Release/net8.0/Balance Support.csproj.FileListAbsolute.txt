@@ -95,3 +95,4 @@ C:\Users\ilia\Downloads\current build\net8.0\Balance Support.deps.json
 C:\Users\ilia\Downloads\current build\net8.0\Balance Support.runtimeconfig.json
 C:\Users\ilia\Downloads\current build\net8.0\Balance Support.dll
 C:\Users\ilia\Downloads\current build\net8.0\Balance Support.pdb
+C:\Users\ilia\Downloads\current build\net8.0\Third-party configs\balance-support-b9da3-default-rtdb-export (3).json

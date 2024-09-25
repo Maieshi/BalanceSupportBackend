@@ -23,9 +23,9 @@ public class CloudMessagingProvider : ICloudMessagingProvider
         try
         {
             var tokenResult = await FindUserToken(request.UserId);
-            
+
             var action = "update";
-            
+
             if (tokenResult == null)
             {
                 action = "insert";
@@ -57,7 +57,7 @@ public class CloudMessagingProvider : ICloudMessagingProvider
         }
     }
 
-    public async Task<string> SendMessage(string userId, Account account, Transaction transactionData)
+    public async Task<string> SendTransaction(string userId, Account account, Transaction transactionData)
     {
         var user = await FindUserToken(userId);
 
@@ -67,6 +67,7 @@ public class CloudMessagingProvider : ICloudMessagingProvider
         {
             Data = new Dictionary<string, string>
             {
+                ["Type"]= "Transaction",
                 ["accountID"] = account.AccountNumber,
                 ["Name"] = account.LastName,
                 ["Balance"] = transactionData.Balance.ToString(),
@@ -89,12 +90,54 @@ public class CloudMessagingProvider : ICloudMessagingProvider
         return res;
     }
 
+    public async Task<IResult> SendMessages(string userId, List<Transaction> transactions, List<Account> accounts)
+    {
+        var token = await FindUserToken(userId);
+        if (token == null) return Results.Problem(statusCode: 500, title: "Cannot find token for user");
+        if (transactions.Any(transaction => !accounts.Any(account => account.Id == transaction.AccountId)))
+            return Results.Problem(statusCode: 500, title: "No account found with the same Id as the transaction");
+
+        foreach (var transaction in transactions)
+        {
+            var account = accounts.First(x => x.Id == transaction.AccountId);
+            var message = new Message
+            {
+                Data = new Dictionary<string, string>
+                {
+                    ["Type"] = "Message",
+                    ["Account"] = account.AccountNumber,
+                    ["Name"] = account.LastName,
+                    ["Text"] = transaction.Message,
+                    ["Device"] = $"{account.AccountGroup},{account.DeviceId}",
+                    ["Time"] = "11:50",
+                    ["Date"] = "02.01.2024",
+                    ["Card "] = account.BankCardNumber,
+                    ["Bank "] = account.BankType,
+                    ["Channel"] = "sms"
+                },
+                Token = token.Token
+            };
+
+            try
+            {
+                var res = await FirebaseMessaging.DefaultInstance.SendAsync(message);
+            }
+            catch (Exception e)
+            {
+                return Results.Problem(statusCode: 500,
+                    title: $"Error sending message to client. Last message{message}");
+            }
+        }
+
+        return Results.Ok();
+    }
+
     public async void Test()
     {
-        var a = await SetUserToken(
-            new SetUserTokenRequest(
-                "sDAmWae7RqMsmWIC74lVdLuQRpq1",
-                "cTJewO0m_f_-6jVyEowMES:APA91bEt7ix5HNm-ct42Hoc3fJC1aTCkDVoPg7952GndQm2BEJushDRtAzaCjZXtjO8olOZNz__3EUFCMPuuYyPTT9StBTVrFe5yZDBnOdxLy0n9xIbImt5qsphtVRXkmb2BQu0LgvQ-"));
+        // var a = await SetUserToken(
+        //     new SetUserTokenRequest(
+        //         "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+        //         "cTJewO0m_f_-6jVyEowMES:APA91bEt7ix5HNm-ct42Hoc3fJC1aTCkDVoPg7952GndQm2BEJushDRtAzaCjZXtjO8olOZNz__3EUFCMPuuYyPTT9StBTVrFe5yZDBnOdxLy0n9xIbImt5qsphtVRXkmb2BQu0LgvQ-"));
 
 
         // string token = "fCR2itQ0_EWyYk-YueXpW1:APA91bHlwFa_vq6YEOf7SvRDklt5Nso_-X4Hx8Iz-GZU1z0BqliRIDpdi4Ru0aqDJJ9G0qlQtlYCnbQj2evs6wcMpLr_RFc-_ukud1qe0qvxlzhDPQPOrfWOIZrPFXozGj0Z8UPCqbLX";
@@ -154,7 +197,6 @@ public class CloudMessagingProvider : ICloudMessagingProvider
     {
         try
         {
-
             var tokenResult = await FindUserToken(request.UserId);
             context.UserTokens.Remove(tokenResult);
 

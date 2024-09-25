@@ -11,5 +11,7 @@ public interface IDatabaseAccountProvider
     public Task<IResult> GetAccountsForDevice(AccountGetForDeviceRequest accountGetRequest);
     public Task<IResult> GetAllAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest);
     public Task<Account?> GetAccountByUserIdAndBankCardNumber(string userId, string bankCardNumber);
+
+    public Task<Account?> GetAccountByUserIdAndAccountNumber(string userId, string accountNumber);
     public void Test();
 }

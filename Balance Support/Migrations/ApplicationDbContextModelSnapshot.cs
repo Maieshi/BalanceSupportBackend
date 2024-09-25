@@ -76,7 +76,7 @@ namespace Balance_Support.Migrations
                     b.ToTable("Accounts");
                 });
 
-            modelBuilder.Entity("Balance_Support.DataClasses.Transaction", b =>
+            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.Transaction", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -116,7 +116,7 @@ namespace Balance_Support.Migrations
                     b.ToTable("Transactions");
                 });
 
-            modelBuilder.Entity("Balance_Support.DataClasses.User", b =>
+            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.User", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -137,7 +137,7 @@ namespace Balance_Support.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Balance_Support.DataClasses.UserToken", b =>
+            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.UserToken", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -159,9 +159,37 @@ namespace Balance_Support.Migrations
                     b.ToTable("UserTokens");
                 });
 
+            modelBuilder.Entity("UserSettings", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("RowCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(100);
+
+                    b.Property<int>("SelectedGroup")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserSettings");
+                });
+
             modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.Account", b =>
                 {
-                    b.HasOne("Balance_Support.DataClasses.User", "User")
+                    b.HasOne("Balance_Support.DataClasses.DatabaseEntities.User", "User")
                         .WithMany("Accounts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -170,7 +198,7 @@ namespace Balance_Support.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Balance_Support.DataClasses.Transaction", b =>
+            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.Transaction", b =>
                 {
                     b.HasOne("Balance_Support.DataClasses.DatabaseEntities.Account", "Account")
                         .WithMany("Transactions")
@@ -178,7 +206,7 @@ namespace Balance_Support.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Balance_Support.DataClasses.User", "User")
+                    b.HasOne("Balance_Support.DataClasses.DatabaseEntities.User", "User")
                         .WithMany("Transactions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -189,11 +217,22 @@ namespace Balance_Support.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Balance_Support.DataClasses.UserToken", b =>
+            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.UserToken", b =>
                 {
-                    b.HasOne("Balance_Support.DataClasses.User", "User")
+                    b.HasOne("Balance_Support.DataClasses.DatabaseEntities.User", "User")
                         .WithMany("UserTokens")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UserSettings", b =>
+                {
+                    b.HasOne("Balance_Support.DataClasses.DatabaseEntities.User", "User")
+                        .WithOne("UserSettings")
+                        .HasForeignKey("UserSettings", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -205,11 +244,14 @@ namespace Balance_Support.Migrations
                     b.Navigation("Transactions");
                 });
 
-            modelBuilder.Entity("Balance_Support.DataClasses.User", b =>
+            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.User", b =>
                 {
                     b.Navigation("Accounts");
 
                     b.Navigation("Transactions");
+
+                    b.Navigation("UserSettings")
+                        .IsRequired();
 
                     b.Navigation("UserTokens");
                 });

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Balance Support")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9d743d706a01562c6911b7bb15d8f72a369869fa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6274c7db4064b16724a0d065c2b8af8738f2aa46")]
 [assembly: System.Reflection.AssemblyProductAttribute("Balance Support")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Balance Support")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

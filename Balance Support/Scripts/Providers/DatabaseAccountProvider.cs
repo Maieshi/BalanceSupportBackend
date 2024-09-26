@@ -104,8 +104,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
         if (!accounts.Any())
             return Results.NotFound("Accounts not found");
 
-        return Results.Ok(JsonConvert.SerializeObject(accounts)
-        );
+        return Results.Ok(AccountDto.CreateDtos(accounts));
     }
 
     public async Task<IResult> GetAllAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest)
@@ -117,8 +116,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
         if (!accounts.Any())
             return Results.NotFound("Accounts not found");
 
-        return Results.Ok(JsonConvert.SerializeObject(accounts)
-        );
+        return Results.Ok(AccountDto.CreateDtos(accounts));
     }
 
     public async Task<Account?> GetAccountByUserIdAndAccountNumber(string userId, string accountNumber)
@@ -174,5 +172,4 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
                 acc.SimSlot == simSlot)
             .FirstOrDefaultAsync() != null;
     }
-    
-}
+} 

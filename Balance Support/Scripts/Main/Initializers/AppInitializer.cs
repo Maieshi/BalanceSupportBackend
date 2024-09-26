@@ -30,8 +30,8 @@ public static class AppInitializer
         #region testovaya huinya
 
         app.MapGet("/", () => "Hello World!");
-        app.MapGet("/GetContext", (HttpContext context) => TypedResults.Ok(new UserDto(context.User)));
-        app.MapPost("/PostContext", (HttpContext context) => TypedResults.Ok(new UserDto(context.User)));
+        app.MapGet("/GetContext", (HttpContext context) => TypedResults.Ok(new UserAuthDto(context.User)));
+        app.MapPost("/PostContext", (HttpContext context) => TypedResults.Ok(new UserAuthDto(context.User)));
 
         app.MapPost("/todos", (ToDo todo) =>
         {
@@ -39,11 +39,11 @@ public static class AppInitializer
             return TypedResults.Created($"/todos/{todo.id}", todo);
         });
         app.MapGet("/GetDatabase", async (ApplicationDbContext context) => TypedResults.Ok(new { 
-            Users = JsonConvert.SerializeObject(await context.Users.ToListAsync()), 
-            UserSettings = JsonConvert.SerializeObject(await context.UserSettings.ToListAsync()), 
-            Accounts = JsonConvert.SerializeObject(await context.Accounts.ToListAsync()), 
-            Transactions = JsonConvert.SerializeObject(await context.Transactions.ToListAsync()), 
-            UserTokens = JsonConvert.SerializeObject(await context.UserTokens.ToListAsync()) 
+            Users = UserDto.CreateDtos(await context.Users.ToListAsync()), 
+            UserSettings = UserSettingsDto.CreateDtos(await context.UserSettings.ToListAsync()), 
+            Accounts = AccountDto.CreateDtos(await context.Accounts.ToListAsync()), 
+            Transactions = TransactionDto.CreateDtos(await context.Transactions.ToListAsync()), 
+            UserTokens =UserTokenDto.CreateDtos(await context.UserTokens.ToListAsync())
         }));
         #endregion
 
@@ -275,9 +275,9 @@ public static class AppInitializer
 
 public record ToDo(int id, string name, bool isComplited);
 
-public class UserDto
+public class UserAuthDto
 {
-    public UserDto(ClaimsPrincipal claimsPrincipal)
+    public UserAuthDto(ClaimsPrincipal claimsPrincipal)
     {
         IsAuthenticated = claimsPrincipal.Identity?.IsAuthenticated ?? false;
         Name = claimsPrincipal.Identity?.Name;

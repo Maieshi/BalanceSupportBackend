@@ -9,6 +9,7 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\publish\Balance Support.runtimeconfig.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\publish\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\publish\Config.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Requests\http-client.env.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Third-party configs\balance-support-b9da3-default-rtdb-export (3).json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Third-party configs\Firebase\FirebaseAuthApiKey.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Third-party configs\Firebase\FirebaseCloudMessaging.json

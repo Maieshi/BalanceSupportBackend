@@ -134,3 +134,121 @@ public class ApplicationDbContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 }
+public class UserDto
+{
+    public string Id { get; set; }
+    public string Email { get; set; }
+    public string DisplayName { get; set; }
+    // Add other properties as needed
+
+    public static List<UserDto> CreateDtos(List<User> users)
+    {
+        return users.Select(u => new UserDto
+        {
+            Id = u.Id,
+            Email = u.Email,
+            DisplayName = u.DisplayName
+            // Map other properties as needed
+        }).ToList();
+    }
+}
+//TODO:remove dtos, create IDtoConvertable to each entity and with this format implementation: new{Id = entity.Id,...}, create for dbset and list of extension that converts it to list dtos   
+public class AccountDto
+{
+    public string Id { get; set; }
+    public string UserId { get; set; }
+    public string AccountNumber { get; set; }
+    public string LastName { get; set; }
+    public int AccountGroup { get; set; }
+    public int DeviceId { get; set; }
+    public int SimSlot { get; set; }
+    public string SimCardNumber { get; set; }
+    public string BankCardNumber { get; set; }
+    public string BankType { get; set; }
+    public string Description { get; set; }
+
+    public static List<AccountDto> CreateDtos(List<Account> accounts)
+        => accounts.Select(account => new AccountDto
+        {
+            UserId = account.UserId,
+            Id = account.Id,
+            AccountNumber = account.AccountNumber,
+            LastName = account.LastName,
+            AccountGroup = account.AccountGroup,
+            DeviceId = account.DeviceId,
+            SimSlot = account.SimSlot,
+            SimCardNumber = account.SimCardNumber,
+            BankCardNumber = account.BankCardNumber,
+            BankType = account.BankType,
+            Description = account.Description
+        }).ToList();
+}
+public class TransactionDto
+{
+    public string Id { get; set; }
+    public string AccountId { get; set; }  // Foreign key to Account
+    public string UserId { get; set; }     // Foreign key to User
+    public decimal Amount { get; set; }
+    public decimal Balance { get; set; }
+    public DateTime Time { get; set; }
+    public int TransactionType { get; set; }
+    public string Message { get; set; }
+
+    // Add other properties as needed
+
+    public static List<TransactionDto> CreateDtos(List<Transaction> transactions)
+    {
+        return transactions.Select(t => new TransactionDto
+        {
+            Id = t.Id,
+            UserId = t.UserId,
+            AccountId = t.AccountId,
+            Amount = t.Amount,
+            Balance = t.Balance,
+            Time = t.Time,
+            TransactionType = t.TransactionType,
+            Message = t.Message
+            // Map other properties as needed
+        }).ToList();
+    }
+}
+
+public class UserTokenDto
+{
+    public string Id { get; set; }
+    public string UserId { get; set; }  // Foreign key to User
+    public string Token { get; set; }
+    // Add other properties as needed
+
+    public static List<UserTokenDto> CreateDtos(List<UserToken> userTokens)
+    {
+        return userTokens.Select(ut => new UserTokenDto
+        {
+            Id = ut.Id,
+            UserId = ut.UserId,  
+            Token = ut.Token
+            // Map other properties as needed
+        }).ToList();
+    }
+}
+
+public class UserSettingsDto
+{
+    public string Id { get; set; }
+    public string UserId { get; set; }  // Foreign key to User
+    public int SelectedGroup { get; set; }
+    public int RowCount { get; set; }
+    // Add other properties as needed
+
+    public static List<UserSettingsDto> CreateDtos(List<UserSettings> userSettings)
+    {
+        return userSettings.Select(us => new UserSettingsDto
+        {
+            Id = us.Id,
+            UserId = us.UserId,   // Foreign key to User
+            SelectedGroup = us.SelectedGroup,
+            RowCount = us.RowCount
+            // Map other properties as needed
+        }).ToList();
+    }
+}

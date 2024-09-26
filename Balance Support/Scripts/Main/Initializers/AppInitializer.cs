@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Balance_Support.DataClasses.Records;
 using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData;
 using Balance_Support.DataClasses.Records.UserData;
@@ -9,6 +8,8 @@ using Balance_Support.Scripts.Providers;
 using Balance_Support.Scripts.Providers.Interfaces;
 using Balance_Support.Scripts.Validators;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Balance_Support.Scripts.Main.Initializers;
 
@@ -16,7 +17,7 @@ public static class AppInitializer
 {
     public static async Task Initialize(WebApplication app)
     {
-        app.UseCors("AllowClientDomain");
+        app.UseCors("AllowSpecificOrigin");
         app.UseHttpsRedirection();
         app.UseSession();
         app.UseAuthentication();
@@ -24,6 +25,8 @@ public static class AppInitializer
 
         var todos = new List<ToDo>();
 
+        #region RequestsMapping
+        
         #region testovaya huinya
 
         app.MapGet("/", () => "Hello World!");
@@ -35,33 +38,13 @@ public static class AppInitializer
             todos.Add(todo);
             return TypedResults.Created($"/todos/{todo.id}", todo);
         });
-        app.MapPost("/todosClass", (ToDoClass todo) =>
-        {
-            var rec = new ToDo(todo.Id, todo.name, todo.isComplited);
-            todos.Add(rec);
-            return TypedResults.Created($"/todos/{rec.id}", rec);
-        });
-
-
-        app.MapGet("/testEmpty", () => { return "Success"; });
-        app.MapPost("/testRoute/{id}/{name}",
-            (int id, string name) => { return $"Success {new TestModel(id, name)}"; });
-        app.MapPost("/testModel", (TestModel model) => { return "Success"; });
-        app.MapPost("/testModelFromBody", ([FromBody] TestModel model) => { return "Success"; });
-        app.MapPost("/testFromQuery", (int id, string name) =>
-        {
-            var model = new TestModel(id, name);
-            return $"Success {model}";
-        });
-        app.MapPost("/testAcceptsModel", (TestModel model) => { return $"Success {model}"; })
-            .Accepts<TestModel>("application/json");
-        app.MapPost("/testAcceptsModelFromBody", ([FromBody] TestModel model) => { return $"Success {model}"; })
-            .Accepts<TestModel>("application/json");
-        app.MapPost("/testAcceptsModel", (TestModel model) => { return $"Success {model}"; })
-            .Accepts<TestModel>("application/json");
-        app.MapPost("/testAcceptsModelFromBody", ([FromBody] TestModel model) => { return $"Success {model}"; })
-            .Accepts<TestModel>("application/json");
-
+        app.MapGet("/GetDatabase", async (ApplicationDbContext context) => TypedResults.Ok(new { 
+            Users = JsonConvert.SerializeObject(await context.Users.ToListAsync()), 
+            UserSettings = JsonConvert.SerializeObject(await context.UserSettings.ToListAsync()), 
+            Accounts = JsonConvert.SerializeObject(await context.Accounts.ToListAsync()), 
+            Transactions = JsonConvert.SerializeObject(await context.Transactions.ToListAsync()), 
+            UserTokens = JsonConvert.SerializeObject(await context.UserTokens.ToListAsync()) 
+        }));
         #endregion
 
         #region User
@@ -197,7 +180,7 @@ public static class AppInitializer
                 return ResultContainer
                     .Start()
                     .Validate<AccountGetForDeviceRequest, AccountGetForDeviceRequestValidator>(deviceGetRequestData)
-                    .Authorize(context)
+                    // .Authorize(context)
                     .Process(async () => await deviceProvider.GetAccountsForDevice(deviceGetRequestData))
                     .GetResult();
             });
@@ -212,7 +195,7 @@ public static class AppInitializer
                 return ResultContainer
                     .Start()
                     .Validate<AccountGetAllForUserRequest, AccountGetAllForUserRequestValidator>(getAllForUserRequest)
-                    .Authorize(context)
+                    // .Authorize(context)
                     .Process(async () => await deviceProvider.GetAllAccountsForUser(getAllForUserRequest))
                     .GetResult();
             });
@@ -280,7 +263,7 @@ public static class AppInitializer
         );
 
         #endregion
-        
+        #endregion
         
 //TODO: create new endpoint filtration and validation
 //TODO: try to rebuild project to mvc
@@ -288,15 +271,6 @@ public static class AppInitializer
 //TODO: try to upgrade architecture and make the code less cohesive
 
     }
-}
-
-public class ToDoClass
-{
-    public int Id { get; set; }
-
-    public string name { get; set; }
-
-    public bool isComplited { get; set; }
 }
 
 public record ToDo(int id, string name, bool isComplited);

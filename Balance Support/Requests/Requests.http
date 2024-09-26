@@ -1,12 +1,19 @@
 ﻿######### Testovaya huinya
 
 GET https://localhost:5001/
+
 ###
 GET https://localhost:5001/todos/1
+
 ###
 GET https://localhost:5001/GetContext
+
 ###
 POST https://localhost:5001/PostContext
+
+###
+GET https://localhost:5001/GetDatabase
+
 ###
 POST https://localhost:5001/todos
 content-type: application/json
@@ -16,66 +23,9 @@ content-type: application/json
 "name":"aaa",   
 "isComplited":true
 }
-###
-POST https://localhost:5001/todosClass
-content-type: application/json
 
-{ 
-  "id":2,  
-"name":"aaa",   
-"isComplited":true
-}
-###
-GET https://localhost:5001/testEmpty
-###
-POST https://localhost:5001/testRoute/1/Test
-###
-POST https://localhost:5001/testModel
-Content-Type: application/json
+######### User 
 
-{ 
-  "id": 1,  
-  "name": "Test"
-}
-###
-POST https://localhost:5001/testModelFromBody
-Content-Type: application/json
-
-{ 
-  "id": 1,  
-  "name": "Test"
-}
-###
-POST https://localhost:5001/testFromQuery?id=1&name=Test
-###
-POST https://localhost:5001/testAcceptsModel
-Content-Type: application/json
-
-{ 
-  "id": 1,  
-  "name": "Test"
-}
-###
-POST https://localhost:5001/testAcceptsModelFromBody
-Content-Type: application/json
-
-{ 
-  "id": 1,  
-  "name": "Test"
-}
-
-######### User
-
-POST https://localhost:5001/Desktop/User/Register
-content-type: application/json
-
-{
-  "DisplayName":"myuser",
-  "Email" : "crazban1@mail.ru",
-  "Password": "testuser4testuser4"
-}
-
-###
 POST https://localhost:5001/Mobile/User/Login
 content-type: application/json
 
@@ -164,8 +114,6 @@ GET https://localhost:5001/Mobile/Account/GetForDevice/sDAmWae7RqMsmWIC74lVdLuQR
 
 ###
 GET https://localhost:5001/Desktop/Account/GetAllForUser/sDAmWae7RqMsmWIC74lVdLuQRpq1
-
-
 
 ######### UserToken
 

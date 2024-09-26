@@ -72,18 +72,15 @@ public static class ServicesInitializer
 
         services.AddCors(options =>
         {
-            options.AddPolicy("AllowClientDomain", builder =>
-            {
-                builder.WithOrigins("http://localhost:5173", "https://balance-support.vercel.app",
-                        "https://localhost:7158") // Client domain
+            options.AddPolicy("AllowSpecificOrigin",
+                x => x.WithOrigins("http://localhost:5173", "https://balance-support.vercel.app",
+                        "https://localhost:7158")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .AllowCredentials(); // Allow cookies to be sent in requests
-            });
+                    .AllowCredentials());
         });
 
         services.AddAuthorization();
-        //services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<DeviceUpdateRequestValidator>());
 
         services.AddSingleton(
             new FirebaseClient("https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/",
@@ -101,36 +98,12 @@ public static class ServicesInitializer
         services.AddScoped<IDatabaseTransactionProvider, DatabaseTransactionProvider>();
         services.AddScoped<INotificationHandler, NotificationHandler>();
         services.AddScoped<IDatabaseUserSettingsProvider, DatabaseUserSettingsProvider>();
-        
-        // services.AddScoped<FirebaseToSqlServerMigrator>();
 
         var provider = services.BuildServiceProvider();
         
         //TODO: split providers to smaller interfaces to provide only functions that needed and make like container.BindInterfaces() 
-        // await provider.GetService<IDatabaseUserProvider>().CreateUserAsync(new User
-        //     { Id = "testId", DisplayName = "testUser", Email = "userMail@gmail.com" });
 
-        // await provider.GetService<IDatabaseAccountProvider>().RegisterAccount(
-        //     new AccountRegisterRequest(
-        //         "testId",
-        //         new AccountDataRequest(
-        //             "testAccountNumber",
-        //             "testName",
-        //             4,
-        //             4,
-        //             2,
-        //             "1234567890",
-        //             "1234",
-        //             "Sberbank",
-        //             "asdfasdfasdf")
-        //     )
-        // );
-
-        // await provider.GetService<INotificationHandler>().HandleNotification(new NotificationHandleRequest(
-        //     "testId",
-        //     "MIR-1234 14:32 зачисление 2800р Sovcombank Баланс: 16 325.95р"
-        // ));
-
+        
     }
 
     private static async Task<string> GetTokenByGoogleServices()

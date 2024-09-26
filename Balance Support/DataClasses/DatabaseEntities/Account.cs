@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Balance_Support.DataClasses.Records.AccountData;
+using Newtonsoft.Json;
 
 namespace Balance_Support.DataClasses.DatabaseEntities;
 
@@ -28,11 +29,13 @@ public class Account : BaseEntity
     [StringLength(500)]
     public string? Description { get; set; } // Nullable property
 
+    [JsonIgnore]
     public ICollection<Transaction> Transactions { get; set; } // Navigation property
 
     [ForeignKey("User")]
     public string UserId { get; set; }  // Foreign key to User
-
+    
+    [JsonIgnore]
     public User User { get; set; } // Navigation property
 
     public void UpdateAccount(AccountUpdateRequest accountUpdateRequest)

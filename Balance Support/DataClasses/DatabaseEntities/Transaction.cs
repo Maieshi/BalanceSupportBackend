@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace Balance_Support.DataClasses.DatabaseEntities;
 
@@ -18,7 +19,8 @@ public class Transaction : BaseEntity
 
     [StringLength(250)]
     public string Message { get; set; }
-
+    [JsonIgnore]
     public Account Account { get; set; }  // Navigation property
+    [JsonIgnore]
     public User User { get; set; }   
 }

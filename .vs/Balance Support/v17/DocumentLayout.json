@@ -78,7 +78,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
@@ -91,8 +91,7 @@
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAaAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-30T12:36:53.54Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Document",
@@ -118,8 +117,11 @@
               "ViewState": "AQIAAEIAAAAAAAAAAAAiwL0AAAAaAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
               "WhenOpened": "2024-09-15T16:57:50.68Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
               "$type": "Document",
@@ -129,14 +131,10 @@
               "RelativeDocumentMoniker": "Balance Support\\Scripts\\Main\\Initializers\\AppInitializer.cs",
               "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Main\\Initializers\\AppInitializer.cs",
               "RelativeToolTip": "Balance Support\\Scripts\\Main\\Initializers\\AppInitializer.cs",
-              "ViewState": "AQIAAE8AAAAAAAAAAAAEwLwAAAAPAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABoAAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-09-24T18:41:16.303Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
               "$type": "Document",

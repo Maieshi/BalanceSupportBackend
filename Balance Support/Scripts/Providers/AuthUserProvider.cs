@@ -85,7 +85,7 @@ public class AuthUserProvider : IAuthUserProvider
             // Manage claims-based session
             await SignInUserV2(userCred, password, context);
 
-            return Results.Ok(new { user.Id, authLink.FirebaseToken });
+            return Results.Ok(new { user.Id,user.DisplayName ,authLink.FirebaseToken });
         }
         catch (Exception ex)
         {

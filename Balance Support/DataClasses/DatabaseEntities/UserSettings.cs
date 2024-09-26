@@ -1,5 +1,6 @@
  using System.ComponentModel.DataAnnotations.Schema;
  using Balance_Support.DataClasses.DatabaseEntities;
+ using Newtonsoft.Json;
 
  public class UserSettings:BaseEntity
 { 
@@ -9,7 +10,7 @@
     public int SelectedGroup { get; set; }
 
     public int RowCount { get; set; }
-
+    [JsonIgnore]
     public virtual User User { get; set; }
     public UserSettings(string userId)
     {

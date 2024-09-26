@@ -3,6 +3,7 @@ using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.Scripts.Extensions.RecordExtenstions;
 using Balance_Support.Scripts.Providers.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Balance_Support.Scripts.Providers;
 
@@ -21,7 +22,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
     {
         if (!await userProvider.IsUserWithIdExist(accountRegisterRequest.UserId))
             return Results.Problem(statusCode: 500, title: "User not found");
-            //TODO: check if account with same account number exists for this user
+        //TODO: check if account with same account number exists for this user
 
         if (await IsAlreadyExistAccountWithGropAndDeviceId(accountRegisterRequest.UserId,
                 accountRegisterRequest.AccountData.AccountGroup, accountRegisterRequest.AccountData.DeviceId,
@@ -30,9 +31,9 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
                 title: "One account with same group and device id already registered");
         try
         {
-            var acc =  context.Accounts.Add(accountRegisterRequest.NewAccount());
+            var acc = context.Accounts.Add(accountRegisterRequest.NewAccount());
             await context.SaveChangesAsync();
-            
+
             return Results.Created("Accounts", acc.Entity);
         }
         catch (Exception ex)
@@ -78,7 +79,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             if (currentAccount == null)
                 return Results.Problem(statusCode: 500, title: "Account not found");
 
-           context.Accounts.Remove(currentAccount);
+            context.Accounts.Remove(currentAccount);
             await context.SaveChangesAsync();
             return Results.Ok($"Devices/{accountDeleteRequest.AccountId}");
         }
@@ -92,7 +93,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
     public async Task<IResult> GetAccountsForDevice(AccountGetForDeviceRequest accountGetRequest)
     {
         if (!await userProvider.IsUserWithIdExist(accountGetRequest.UserId))
-            return Results.Problem(statusCode: 500, title: "User not found");
+            return Results.NotFound("User not found");
 
         var accounts = (await FindAccountsByUserId(accountGetRequest.UserId))
             .Where(x =>
@@ -101,31 +102,30 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             .ToList();
 
         if (!accounts.Any())
-            return Results.Problem(statusCode: 500, title: "Accounts not found");
-        
-        return Results.Ok(new
-        {
-            Accounts = accounts
-        });
+            return Results.NotFound("Accounts not found");
+
+        return Results.Ok(JsonConvert.SerializeObject(accounts)
+        );
     }
-    
+
     public async Task<IResult> GetAllAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest)
     {
         if (!await userProvider.IsUserWithIdExist(accountGetAllForUserRequest.UserId))
-            return Results.Problem(statusCode: 500, title: "User not found");
-        
+            return Results.NotFound("User not found");
+
         var accounts = await FindAccountsByUserId(accountGetAllForUserRequest.UserId);
         if (!accounts.Any())
-            return Results.Problem(statusCode: 500, title: "Accounts not found");
-        
-        return Results.Ok(new
-        {
-            Accounts = accounts
-        });
+            return Results.NotFound("Accounts not found");
+
+        return Results.Ok(JsonConvert.SerializeObject(accounts)
+        );
     }
 
     public async Task<Account?> GetAccountByUserIdAndAccountNumber(string userId, string accountNumber)
-        =>await context.Accounts.Where(x => x.UserId == userId && x.AccountNumber == accountNumber).FirstOrDefaultAsync();
+    {
+        return await context.Accounts.Where(x => x.UserId == userId && x.AccountNumber == accountNumber)
+            .FirstOrDefaultAsync();
+    }
 
     public async void Test()
     {
@@ -147,25 +147,32 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
 
     public async Task<Account?> GetAccountByUserIdAndBankCardNumber(string userId,
         string bankCardNumber)
-     =>(await FindAccountsByUserId(userId))
+    {
+        return (await FindAccountsByUserId(userId))
             .FirstOrDefault(x =>
                 string.Equals(x.BankCardNumber, bankCardNumber));
-    
+    }
+
     public async Task<Account?> FindAccountByAccountId(string accountId)
-        => await context.Accounts.FindAsync(accountId);
+    {
+        return await context.Accounts.FindAsync(accountId);
+    }
 
     private async Task<List<Account>> FindAccountsByUserId(string userId)
-        => await context.Accounts.Where(x => x.UserId == userId)
+    {
+        return await context.Accounts.Where(x => x.UserId == userId)
             .ToListAsync();
+    }
 
     private async Task<bool> IsAlreadyExistAccountWithGropAndDeviceId(string userId, int accountGroup,
         int deviceId, int simSlot)
-        =>
-            (await context.Accounts.Where(acc =>
-                    acc.UserId == userId &&
-                    acc.AccountGroup == accountGroup &&
-                    acc.DeviceId == deviceId &&
-                    acc.SimSlot == simSlot)
-                .FirstOrDefaultAsync()) != null;
-
+    {
+        return await context.Accounts.Where(acc =>
+                acc.UserId == userId &&
+                acc.AccountGroup == accountGroup &&
+                acc.DeviceId == deviceId &&
+                acc.SimSlot == simSlot)
+            .FirstOrDefaultAsync() != null;
+    }
+    
 }

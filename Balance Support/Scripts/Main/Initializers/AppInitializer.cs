@@ -165,7 +165,7 @@ public static class AppInitializer
                 .Start()
                 .Validate<AccountDeleteRequest, DeviceDeleteRequestValidator>(deviceRegisterData)
                 .Authorize(context)
-                .Process(async () => await deviceProvider.DeleteDevice(deviceRegisterData))
+                .Process(async () => await deviceProvider.DeleteAccount(deviceRegisterData))
                 .GetResult()
         );
 

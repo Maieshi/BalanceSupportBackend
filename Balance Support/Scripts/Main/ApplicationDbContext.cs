@@ -166,22 +166,25 @@ public class AccountDto
     public string BankCardNumber { get; set; }
     public string BankType { get; set; }
     public string Description { get; set; }
+    
+    public AccountDto(Account account)
+    {
+        UserId = account.UserId;
+        Id = account.Id;
+        AccountNumber = account.AccountNumber;
+        LastName = account.LastName;
+        AccountGroup = account.AccountGroup;
+        DeviceId = account.DeviceId;
+        SimSlot = account.SimSlot;
+        SimCardNumber = account.SimCardNumber;
+        BankCardNumber = account.BankCardNumber;
+        BankType = account.BankType;
+        Description = account.Description;
+    }
+
 
     public static List<AccountDto> CreateDtos(List<Account> accounts)
-        => accounts.Select(account => new AccountDto
-        {
-            UserId = account.UserId,
-            Id = account.Id,
-            AccountNumber = account.AccountNumber,
-            LastName = account.LastName,
-            AccountGroup = account.AccountGroup,
-            DeviceId = account.DeviceId,
-            SimSlot = account.SimSlot,
-            SimCardNumber = account.SimCardNumber,
-            BankCardNumber = account.BankCardNumber,
-            BankType = account.BankType,
-            Description = account.Description
-        }).ToList();
+        => accounts.Select(account => new AccountDto(account)).ToList();
 }
 public class TransactionDto
 {

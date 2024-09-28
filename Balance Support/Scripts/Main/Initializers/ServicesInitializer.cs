@@ -90,7 +90,7 @@ public static class ServicesInitializer
         services.AddSingleton<IFirebaseAuthProvider>(
             new FirebaseAuthProvider(new FirebaseConfig(apiKey.ApiKey))
         );
-
+//TODO:create DI installers
         services.AddScoped<IDatabaseUserProvider, DatabaseUserProvider>();
         services.AddScoped<IAuthUserProvider, AuthUserProvider>();
         services.AddScoped<IDatabaseAccountProvider, DatabaseAccountProvider>();

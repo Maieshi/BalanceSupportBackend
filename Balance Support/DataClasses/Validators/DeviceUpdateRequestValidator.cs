@@ -8,6 +8,6 @@ public class DeviceUpdateRequestValidator : AbstractValidator<AccountUpdateReque
     public DeviceUpdateRequestValidator()
     {
         RuleFor(x=> x.AccountId).NotNull().NotEmpty();
-        RuleFor(x=> x.AccountDataRequest).NotNull().SetValidator(new AccountDataRequestValidator());
+        RuleFor(x=> x.AccountData).NotNull().SetValidator(new AccountDataRequestValidator());
     }
 }

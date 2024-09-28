@@ -21,20 +21,17 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
     public async Task<IResult> RegisterAccount(AccountRegisterRequest accountRegisterRequest)
     {
         if (!await userProvider.IsUserWithIdExist(accountRegisterRequest.UserId))
-            return Results.Problem(statusCode: 500, title: "User not found");
+            return Results.NotFound("User");
         //TODO: check if account with same account number exists for this user
-
-        if (await IsAlreadyExistAccountWithGropAndDeviceId(accountRegisterRequest.UserId,
-                accountRegisterRequest.AccountData.AccountGroup, accountRegisterRequest.AccountData.DeviceId,
-                accountRegisterRequest.AccountData.SimSlot))
+        if (!await CanProceedRequest(accountRegisterRequest.AccountData,accountRegisterRequest.UserId))
             return Results.Problem(statusCode: 500,
-                title: "One account with same group and device id already registered");
+                title: "One account with same unique data already registered");
         try
         {
             var acc = context.Accounts.Add(accountRegisterRequest.NewAccount());
             await context.SaveChangesAsync();
 
-            return Results.Created("Accounts", acc.Entity);
+            return Results.Created("Accounts", new AccountDto(acc.Entity));
         }
         catch (Exception ex)
         {
@@ -49,13 +46,11 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
         {
             var account = await FindAccountByAccountId(accountUpdateRequest.AccountId);
             if (account == null)
-                return Results.Problem(statusCode: 500, title: "Account not found");
-
-            if (await IsAlreadyExistAccountWithGropAndDeviceId(accountUpdateRequest.UserId,
-                    accountUpdateRequest.AccountDataRequest.AccountGroup,
-                    accountUpdateRequest.AccountDataRequest.DeviceId, accountUpdateRequest.AccountDataRequest.SimSlot))
+                return Results.NotFound("Account");
+            
+            if (!await CanProceedRequest(accountUpdateRequest.AccountData,accountUpdateRequest.UserId, accountUpdateRequest.AccountId))
                 return Results.Problem(statusCode: 500,
-                    title: "One account with same group and device id already registered");
+                    title: "One account with same unique data already registered");
 
             account.UpdateAccount(accountUpdateRequest);
             context.Accounts.Update(account);
@@ -66,18 +61,18 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
         catch (Exception ex)
         {
             return Results.Problem(ex.Message, statusCode: 500,
-                title: "An error occurred while updating device ");
+                title: "An error occurred while updating account");
         }
     }
 
 
-    public async Task<IResult> DeleteDevice(AccountDeleteRequest accountDeleteRequest)
+    public async Task<IResult> DeleteAccount(AccountDeleteRequest accountDeleteRequest)
     {
         try
         {
             var currentAccount = await FindAccountByAccountId(accountDeleteRequest.AccountId);
             if (currentAccount == null)
-                return Results.Problem(statusCode: 500, title: "Account not found");
+                return Results.NotFound("Account");
 
             context.Accounts.Remove(currentAccount);
             await context.SaveChangesAsync();
@@ -93,7 +88,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
     public async Task<IResult> GetAccountsForDevice(AccountGetForDeviceRequest accountGetRequest)
     {
         if (!await userProvider.IsUserWithIdExist(accountGetRequest.UserId))
-            return Results.NotFound("User not found");
+            return Results.NotFound("User");
 
         var accounts = (await FindAccountsByUserId(accountGetRequest.UserId))
             .Where(x =>
@@ -102,7 +97,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             .ToList();
 
         if (!accounts.Any())
-            return Results.NotFound("Accounts not found");
+            return Results.NotFound("Accounts");
 
         return Results.Ok(AccountDto.CreateDtos(accounts));
     }
@@ -110,13 +105,23 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
     public async Task<IResult> GetAllAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest)
     {
         if (!await userProvider.IsUserWithIdExist(accountGetAllForUserRequest.UserId))
-            return Results.NotFound("User not found");
+            return Results.NotFound("User");
 
         var accounts = await FindAccountsByUserId(accountGetAllForUserRequest.UserId);
         if (!accounts.Any())
-            return Results.NotFound("Accounts not found");
+            return Results.NotFound("Accounts");
 
-        return Results.Ok(AccountDto.CreateDtos(accounts));
+        return Results.Ok(new
+        {
+            Balance = new Random().Next(1000, 2001),
+            DailyExpression = new Random().Next(1000, 2001),
+            Accounts =  AccountDto.CreateDtos(accounts).Select(x => new
+            {
+                Account = x,
+                T = new Random().Next(100, 200),
+                D = new Random().Next(100, 200)
+            })
+        });
     }
 
     public async Task<Account?> GetAccountByUserIdAndAccountNumber(string userId, string accountNumber)
@@ -125,23 +130,6 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             .FirstOrDefaultAsync();
     }
 
-    public async void Test()
-    {
-        var result = await RegisterAccount(
-            new AccountRegisterRequest(
-                "sDAmWae7RqMsmWIC74lVdLuQRpq1",
-                new AccountDataRequest(
-                    "123456789",
-                    "Ivaniv",
-                    3,
-                    3,
-                    1,
-                    "+88005553535",
-                    "1488",
-                    "SberBank",
-                    "Very rich person"
-                )));
-    }
 
     public async Task<Account?> GetAccountByUserIdAndBankCardNumber(string userId,
         string bankCardNumber)
@@ -160,16 +148,25 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
     {
         return await context.Accounts.Where(x => x.UserId == userId)
             .ToListAsync();
-    }
+    } 
 
-    private async Task<bool> IsAlreadyExistAccountWithGropAndDeviceId(string userId, int accountGroup,
-        int deviceId, int simSlot)
+
+      
+    
+    private async Task<bool> CanProceedRequest(AccountDataRequest accountData, string userId, string? accountId = null)
     {
-        return await context.Accounts.Where(acc =>
-                acc.UserId == userId &&
-                acc.AccountGroup == accountGroup &&
-                acc.DeviceId == deviceId &&
-                acc.SimSlot == simSlot)
-            .FirstOrDefaultAsync() != null;
+        var existingAccounts = await context.Accounts
+            .Where(x => x.UserId == userId && (accountId == null || x.Id != accountId))
+            .ToListAsync();
+
+        var hasSameAccountNumber = existingAccounts.Exists(x => x.AccountNumber == accountData.AccountNumber);
+        var hasSameSimCardNumber = existingAccounts.Exists(x => x.SimCardNumber == accountData.SimCardNumber);
+        var hasSameGroupDeviceSlot = existingAccounts.Exists(x =>
+            x.AccountGroup == accountData.AccountGroup &&
+            x.DeviceId == accountData.DeviceId &&
+            x.SimSlot == accountData.SimSlot);
+
+        return !(hasSameAccountNumber || hasSameSimCardNumber || hasSameGroupDeviceSlot);
     }
-} 
+    
+}

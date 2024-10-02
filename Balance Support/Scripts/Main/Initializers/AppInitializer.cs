@@ -180,7 +180,7 @@ public static class AppInitializer
                 return ResultContainer
                     .Start()
                     .Validate<AccountGetForDeviceRequest, AccountGetForDeviceRequestValidator>(deviceGetRequestData)
-                    // .Authorize(context)
+                    .Authorize(context)
                     .Process(async () => await deviceProvider.GetAccountsForDevice(deviceGetRequestData))
                     .GetResult();
             });
@@ -195,7 +195,7 @@ public static class AppInitializer
                 return ResultContainer
                     .Start()
                     .Validate<AccountGetAllForUserRequest, AccountGetAllForUserRequestValidator>(getAllForUserRequest)
-                    // .Authorize(context)
+                    .Authorize(context)
                     .Process(async () => await deviceProvider.GetAllAccountsForUser(getAllForUserRequest))
                     .GetResult();
             });
@@ -247,18 +247,6 @@ public static class AppInitializer
                 .Validate<MessagesGetRequest, MessagesGetRequestValidator>(getMessagesRequest)
                 .Authorize(context)
                 .Process(async () => await databaseTransactionProvider.GetMessages(getMessagesRequest))
-                .GetResult()
-        );
-
-        app.MapPost("/Desktop/Transaction/GetTransactions", async (
-                [FromBody] TransactionGetRequest getTransactionRequest,
-                IDatabaseTransactionProvider transactionProvider, HttpContext context) =>
-            ResultContainer
-                .Start()
-                .Validate<TransactionGetRequest, TransactionGetRequestValidatior>(getTransactionRequest)
-                .Authorize(context)
-                .Process(async () =>
-                    await transactionProvider.GetTransactionsForUser(getTransactionRequest))
                 .GetResult()
         );
 

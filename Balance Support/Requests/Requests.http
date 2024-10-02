@@ -104,7 +104,7 @@ content-type: application/json
 }
 ###
 POST https://localhost:5001/Desktop/Account/Delete
-content-type: application/json
+content-type: application/json 
 
 {
   "AccountId": "sampleAccountId"
@@ -140,7 +140,7 @@ content-type: application/json
 
 {
   "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
-  "NotificationText": "СЧЁТ3684 16:00 перевод 3900р Комиссия 19.50р Баланс: 69.40р"
+  "NotificationText": "СЧЁТ2280 16:00 перевод 3900р Комиссия 19.50р Баланс: 69.40р"
 }
 
 ###
@@ -154,14 +154,5 @@ content-type: application/json
   "StartingDate":"2024-09-19T00:42:30.647Z",
   "EndingDate":"2024-09-21T00:42:30.647Z",
   "MessageType":-1,
-  "Amount":100
-}
-
-###
-POST https://localhost:5001/Desktop/Transaction/GetTransactions
-content-type: application/json
-
-{
-  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
   "Amount":100
 }

@@ -10,12 +10,14 @@ namespace Balance_Support.Scripts.Providers;
 public class DatabaseAccountProvider : IDatabaseAccountProvider
 {
     private readonly ApplicationDbContext context;
+    private readonly IDatabaseUserSettingsProvider userSettingsProvider;
     private readonly IDatabaseUserProvider userProvider;
 
-    public DatabaseAccountProvider(IDatabaseUserProvider userProvider, ApplicationDbContext context)
+    public DatabaseAccountProvider(IDatabaseUserProvider userProvider, ApplicationDbContext context, IDatabaseUserSettingsProvider userSettingsProvider)
     {
         this.userProvider = userProvider;
         this.context = context;
+        this.userSettingsProvider = userSettingsProvider;
     }
 
     public async Task<IResult> RegisterAccount(AccountRegisterRequest accountRegisterRequest)
@@ -107,20 +109,36 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
         if (!await userProvider.IsUserWithIdExist(accountGetAllForUserRequest.UserId))
             return Results.NotFound("User");
 
+        var userSeetings = await userSettingsProvider.GetUserSettings(accountGetAllForUserRequest.UserId);
+        if(userSeetings==null)
+            return Results.NotFound("UserSettings");
+
         var accounts = await FindAccountsByUserId(accountGetAllForUserRequest.UserId);
         if (!accounts.Any())
             return Results.NotFound("Accounts");
+        
+        if(userSeetings.SelectedGroup!=0)
+            accounts = accounts.Where(x => x.AccountGroup == userSeetings.SelectedGroup).ToList();
+        
+        var globalIncome =await CalculateGlobalIncome(accountGetAllForUserRequest.UserId);
+        
+        var accountDtos = new List<object>();
+        foreach (var account in accounts)
+        {
+            var accountIncome = await CalculateIncomeForAccount(account.Id);
+            accountDtos.Add(new
+            {
+                Account = new AccountDto(account),
+                T =accountIncome.total,
+                D = accountIncome.daily
+            });
+        }
 
         return Results.Ok(new
         {
-            Balance = new Random().Next(1000, 2001),
-            DailyExpression = new Random().Next(1000, 2001),
-            Accounts =  AccountDto.CreateDtos(accounts).Select(x => new
-            {
-                Account = x,
-                T = new Random().Next(100, 200),
-                D = new Random().Next(100, 200)
-            })
+            Balance = globalIncome.total,
+            DailyExpression = globalIncome.daily,
+            Accounts =  accountDtos
         });
     }
 
@@ -167,6 +185,28 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             x.SimSlot == accountData.SimSlot);
 
         return !(hasSameAccountNumber || hasSameSimCardNumber || hasSameGroupDeviceSlot);
+    }
+    
+    public async Task<(float total, float daily)> CalculateIncomeForAccount(string accountId)
+    {
+        var transactions = await context.Transactions.Where(x => accountId == x.AccountId).ToListAsync();
+        
+        float totalIncome = (float)transactions.Sum(x => x.Amount);
+        float dailyIncome = (float)transactions
+            .Where(x => x.Time.Date == DateTime.UtcNow.Date)
+            .Sum(x => x.Amount);
+        return (totalIncome, dailyIncome);
+    }
+    
+    public async Task<(float total, float daily)> CalculateGlobalIncome(string userId)
+    {
+        var transactions = await context.Transactions.Where(x => userId == x.UserId).ToListAsync();
+        
+        float totalIncome = (float)transactions.Sum(x => x.Amount);
+        float dailyIncome = (float)transactions
+            .Where(x => x.Time.Date == DateTime.UtcNow.Date)
+            .Sum(x => x.Amount);
+        return (totalIncome, dailyIncome);
     }
     
 }

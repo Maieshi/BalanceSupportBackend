@@ -1,3 +1,4 @@
+using System.Linq;
 
 // using FireSharp.Interfaces;
 // using FireSharp.Response;
@@ -85,23 +86,6 @@ public class DatabaseTransactionProvider : IDatabaseTransactionProvider
         return Results.Created("Transactions", newId);
     }
 
-    public async Task<IResult> GetTransactionsForUser(TransactionGetRequest transactionGetRequest)
-    {
-        var transactions =await context.Transactions.Where(x => x.UserId == transactionGetRequest.UserId).ToListAsync();
-
-        var distinctAccountIds = transactions.Select(transaction => transaction.AccountId).Distinct().ToList();
-
-        var accounts =
-            await Task.WhenAll(distinctAccountIds.Select(id => context.Accounts.FirstOrDefaultAsync(a => a.Id == id)));
-        foreach (var transaction in transactions)
-        {
-            var account = accounts.FirstOrDefault(x => x.Id == transaction.AccountId);
-            if (account != null)
-                await cloudMessagingProvider.SendTransaction(transactionGetRequest.UserId, account, transaction);
-        }
-
-        return Results.Ok();
-    }
 
     public async Task<IResult> GetMessages(MessagesGetRequest messagesGetRequest)
     {
@@ -155,4 +139,6 @@ public class DatabaseTransactionProvider : IDatabaseTransactionProvider
             return Results.NotFound("Account with the same Id as the transaction");
         return await cloudMessagingProvider.SendMessages(messagesGetRequest.UserId, transactions, accounts);
     }
+
+   
 }

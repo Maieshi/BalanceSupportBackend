@@ -7,4 +7,6 @@ public interface IDatabaseUserSettingsProvider
     public Task<bool> CreateUserSetting(string userId);
     public Task<IResult> UpdateUserSettings(UserSettingsUpdateRequest userSettingsUpdateRequest);
     public Task<IResult> GetUserSettings(UserSettingsGetRequest getRequest);
+    
+    public Task<UserSettings?> GetUserSettings(string user);
 }

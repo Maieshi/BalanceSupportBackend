@@ -24,30 +24,24 @@ public class CloudMessagingProvider : ICloudMessagingProvider
         {
             var tokenResult = await FindUserToken(request.UserId);
 
-            var action = "update";
+            string action = string.Empty;
 
             if (tokenResult == null)
             {
                 action = "insert";
-                tokenResult = new UserToken();
-            }
-            else
-            {
-                tokenResult.Token = request.Token;
-            }
-
-            if (tokenResult != null)
-                tokenResult.Token = request.Token;
-            else
                 context.UserTokens.Add(new UserToken
                 {
                     Id = Guid.NewGuid().ToString(),
                     UserId = request.UserId,
                     Token = request.Token
                 });
-
+            }
+            else
+            {
+                tokenResult.Token = request.Token;
+                action = "update";
+            }
             await context.SaveChangesAsync();
-
 
             return Results.Ok($"Token {action}");
         }

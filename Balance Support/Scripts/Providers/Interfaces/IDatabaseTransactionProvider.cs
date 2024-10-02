@@ -13,7 +13,11 @@ public interface IDatabaseTransactionProvider
         string message
     );
 
-    public Task<IResult> GetTransactionsForUser(TransactionGetRequest transactionGetRequest);
+    // public Task<IResult> GetTransactionsForUser(TransactionGetRequest transactionGetRequest);
 
     public Task<IResult> GetMessages(MessagesGetRequest messagesGetRequest);
+
+    // public Task<(float total, float daily)> CalculateIncomeForAccount(string accountId);
+    //
+    // public Task<(float total, float daily)> CalculateGlobalIncome(string userId);
 }

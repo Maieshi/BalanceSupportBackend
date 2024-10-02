@@ -63,4 +63,7 @@ public class DatabaseUserSettingsProvider: IDatabaseUserSettingsProvider
 
         return Results.Ok(userSettings);
     }
+
+    public async Task<UserSettings?> GetUserSettings(string user)
+    =>await context.UserSettings.FirstOrDefaultAsync(s => s.UserId == user);
 }

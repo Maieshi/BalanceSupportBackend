@@ -8,6 +8,7 @@ using Balance_Support.Scripts.Extensions;
 using Balance_Support.Scripts.Providers;
 using Balance_Support.Scripts.Providers.Interfaces;
 using Balance_Support.Scripts.Validators;
+using Balance_Support.Scripts.WebSockets;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Balance_Support.Scripts.Main.Initializers;
@@ -241,11 +242,14 @@ public static class AppInitializer
 //TODO: create new endpoint filtration and validation
 
         #endregion
+        
+        app.MapHub<BaseHub>("/baseHub");
     }
 }
 
 public class ToDoClass
 {
+    
     public int Id { get; set; }
 
     public string name { get; set; }

@@ -1,7 +1,10 @@
 using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData;
+using Balance_Support.Scripts.Extensions.DIExtensions;
 using Balance_Support.Scripts.Providers;
 using Balance_Support.Scripts.Providers.Interfaces;
+using Balance_Support.Scripts.WebSockets;
+using Balance_Support.Scripts.WebSockets.Interfaces;
 using Balance_Support.SerializationClasses;
 using Firebase.Auth;
 using Firebase.Database;
@@ -83,8 +86,20 @@ public static class ServicesInitializer
         });
 
         services.AddAuthorization();
-        //services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<DeviceUpdateRequestValidator>());
 
+        services.AddSignalR();
+
+        services.AddInterfacesSingleton<ConnectionManager>();
+
+        // services.AddInterfacesSingleton<AccountsHub>();
+        // services.AddSingleton<AccountsHub>();
+        // services.AddInterfacesSingleton<TransactionsHub>();
+        // services.AddSingleton<TransactionsHub>();
+
+        services.AddSingleton<IMessageSender,BaseHub>();
+
+        services.AddSingleton<BaseHub>();
+        
         services.AddSingleton(
             new FirebaseClient("https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/",
                 new FirebaseOptions { AuthTokenAsyncFactory = () => GetTokenByGoogleServices(), AsAccessToken = true })

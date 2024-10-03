@@ -8,8 +8,6 @@ GET https://localhost:5001/todos/1
 ###
 GET https://localhost:5001/GetContext
 
-###
-POST https://localhost:5001/PostContext
 
 ###
 GET https://localhost:5001/GetDatabase

@@ -1,4 +1,6 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData;
 using Balance_Support.DataClasses.Records.UserData;
@@ -26,25 +28,31 @@ public static class AppInitializer
         var todos = new List<ToDo>();
 
         #region RequestsMapping
-        
+
         #region testovaya huinya
 
         app.MapGet("/", () => "Hello World!");
-        app.MapGet("/GetContext", (HttpContext context) => TypedResults.Ok(new UserAuthDto(context.User)));
-        app.MapPost("/PostContext", (HttpContext context) => TypedResults.Ok(new UserAuthDto(context.User)));
+        app.MapGet("/GetContext", async (HttpContext context) =>
+        {
+            var result = await GetHttpContextLog(context);
+            return result; // Properly returning the result
+        });
+      
 
         app.MapPost("/todos", (ToDo todo) =>
         {
             todos.Add(todo);
             return TypedResults.Created($"/todos/{todo.id}", todo);
         });
-        app.MapGet("/GetDatabase", async (ApplicationDbContext context) => TypedResults.Ok(new { 
-            Users = UserDto.CreateDtos(await context.Users.ToListAsync()), 
-            UserSettings = UserSettingsDto.CreateDtos(await context.UserSettings.ToListAsync()), 
-            Accounts = AccountDto.CreateDtos(await context.Accounts.ToListAsync()), 
-            Transactions = TransactionDto.CreateDtos(await context.Transactions.ToListAsync()), 
-            UserTokens =UserTokenDto.CreateDtos(await context.UserTokens.ToListAsync())
+        app.MapGet("/GetDatabase", async (ApplicationDbContext context) => TypedResults.Ok(new
+        {
+            Users = UserDto.CreateDtos(await context.Users.ToListAsync()),
+            UserSettings = UserSettingsDto.CreateDtos(await context.UserSettings.ToListAsync()),
+            Accounts = AccountDto.CreateDtos(await context.Accounts.ToListAsync()),
+            Transactions = TransactionDto.CreateDtos(await context.Transactions.ToListAsync()),
+            UserTokens = UserTokenDto.CreateDtos(await context.UserTokens.ToListAsync())
         }));
+
         #endregion
 
         #region User
@@ -108,7 +116,7 @@ public static class AppInitializer
                 HttpContext context) =>
             {
                 var getRequest = new UserSettingsGetRequest(userId);
-                
+
                 return ResultContainer
                     .Start()
                     .Authorize(context)
@@ -223,8 +231,9 @@ public static class AppInitializer
                 .Process(async () => await cloudMessagingProvider.DeleteUserToken(userTokenRequest))
                 .GetResult()
         );
+
         #endregion
-        
+
         #region Transaction
 
         app.MapPost("/Mobile/Transaction/HandleNew", async (
@@ -251,73 +260,109 @@ public static class AppInitializer
         );
 
         #endregion
+
         #endregion
-        
+
+
 //TODO: create new endpoint filtration and validation
 //TODO: try to rebuild project to mvc
 //TODO: split notification handling to parser(mb static) that returns transaction and transaction handler
 //TODO: try to upgrade architecture and make the code less cohesive
-
     }
+
+
+public static async Task<IResult> GetHttpContextLog(HttpContext context)
+{
+    // Log request details
+    var request = context.Request;
+    var headers = request.Headers;
+    var queryParams = request.Query;
+    var method = request.Method;
+    var path = request.Path;
+    var scheme = request.Scheme;
+    var host = request.Host.ToString();
+    var protocol = request.Protocol;
+    var queryString = request.QueryString.ToString();
+    var pathBase = request.PathBase.ToString();
+    var contentType = request.ContentType;
+    var cookies = request.Cookies;
+    var remoteIpAddress = context.Connection.RemoteIpAddress?.ToString();
+    string requestBody = "";
+
+    // Log Request Body (for methods like POST/PUT)
+    if (request.ContentLength > 0 &&
+        (request.Method == HttpMethods.Post || request.Method == HttpMethods.Put))
+    {
+        request.EnableBuffering(); // Allows re-reading the body
+        using (var reader = new StreamReader(request.Body, Encoding.UTF8, leaveOpen: true))
+        {
+            requestBody = await reader.ReadToEndAsync();
+            request.Body.Position = 0; // Reset the body stream position
+        }
+    }
+
+    // Log user information
+    var user = context.User;
+    var isAuthenticated = user.Identity?.IsAuthenticated ?? false;
+    var userName = user.Identity?.Name;
+    var claims = user.Claims.Select(c => new { c.Type, c.Value });
+
+    // Decode JWT token if present in Authorization header
+    var jwtToken = request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+    var decodedClaims = DecodeJwtToken(jwtToken);
+
+    // Log the response status code (response code might not be available at this point)
+    var responseStatusCode = context.Response.StatusCode;
+
+    // Return all relevant details as an object
+    return TypedResults.Ok(new
+    {
+        Method = method,
+        Path = path,
+        Scheme = scheme,
+        Host = host,
+        Protocol = protocol,
+        QueryParams = queryParams.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToString()),
+        QueryString = queryString,
+        PathBase = pathBase,
+        ContentType = contentType,
+        RemoteIpAddress = remoteIpAddress,
+        Cookies = cookies.ToDictionary(c => c.Key, c => c.Value),
+        Headers = headers.ToDictionary(h => h.Key, h => h.Value.ToString()),
+        RequestBody = requestBody,
+        ResponseStatusCode = responseStatusCode,
+        IsAuthenticated = isAuthenticated,
+        UserName = userName,
+        Claims = claims.ToList(),
+        DecodedClaims = decodedClaims
+    });
+}
+
+// Method to decode JWT token and return claims
+private static List<ClaimInfo> DecodeJwtToken(string token)
+{
+    var claimsList = new List<ClaimInfo>();
+    if (!string.IsNullOrEmpty(token))
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+
+        if (jsonToken != null)
+        {
+            claimsList = jsonToken.Claims.Select(c => new ClaimInfo { Type = c.Type, Value = c.Value }).ToList();
+        }
+    }
+    return claimsList;
+}
+
+// ClaimInfo class definition
+public class ClaimInfo
+{
+    public string Type { get; set; }
+    public string Value { get; set; }
+}
+
 }
 
 public record ToDo(int id, string name, bool isComplited);
 
-public class UserAuthDto
-{
-    public UserAuthDto(ClaimsPrincipal claimsPrincipal)
-    {
-        IsAuthenticated = claimsPrincipal.Identity?.IsAuthenticated ?? false;
-        Name = claimsPrincipal.Identity?.Name;
-        Claims = MapClaims(claimsPrincipal.Claims);
-
-        // Assuming you want to map identities from ClaimsPrincipal
-        // ClaimsPrincipal does not directly provide access to multiple identities
-        // but you can map the main identity
-        Identity = new IdentityDto
-        {
-            Name = claimsPrincipal.Identity?.Name,
-            AuthenticationType = claimsPrincipal.Identity?.AuthenticationType,
-            IsAuthenticated = claimsPrincipal.Identity?.IsAuthenticated ?? false
-        };
-
-        // Identities in ClaimsPrincipal are generally not directly accessible
-        // You may need additional logic if you have multiple identities in your use case
-        Identities = new List<IdentityDto> { Identity };
-    }
-
-    public bool IsAuthenticated { get; set; }
-    public string? Name { get; set; }
-    public IEnumerable<ClaimDto> Claims { get; set; }
-    public IEnumerable<IdentityDto> Identities { get; set; }
-    public IdentityDto Identity { get; set; }
-
-    private IEnumerable<ClaimDto> MapClaims(IEnumerable<Claim> claims)
-    {
-        foreach (var claim in claims)
-            yield return new ClaimDto
-            {
-                Type = claim.Type,
-                Value = claim.Value
-            };
-    }
-
-    public class ClaimDto
-    {
-        public string? Type { get; set; }
-        public string? Value { get; set; }
-    }
-
-    public class IdentityDto
-    {
-        public string AuthenticationType { get; set; }
-        public bool IsAuthenticated { get; set; }
-        public string? Name { get; set; }
-        public string NameClaimType { get; set; }
-        public string RoleClaimType { get; set; }
-        public object Actor { get; set; }
-        public object BootstrapContext { get; set; }
-        public string Label { get; set; }
-        public IEnumerable<ClaimDto> Claims { get; set; } = new List<ClaimDto>();
-    }
-}

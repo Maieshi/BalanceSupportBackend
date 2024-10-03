@@ -38,7 +38,7 @@ public class DatabaseUserSettingsProvider: IDatabaseUserSettingsProvider
         }
 
         existingSettings.SelectedGroup = userSettingsUpdateRequest.SelectedGroup;
-        existingSettings.RowCount = userSettingsUpdateRequest.RowsCount;
+        existingSettings.RowsCount = userSettingsUpdateRequest.RowsCount;
 
         try
         {

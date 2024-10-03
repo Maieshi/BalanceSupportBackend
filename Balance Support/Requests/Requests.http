@@ -57,9 +57,22 @@ POST https://localhost:5001/Desktop/UserSettings/Update
 content-type: application/json
 
 {
-  "UserId": "Xgs8ggFREQSjyC9wop9tQYzwvBz1",
-  "SelectedGroup":3,
-  "RowsCount":100
+  "userId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "userName": null,
+  "nickname": null,
+  "phoneNumber": null,
+  "address": null,
+  "country": null,
+  "about": null,
+  "commentsOnArticle": false,
+  "answersOnForm": false,
+  "onFollower": false,
+  "newsAnnouncements": false,
+  "productUpdates": false,
+  "blogDigest": false,
+  "selectedGroup": 1,
+  "rowsCount": 100
+  
 }
 
 ######### Account

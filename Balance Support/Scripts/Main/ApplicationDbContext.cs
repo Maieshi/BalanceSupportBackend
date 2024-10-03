@@ -9,6 +9,7 @@ public class ApplicationDbContext : DbContext
     public virtual DbSet<Transaction> Transactions { get; set; }
     public virtual DbSet<UserToken> UserTokens { get; set; }
     public virtual DbSet<UserSettings> UserSettings { get; set; }
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
@@ -46,22 +47,78 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(ut => ut.UserId);
 
         #endregion
-        
+
         #region UserSettings
-        
+
         modelBuilder.Entity<UserSettings>()
             .Property(us => us.Id)
             .ValueGeneratedOnAdd(); // Ensure ID is generated on add
 
-        modelBuilder.Entity<UserSettings>().Property(us => us.SelectedGroup)
-            .HasDefaultValue(1); // Set a default value if needed
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.UserName)
+            .IsRequired(false)
+            .HasDefaultValue(string.Empty); // Set a default value if needed
 
         modelBuilder.Entity<UserSettings>()
-            .Property(us => us.RowCount)
+            .Property(us => us.Nickname)
+            .IsRequired(false)
+            .HasDefaultValue(string.Empty); // Set a default value if needed
+
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.PhoneNumber)
+            .IsRequired(false)
             .HasDefaultValue(100); // Set a default value if needed
-        
+
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.Address)
+            .IsRequired(false)
+            .HasDefaultValue(string.Empty);
+
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.Country)
+            .IsRequired(false)
+            .HasDefaultValue(string.Empty);
+
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.About)
+            .IsRequired(false)
+            .HasDefaultValue(string.Empty);
+
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.CommentsOnArticle)
+            .HasDefaultValue(false);
+
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.AnswersOnForm)
+            .HasDefaultValue(false);
+
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.OnFollower)
+            .HasDefaultValue(false);
+
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.NewsAnnouncements)
+            .HasDefaultValue(false);
+
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.ProductUpdates)
+            .HasDefaultValue(false);
+
+
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.BlogDigest)
+            .HasDefaultValue(false);
+
+        modelBuilder.Entity<UserSettings>().Property(us => us.SelectedGroup)
+            .HasDefaultValue(1);
+
+
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.RowsCount)
+            .HasDefaultValue(100);
+
         #endregion
-        
+
         #region Account
 
         modelBuilder.Entity<Account>()
@@ -134,6 +191,7 @@ public class ApplicationDbContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 }
+
 public class UserDto
 {
     public string Id { get; set; }
@@ -152,6 +210,7 @@ public class UserDto
         }).ToList();
     }
 }
+
 //TODO:remove dtos, create IDtoConvertable to each entity and with this format implementation: new{Id = entity.Id,...}, create for dbset and list of extension that converts it to list dtos   
 public class AccountDto
 {
@@ -166,7 +225,7 @@ public class AccountDto
     public string BankCardNumber { get; set; }
     public string BankType { get; set; }
     public string Description { get; set; }
-    
+
     public AccountDto(Account account)
     {
         UserId = account.UserId;
@@ -186,11 +245,12 @@ public class AccountDto
     public static List<AccountDto> CreateDtos(List<Account> accounts)
         => accounts.Select(account => new AccountDto(account)).ToList();
 }
+
 public class TransactionDto
 {
     public string Id { get; set; }
-    public string AccountId { get; set; }  // Foreign key to Account
-    public string UserId { get; set; }     // Foreign key to User
+    public string AccountId { get; set; } // Foreign key to Account
+    public string UserId { get; set; } // Foreign key to User
     public decimal Amount { get; set; }
     public decimal Balance { get; set; }
     public DateTime Time { get; set; }
@@ -219,7 +279,7 @@ public class TransactionDto
 public class UserTokenDto
 {
     public string Id { get; set; }
-    public string UserId { get; set; }  // Foreign key to User
+    public string UserId { get; set; } // Foreign key to User
     public string Token { get; set; }
     // Add other properties as needed
 
@@ -228,7 +288,7 @@ public class UserTokenDto
         return userTokens.Select(ut => new UserTokenDto
         {
             Id = ut.Id,
-            UserId = ut.UserId,  
+            UserId = ut.UserId,
             Token = ut.Token
             // Map other properties as needed
         }).ToList();
@@ -238,7 +298,7 @@ public class UserTokenDto
 public class UserSettingsDto
 {
     public string Id { get; set; }
-    public string UserId { get; set; }  // Foreign key to User
+    public string UserId { get; set; } // Foreign key to User
     public int SelectedGroup { get; set; }
     public int RowCount { get; set; }
     // Add other properties as needed
@@ -248,9 +308,9 @@ public class UserSettingsDto
         return userSettings.Select(us => new UserSettingsDto
         {
             Id = us.Id,
-            UserId = us.UserId,   // Foreign key to User
+            UserId = us.UserId, // Foreign key to User
             SelectedGroup = us.SelectedGroup,
-            RowCount = us.RowCount
+            RowCount = us.RowsCount
             // Map other properties as needed
         }).ToList();
     }

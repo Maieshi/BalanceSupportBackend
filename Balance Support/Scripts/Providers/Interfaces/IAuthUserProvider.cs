@@ -6,5 +6,5 @@ public interface IAuthUserProvider
 
     public Task<IResult> LogInUser(HttpContext context, string userCred, string password, LoginDeviceType deviceType);
 
-    public Task<IResult> LogOutUser();
+    public Task<IResult> LogOutUser(HttpContext context);
 }

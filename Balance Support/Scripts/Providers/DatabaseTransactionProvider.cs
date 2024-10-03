@@ -60,7 +60,9 @@ public class DatabaseTransactionProvider : IDatabaseTransactionProvider
         {
             context.Transactions.Add(transactionData);
             await context.SaveChangesAsync();
-            var result = cloudMessagingProvider.SendTransaction(userId, account, transactionData);
+            var accountIncome = await CalculateIncomeForAccount(account.Id);
+            var totalIncomes = await CalculateGlobalIncome(userId);
+            await  cloudMessagingProvider.SendTransaction(userId, account.Id, accountIncome.total, accountIncome.daily, totalIncomes.balance,totalIncomes.dailyExpression);
         }
         catch (FirebaseMessagingException e)
         {
@@ -104,7 +106,7 @@ public class DatabaseTransactionProvider : IDatabaseTransactionProvider
             }
             else return Results.NotFound("Account with this account number");
         }
-
+    
         if (!string.IsNullOrEmpty(messagesGetRequest.SearchText))
         {
             query = query.Where(t => t.Message.Contains(messagesGetRequest.SearchText));
@@ -140,5 +142,25 @@ public class DatabaseTransactionProvider : IDatabaseTransactionProvider
         return await cloudMessagingProvider.SendMessages(messagesGetRequest.UserId, transactions, accounts);
     }
 
-   
+    public async Task<(float total, float daily)> CalculateIncomeForAccount(string accountId)
+    {
+        var transactions = await context.Transactions.Where(x => accountId == x.AccountId).ToListAsync();
+        
+        float totalIncome = (float)transactions.Sum(x => x.Amount);
+        float dailyIncome = (float)transactions
+            .Where(x => x.Time.Date == DateTime.UtcNow.Date)
+            .Sum(x => x.Amount);
+        return (totalIncome, dailyIncome);
+    }
+    
+    public async Task<(float balance, float dailyExpression)> CalculateGlobalIncome(string userId)
+    {
+        var transactions = await context.Transactions.Where(x => userId == x.UserId).ToListAsync();
+        
+        float totalIncome = (float)transactions.Sum(x => x.Amount);
+        float dailyIncome = (float)transactions
+            .Where(x => x.Time.Date == DateTime.UtcNow.Date)
+            .Sum(x => x.Amount);
+        return (totalIncome, dailyIncome);
+    }
 }

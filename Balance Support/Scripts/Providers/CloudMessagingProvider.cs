@@ -51,7 +51,7 @@ public class CloudMessagingProvider : ICloudMessagingProvider
         }
     }
 
-    public async Task<string> SendTransaction(string userId, Account account, Transaction transactionData)
+    public async Task<string> SendTransaction(string userId,string accountID, float accountTotal, float accountDaily, float balance, float dailyExpression)
     {
         var user = await FindUserToken(userId);
 
@@ -62,19 +62,11 @@ public class CloudMessagingProvider : ICloudMessagingProvider
             Data = new Dictionary<string, string>
             {
                 ["Type"]= "Transaction",
-                ["accountID"] = account.AccountNumber,
-                ["Name"] = account.LastName,
-                ["Balance"] = transactionData.Balance.ToString(),
-                ["Group"] = account.AccountGroup.ToString(),
-                ["Device"] = account.DeviceId.ToString(),
-                ["Sim slot"] = account.SimSlot.ToString(),
-                ["Phone"] = account.SimCardNumber,
-                ["Card "] = account.BankCardNumber,
-                ["Bank "] = account.BankType,
-                ["Expenses t "] = "12345 123,12",
-                ["Expenses D "] = "12345 123,120",
-                ["tIME "] = "02.01.2024 11:50",
-                ["Info "] = transactionData.Message
+                ["AccountID"] = accountID,
+                ["ExpensesT"] = accountTotal.ToString(),
+                ["ExpensesD"] = accountDaily.ToString(),
+                ["Balance"] = balance.ToString(),
+                ["DailyExpression"] = dailyExpression.ToString()
             },
             Token = user.Token
         };
@@ -103,10 +95,10 @@ public class CloudMessagingProvider : ICloudMessagingProvider
                     ["Name"] = account.LastName,
                     ["Text"] = transaction.Message,
                     ["Device"] = $"{account.AccountGroup},{account.DeviceId}",
-                    ["Time"] = "11:50",
-                    ["Date"] = "02.01.2024",
-                    ["Card "] = account.BankCardNumber,
-                    ["Bank "] = account.BankType,
+                    ["Time"] = $"{transaction.Time.TimeOfDay}",
+                    ["Date"] = $"{transaction.Time:M/d/yyyy}",
+                    ["Card"] = account.BankCardNumber,
+                    ["Bank"] = account.BankType,
                     ["Channel"] = "sms"
                 },
                 Token = token.Token

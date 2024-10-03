@@ -65,6 +65,26 @@ public class ResultContainer
 
         return this;
     }
+    
+    public async Task<ResultContainer> ProcessAsync(Func<Task<IResult>> processFunc)
+    {
+        if (_isCancelled) return this;
+
+        if (processFunc == null)
+            throw new ArgumentNullException(nameof(processFunc));
+
+        try
+        {
+            _result = await processFunc.Invoke();
+        }
+        catch (Exception ex)
+        {
+            _isCancelled = true;
+            _result = Results.Problem(detail: ex.Message);
+        }
+
+        return this;
+    }
 
     public IResult GetResult()
     {

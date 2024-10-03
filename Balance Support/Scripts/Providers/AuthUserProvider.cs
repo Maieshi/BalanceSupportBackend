@@ -1,16 +1,20 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Web;
 using Balance_Support.Scripts.Providers.Interfaces;
 using Firebase.Auth;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Owin;
 using FirebaseAuthException = FirebaseAdmin.Auth.FirebaseAuthException;
 using User = Balance_Support.DataClasses.DatabaseEntities.User;
 
 namespace Balance_Support.Scripts.Providers;
 
-public class AuthUserProvider : IAuthUserProvider
+public class AuthUserProvider : Controller, IAuthUserProvider
 {
     private readonly IDatabaseUserSettingsProvider databaseUserSettingsProvider;
     private IFirebaseAuthProvider firebaseAuthProvider;
@@ -19,21 +23,20 @@ public class AuthUserProvider : IAuthUserProvider
 
     private IDatabaseUserProvider databaseUserProvider;
 
-    private IHttpContextAccessor httpContextAccessor;
 
-    public AuthUserProvider(IDatabaseUserSettingsProvider databaseUserSettingsProvider, IDatabaseUserProvider databaseUserProvider, IFirebaseAuthProvider firebaseAuthProvider,
-        IHttpContextAccessor httpContextAccessor)
+    public AuthUserProvider(IDatabaseUserSettingsProvider databaseUserSettingsProvider,
+        IDatabaseUserProvider databaseUserProvider, IFirebaseAuthProvider firebaseAuthProvider)
     {
         this.databaseUserSettingsProvider = databaseUserSettingsProvider;
         this.firebaseAuthProvider = firebaseAuthProvider;
         emailAttribute = new EmailAddressAttribute();
         this.databaseUserProvider = databaseUserProvider;
-        this.httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<IResult> RegisterNewUser(string username, string email, string pasword)
     {
-        if (await databaseUserProvider.IsEmailAlreadyRegistered(email)||await databaseUserProvider.IsUserWithUsernameExist(username))
+        if (await databaseUserProvider.IsEmailAlreadyRegistered(email) ||
+            await databaseUserProvider.IsUserWithUsernameExist(username))
             return Results.BadRequest("User already exists");
 
         FirebaseAuthLink link;
@@ -51,8 +54,8 @@ public class AuthUserProvider : IAuthUserProvider
 
         var response = await databaseUserProvider.CreateUserAsync(new User()
             { Id = link.User.LocalId, Email = link.User.Email, DisplayName = link.User.DisplayName });
-        
-        
+
+
         if (response.IsSuccess == false)
         {
             //TODO сделать удаление пользователя из базы данных
@@ -60,12 +63,12 @@ public class AuthUserProvider : IAuthUserProvider
                 title: "An error occurred while pushing user to database ", detail: response.ErrorMessage);
         }
 
-        var isSettingsCreated =await databaseUserSettingsProvider.CreateUserSetting(link.User.LocalId);
-        
-        if(!isSettingsCreated)
+        var isSettingsCreated = await databaseUserSettingsProvider.CreateUserSetting(link.User.LocalId);
+
+        if (!isSettingsCreated)
             return Results.Problem(statusCode: 500,
                 title: "An error occurred while pushing user settings to database ", detail: response.ErrorMessage);
-                
+
         return Results.Created($"/Users/{link.User.LocalId}", link.User.DisplayName);
     }
 
@@ -76,30 +79,89 @@ public class AuthUserProvider : IAuthUserProvider
         {
             var user = await databaseUserProvider.GetUser(userCred);
             if (user == null)
-                return Results.Problem(detail: "Cannot find user in database", statusCode: 500,
-                    title: "User not found");
-            string userEmail = emailAttribute.IsValid(userCred) ? userCred : user.Email;
+                return Results.Problem(detail: "Cannot find user in database",
+                    statusCode: StatusCodes.Status404NotFound, title: "User not found");
 
+            string userEmail = emailAttribute.IsValid(userCred) ? userCred : user.Email;
             var authLink = await firebaseAuthProvider.SignInWithEmailAndPasswordAsync(userEmail, password);
 
-            // Manage claims-based session
-            await SignInUserV2(userCred, password, context);
+            // You can access OWINContext here if you handle it properly in middleware
+            // Otherwise, handle claims and authentication directly here
+            await SignInUserWithToken(context, user, authLink);
 
-            return Results.Ok(new { user.Id,user.DisplayName ,authLink.FirebaseToken });
+            return Results.Ok(new { user.Id, user.DisplayName});
+        }
+        catch (FirebaseAuthException ex)
+        {
+            return Results.Problem(detail: ex.Message, statusCode: StatusCodes.Status401Unauthorized,
+                title: "Authentication failed");
         }
         catch (Exception ex)
         {
-            return Results.Problem(detail: ex.Message, statusCode: 500, title: "An error occurred while logging in");
+            return Results.Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError,
+                title: "An error occurred while logging in");
         }
     }
 
-    public async Task<IResult> LogOutUser()
+    public async Task<IResult> LogOutUser(HttpContext context)
     {
-        await httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return Results.Ok("User has been logged out successfully.");
     }
 
-    private async Task SignInUser(FirebaseAuthLink authLink, LoginDeviceType deviceType)
+    private async Task SignInUserWithToken(HttpContext context, User user, FirebaseAuthLink authLink)
+    {
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Authentication, authLink.FirebaseToken),
+            new Claim(ClaimTypes.Email, user.Email),
+        };
+
+        var claimsIdentity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
+        
+        var authProperties = new AuthenticationProperties
+        {
+            IsPersistent = true, // Keep the user logged in across sessions
+            ExpiresUtc = DateTime.UtcNow.AddHours(24),
+            AllowRefresh = true,
+            RedirectUri = "/",
+            Items =
+            {
+                { ".AuthScheme", CookieAuthenticationDefaults.AuthenticationScheme }
+            }
+        };
+
+        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+        // Create an authentication ticket with the claims
+        
+        // Sign in the user
+        await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, authProperties);
+    }
+
+    // private async Task SignInUserWithClaims(HttpContext context, User user, FirebaseAuthLink authLink)
+    // {
+    //     var claims = new List<Claim>
+    //     {
+    //         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+    //         new Claim(ClaimTypes.Name, user.DisplayName)
+    //     };
+    //
+    //     var claimsIdentity = new ClaimsIdentity(claims, "Custom");
+    //
+    //     // Create an authentication ticket with the claims
+    //     var authProperties = new AuthenticationProperties
+    //     {
+    //         IsPersistent = true,
+    //         ExpiresUtc = DateTime.UtcNow.AddHours(24),
+    //         AllowRefresh = true
+    //     };
+    //
+    //     // Sign in the user
+    //     await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+    //         new ClaimsPrincipal(claimsIdentity), authProperties);
+    // }
+
+    private async Task SignInUser(FirebaseAuthLink authLink, LoginDeviceType deviceType, HttpContext context)
     {
         var expirationTime = DateTime.UtcNow.Add(GetSessionTimeout(deviceType));
         var claims = new List<Claim>
@@ -126,7 +188,7 @@ public class AuthUserProvider : IAuthUserProvider
             }
         };
 
-        await httpContextAccessor.HttpContext.SignInAsync(
+        await context.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(claimsIdentity),
             authProperties);
@@ -152,9 +214,10 @@ public class AuthUserProvider : IAuthUserProvider
                 IsPersistent = true, // Make the session persistent (i.e., cookie will persist across sessions)
                 ExpiresUtc = DateTime.UtcNow.AddDays(7) // Set cookie expiration time
             });
-        
+
         Debug.Print("aaa");
     }
+
     private TimeSpan GetSessionTimeout(LoginDeviceType deviceType)
     {
         return deviceType switch

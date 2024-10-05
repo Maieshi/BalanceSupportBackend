@@ -25,24 +25,6 @@ public static class AppInitializer
         app.UseCors("AllowSpecificOrigin");
         app.UseHttpsRedirection();
         app.UseSession();
-
-        app.UseOwin(pipeline =>
-        {
-            // Properly invoke OWIN middleware
-            pipeline(next => async env =>
-            {
-                var context = new OwinContext(env);
-
-                // Example: Log requests
-                Console.WriteLine($"Request: {context.Request.Method} {context.Request.Path}");
-
-                // Invoke the next middleware in the pipeline
-                await next.Invoke(env);
-
-                // Example: Log responses
-                Console.WriteLine($"Response: {context.Response.StatusCode}");
-            });
-        });
         
         app.UseAuthentication();
         app.UseAuthorization();
@@ -327,6 +309,16 @@ public static class AppInitializer
 
         // Log user information
         var user = context.User;
+        string userString = string.Empty;
+        try
+        {
+            userString = JsonConvert.SerializeObject(user);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        var identity = user.Identity;
         var isAuthenticated = user.Identity?.IsAuthenticated ?? false;
         var userName = user.Identity?.Name;
         var claims = user.Claims.Select(c => new { c.Type, c.Value });
@@ -355,10 +347,12 @@ public static class AppInitializer
             Headers = headers.ToDictionary(h => h.Key, h => h.Value.ToString()),
             RequestBody = requestBody,
             ResponseStatusCode = responseStatusCode,
+           
             IsAuthenticated = isAuthenticated,
             UserName = userName,
             Claims = claims.ToList(),
-            DecodedClaims = decodedClaims
+            DecodedClaims = decodedClaims,
+            User = userString
         });
     }
 

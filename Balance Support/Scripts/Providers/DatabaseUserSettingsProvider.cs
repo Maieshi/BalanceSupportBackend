@@ -37,8 +37,7 @@ public class DatabaseUserSettingsProvider: IDatabaseUserSettingsProvider
             return Results.NotFound("User");
         }
 
-        existingSettings.SelectedGroup = userSettingsUpdateRequest.SelectedGroup;
-        existingSettings.RowsCount = userSettingsUpdateRequest.RowsCount;
+        existingSettings.Update(userSettingsUpdateRequest);
 
         try
         {

@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Balance_Support.DataClasses;
 using Balance_Support.DataClasses.DatabaseEntities;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : DbContext,IDataProtectionKeyContext
 {
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Account> Accounts { get; set; }
@@ -10,6 +11,7 @@ public class ApplicationDbContext : DbContext
     public virtual DbSet<UserToken> UserTokens { get; set; }
     public virtual DbSet<UserSettings> UserSettings { get; set; }
 
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
@@ -190,6 +192,7 @@ public class ApplicationDbContext : DbContext
 
         base.OnModelCreating(modelBuilder);
     }
+
 }
 
 public class UserDto

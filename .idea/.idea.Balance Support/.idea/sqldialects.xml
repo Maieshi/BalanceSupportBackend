@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/2577ecc2-403e-4f37-8ed6-d5e5361561ed/console.sql" dialect="GenericSQL" />
+  </component>
+</project>

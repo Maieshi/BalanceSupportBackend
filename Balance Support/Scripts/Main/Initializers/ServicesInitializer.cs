@@ -8,6 +8,8 @@ using Firebase.Database;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using User = Balance_Support.DataClasses.DatabaseEntities.User;
@@ -24,6 +26,17 @@ public static class ServicesInitializer
             options.UseSqlServer(
                 builder.Configuration
                     .GetConnectionString("SqlServerConnection"))); // Register EF Core DbContext with SQL Server
+        
+        services.AddDataProtection()
+            .PersistKeysToDbContext<ApplicationDbContext>()  // Store keys in the database
+            .SetDefaultKeyLifetime(TimeSpan.FromDays(90)); 
+           // Key lifetime set to 90 days
+
+        // Optionally configure SecurityStamp validation interval to fix the 30-minute logout issue
+        services.Configure<SecurityStampValidatorOptions>(options =>
+        {
+            options.ValidationInterval = TimeSpan.FromHours(10);
+        });
 
         var apiKey = JsonConvert.DeserializeObject<FirebaseAuthApiKey>(
             File.ReadAllText(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseAuthApiKey)));
@@ -49,43 +62,45 @@ public static class ServicesInitializer
         services.AddSession(options =>
         {
             options.IdleTimeout = TimeSpan.FromHours(24);
-         
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
         });
-        
-        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(options =>
-            {
-                options.Cookie.IsEssential = true;
-                options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookie is sent only over HTTPS
-                options.Cookie.SameSite = SameSiteMode.None; // Allow cookies in cross-site requests
-                // Set the login path
-                options.LoginPath = "/Account/Login";
-                // Set the logout path
-                options.LogoutPath = "/Account/Logout";
-                // Set cookie expiration time
-                options.ExpireTimeSpan = TimeSpan.FromHours(24); 
-                options.SlidingExpiration = true; // Automatically renew cookie if active within expiration window
-                // You can also customize other settings like the access denied path
-                options.AccessDeniedPath = "/Account/AccessDenied";
-            });
 
+        
         // services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         //     .AddCookie(options =>
         //     {
-        //         // Set up cookie options
+        //         options.Cookie.IsEssential = true;
         //         options.Cookie.HttpOnly = true;
         //         options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookie is sent only over HTTPS
         //         options.Cookie.SameSite = SameSiteMode.None; // Allow cookies in cross-site requests
-        //         options.Cookie.Name = "AuthCookie"; // Name your authentication cookie
-        //         options.Cookie.Domain = ".balancesupportapi.top"; // Specify the domain for the cookie
-        //         options.Cookie.Path = "/"; // Path for the cookie
-        //         options.LoginPath = "/account/login"; // Redirect to login if unauthorized
-        //         options.LogoutPath = "/account/logout"; // Path to handle logout
-        //         options.AccessDeniedPath = "/account/accessdenied"; // Path for access denied page
-        //         options.SlidingExpiration = true; // Automatically extend the cookie lifetime when the user is active
-        //         options.ExpireTimeSpan = TimeSpan.FromDays(7); // Set cookie expiration
+        //         // Set the login path
+        //         options.LoginPath = "/Account/Login";
+        //         // Set the logout path
+        //         options.LogoutPath = "/Account/Logout";
+        //         // Set cookie expiration time
+        //         options.ExpireTimeSpan = TimeSpan.FromHours(24); 
+        //         options.SlidingExpiration = true; // Automatically renew cookie if active within expiration window
+        //         // You can also customize other settings like the access denied path
+        //         options.AccessDeniedPath = "/Account/AccessDenied";
         //     });
+
+        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                // Set up cookie options
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookie is sent only over HTTPS
+                options.Cookie.SameSite = SameSiteMode.None; // Allow cookies in cross-site requests
+                options.Cookie.Name = "AuthCookie"; // Name your authentication cookie
+                options.Cookie.Domain = ".balancesupportapi.top"; // Specify the domain for the cookie
+                options.Cookie.Path = "/"; // Path for the cookie
+                options.LoginPath = "/account/login"; // Redirect to login if unauthorized
+                options.LogoutPath = "/account/logout"; // Path to handle logout
+                options.AccessDeniedPath = "/account/accessdenied"; // Path for access denied page
+                options.SlidingExpiration = true; // Automatically extend the cookie lifetime when the user is active
+                options.ExpireTimeSpan = TimeSpan.FromDays(7); // Set cookie expiration
+            });
 
         services.AddCors(options =>
         {
@@ -98,6 +113,7 @@ public static class ServicesInitializer
         });
 
         services.AddAuthorization();
+        
 
         services.AddSingleton(
             new FirebaseClient("https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/",

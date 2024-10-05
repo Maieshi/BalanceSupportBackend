@@ -46,7 +46,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
@@ -59,6 +59,10 @@
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-09-06T11:29:48.097Z",
               "IsPinned": true
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
               "$type": "Document",
@@ -81,14 +85,10 @@
               "RelativeDocumentMoniker": "Balance Support\\Scripts\\Main\\Initializers\\AppInitializer.cs",
               "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Main\\Initializers\\AppInitializer.cs",
               "RelativeToolTip": "Balance Support\\Scripts\\Main\\Initializers\\AppInitializer.cs",
-              "ViewState": "AQIAAJcAAAAAAAAAAAAAAJ8AAAAUAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABwAAAAHAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-10-03T17:43:44.226Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
               "$type": "Document",

@@ -248,7 +248,7 @@ public static class AppInitializer
             (await ResultContainer
                 .Start()
                 .Validate<NotificationHandleRequest, NotificationHandleRequestValidator>(handleNotificationRequest)
-                // .Authorize(context)
+                .Authorize(context)
                 .ProcessAsync(async () => await notificationHandler.HandleNotification(handleNotificationRequest)))
             .GetResult()
         );

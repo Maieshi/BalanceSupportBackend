@@ -160,8 +160,8 @@ content-type: application/json
 
 {
   "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
-  "SearchText":"",
-  "AccountNumber":"123456789",
+  "SearchText":null,
+  "AccountNumber":"sampleAccountNumber",
   "StartingDate":"2024-09-19T00:42:30.647Z",
   "EndingDate":"2024-09-21T00:42:30.647Z",
   "MessageType":-1,

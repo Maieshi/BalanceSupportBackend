@@ -1,37 +1,80 @@
 using Balance_Support.DataClasses.DatabaseEntities;
 using Balance_Support.DataClasses.Records.AccountData;
+using Balance_Support.Scripts.Database;
+using Balance_Support.Scripts.Database.Providers.Interfaces.Account;
 using Balance_Support.Scripts.Extensions.RecordExtenstions;
 using Balance_Support.Scripts.Providers.Interfaces;
+using Balance_Support.Scripts.Providers.Interfaces.Account;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace Balance_Support.Scripts.Providers;
 
-public class DatabaseAccountProvider : IDatabaseAccountProvider
+public class DatabaseAccountProvider : DbSetController<Account>, IRegisterAccount, IUpdateAccount
+    // , IDatabaseAccountProvider
 {
-    private readonly ApplicationDbContext context;
-    private readonly IDatabaseUserSettingsProvider userSettingsProvider;
-    private readonly IDatabaseUserProvider userProvider;
+    // private readonly ApplicationDbContext context;
+    // private readonly IDatabaseUserSettingsProvider userSettingsProvider;
+    // private readonly IDatabaseUserProvider userProvider;
 
-    public DatabaseAccountProvider(IDatabaseUserProvider userProvider, ApplicationDbContext context, IDatabaseUserSettingsProvider userSettingsProvider)
+    public DatabaseAccountProvider(IDatabaseUserProvider userProvider, ApplicationDbContext context,
+        IDatabaseUserSettingsProvider userSettingsProvider, IDbSetContainer container) : base(container)
     {
         this.userProvider = userProvider;
         this.context = context;
         this.userSettingsProvider = userSettingsProvider;
     }
 
-    public async Task<IResult> RegisterAccount(AccountRegisterRequest accountRegisterRequest)
+    public async Task RegisterAccount(AccountRegisterRequest accountRegisterRequest)
     {
-        if (!await userProvider.IsUserWithIdExist(accountRegisterRequest.UserId))
-            return Results.NotFound("User");
-        //TODO: check if account with same account number exists for this user
-        if (!await CanProceedRequest(accountRegisterRequest.AccountData,accountRegisterRequest.UserId))
-            return Results.Problem(statusCode: 500,
-                title: "One account with same unique data already registered");
-        try
-        {
-            var acc = context.Accounts.Add(accountRegisterRequest.NewAccount());
-            await context.SaveChangesAsync();
+        var acc = context.Accounts.Add(accountRegisterRequest.NewAccount());
+        await context.SaveChangesAsync();
+    }
+
+
+    public async Task UpdateAccount(Account account, AccountUpdateRequest accountUpdateRequest)
+    {
+        account.UpdateAccount(accountUpdateRequest);
+        context.Accounts.Update(account);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task Del(Account account)
+    {
+        context.Accounts.Remove(account);
+        await context.SaveChangesAsync();
+    }
+
+
+    public async Task<List<Account>> GetForDeivce(string userId, int accountGroup, int deviceId)
+        =>
+            (await FindAccountsByUserId(userId))
+            .Where(x =>
+                x.AccountGroup == accountGroup
+                && x.DeviceId == deviceId)
+            .ToList();
+
+
+    public async Task<List<Account>> GetAllForUser(string userId, int selectedGroup) =>
+        await FindAccountsByUserId(userId)
+            .ContinueWith(t => t.Result
+                .Where(x => x.AccountGroup == selectedGroup)
+                .ToList()
+            );
+    //
+    // public async Task<IResult> RegisterAccount(AccountRegisterRequest accountRegisterRequest)
+    // {
+    //     if (!await userProvider.IsUserWithIdExist(accountRegisterRequest.UserId))
+    //         return Results.NotFound("User");
+    //     //TODO: check if account with same account number exists for this user
+    //     if (!await CanProceedRequest(accountRegisterRequest.AccountData, accountRegisterRequest.UserId))
+    //         return Results.Problem(statusCode: 500,
+    //             title: "One account with same unique data already registered");
+    //     try
+    //     {
+    //         var acc = context.Accounts.Add(accountRegisterRequest.NewAccount());
+    //         await context.SaveChangesAsync();
+
 
             return Results.Created("Accounts", new AccountDto(acc.Entity));
         }
@@ -49,8 +92,9 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             var account = await FindAccountByAccountId(accountUpdateRequest.AccountId);
             if (account == null)
                 return Results.NotFound("Account");
-            
-            if (!await CanProceedRequest(accountUpdateRequest.AccountData,accountUpdateRequest.UserId, accountUpdateRequest.AccountId))
+
+            if (!await CanProceedRequest(accountUpdateRequest.AccountData, accountUpdateRequest.UserId,
+                    accountUpdateRequest.AccountId))
                 return Results.Problem(statusCode: 500,
                     title: "One account with same unique data already registered");
 
@@ -110,18 +154,18 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             return Results.NotFound("User");
 
         var userSeetings = await userSettingsProvider.GetUserSettings(accountGetAllForUserRequest.UserId);
-        if(userSeetings==null)
+        if (userSeetings == null)
             return Results.NotFound("UserSettings");
 
         var accounts = await FindAccountsByUserId(accountGetAllForUserRequest.UserId);
         if (!accounts.Any())
             return Results.NotFound("Accounts");
-        
-        if(userSeetings.SelectedGroup!=0)
+
+        if (userSeetings.SelectedGroup != 0)
             accounts = accounts.Where(x => x.AccountGroup == userSeetings.SelectedGroup).ToList();
-        
-        var globalIncome =await CalculateGlobalIncome(accountGetAllForUserRequest.UserId);
-        
+
+        var globalIncome = await CalculateGlobalIncome(accountGetAllForUserRequest.UserId);
+
         var accountDtos = new List<object>();
         foreach (var account in accounts)
         {
@@ -129,7 +173,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
             accountDtos.Add(new
             {
                 Account = new AccountDto(account),
-                T =accountIncome.total,
+                T = accountIncome.total,
                 D = accountIncome.daily
             });
         }
@@ -138,7 +182,7 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
         {
             Balance = globalIncome.total,
             DailyExpression = globalIncome.daily,
-            Accounts =  accountDtos
+            Accounts = accountDtos
         });
     }
 
@@ -162,16 +206,13 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
         return await context.Accounts.FindAsync(accountId);
     }
 
-    private async Task<List<Account>> FindAccountsByUserId(string userId)
+    public async Task<List<Account>> FindAccountsByUserId(string userId)
     {
         return await context.Accounts.Where(x => x.UserId == userId)
             .ToListAsync();
-    } 
+    }
 
-
-      
-    
-    private async Task<bool> CanProceedRequest(AccountDataRequest accountData, string userId, string? accountId = null)
+    public async Task<bool> CanProceedRequest(AccountDataRequest accountData, string userId, string? accountId = null)
     {
         var existingAccounts = await context.Accounts
             .Where(x => x.UserId == userId && (accountId == null || x.Id != accountId))
@@ -186,27 +227,27 @@ public class DatabaseAccountProvider : IDatabaseAccountProvider
 
         return !(hasSameAccountNumber || hasSameSimCardNumber || hasSameGroupDeviceSlot);
     }
-    
+
     public async Task<(float total, float daily)> CalculateIncomeForAccount(string accountId)
     {
         var transactions = await context.Transactions.Where(x => accountId == x.AccountId).ToListAsync();
-        
+
         float totalIncome = (float)transactions.Sum(x => x.Amount);
         float dailyIncome = (float)transactions
             .Where(x => x.Time.Date == DateTime.UtcNow.Date)
             .Sum(x => x.Amount);
         return (totalIncome, dailyIncome);
     }
-    
+
+
     public async Task<(float total, float daily)> CalculateGlobalIncome(string userId)
     {
         var transactions = await context.Transactions.Where(x => userId == x.UserId).ToListAsync();
-        
+
         float totalIncome = (float)transactions.Sum(x => x.Amount);
         float dailyIncome = (float)transactions
             .Where(x => x.Time.Date == DateTime.UtcNow.Date)
             .Sum(x => x.Amount);
         return (totalIncome, dailyIncome);
     }
-    
 }

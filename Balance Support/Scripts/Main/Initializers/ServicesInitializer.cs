@@ -141,7 +141,7 @@ public static class ServicesInitializer
         );
 //TODO:create DI installers
         services.AddScoped<IDatabaseUserProvider, DatabaseUserProvider>();
-        services.AddScoped<IDatabaseUserSettingsProvider, DatabaseUserSettingsProvider>();  
+        services.AddScoped<IDatabaseUserSettingsProvider, DatabaseUserSettingsProvider>();
         services.AddScoped<IAuthUserProvider, AuthUserProvider>();
         services.AddScoped<IDatabaseAccountProvider, DatabaseAccountProvider>();
         services.AddScoped<ICloudMessagingProvider, CloudMessagingProvider>();

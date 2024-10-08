@@ -1,5 +1,6 @@
 using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData;
+using Balance_Support.Scripts.Extensions.DIExtensions;
 using Balance_Support.Scripts.Providers;
 using Balance_Support.Scripts.Providers.Interfaces;
 using Balance_Support.Scripts.WebSockets;
@@ -140,6 +141,7 @@ public static class ServicesInitializer
         );
 //TODO:create DI installers
         services.AddScoped<IDatabaseUserProvider, DatabaseUserProvider>();
+        services.AddScoped<IDatabaseUserSettingsProvider, DatabaseUserSettingsProvider>();  
         services.AddScoped<IAuthUserProvider, AuthUserProvider>();
         services.AddScoped<IDatabaseAccountProvider, DatabaseAccountProvider>();
         services.AddScoped<ICloudMessagingProvider, CloudMessagingProvider>();

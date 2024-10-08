@@ -8,7 +8,7 @@ namespace Balance_Support.Scripts.Providers;
 public class FbTest
 {
     FirebaseClient firebaseClient;
-
+//TODO: udalit' nahui etu zalupu
     public FbTest()
     {
         firebaseClient =

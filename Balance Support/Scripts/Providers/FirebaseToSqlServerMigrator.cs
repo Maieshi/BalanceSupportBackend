@@ -3,7 +3,7 @@ namespace Balance_Support.Scripts.Providers;
 public class FirebaseToSqlServerMigrator
 {
     private readonly ApplicationDbContext context;
-
+//TODO:i etu huitu toje udalit'
     public FirebaseToSqlServerMigrator(ApplicationDbContext context)
     {
         this.context = context;

@@ -76,7 +76,7 @@ namespace Balance_Support.Migrations
                     b.ToTable("Accounts");
                 });
 
-            modelBuilder.Entity("Balance_Support.DataClasses.Transaction", b =>
+            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.Transaction", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -116,7 +116,7 @@ namespace Balance_Support.Migrations
                     b.ToTable("Transactions");
                 });
 
-            modelBuilder.Entity("Balance_Support.DataClasses.User", b =>
+            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.User", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -137,7 +137,7 @@ namespace Balance_Support.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Balance_Support.DataClasses.UserToken", b =>
+            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.UserToken", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -159,9 +159,122 @@ namespace Balance_Support.Migrations
                     b.ToTable("UserTokens");
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FriendlyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Xml")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DataProtectionKeys");
+                });
+
+            modelBuilder.Entity("UserSettings", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("About")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasDefaultValue("");
+
+                    b.Property<string>("Address")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasDefaultValue("");
+
+                    b.Property<bool>("AnswersOnForm")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("BlogDigest")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("CommentsOnArticle")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Country")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasDefaultValue("");
+
+                    b.Property<bool>("NewsAnnouncements")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Nickname")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("");
+
+                    b.Property<bool>("OnFollower")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("PhoneNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("100");
+
+                    b.Property<bool>("ProductUpdates")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("RowsCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(100);
+
+                    b.Property<int>("SelectedGroup")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserName")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserSettings");
+                });
+
             modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.Account", b =>
                 {
-                    b.HasOne("Balance_Support.DataClasses.User", "User")
+                    b.HasOne("Balance_Support.DataClasses.DatabaseEntities.User", "User")
                         .WithMany("Accounts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -170,7 +283,7 @@ namespace Balance_Support.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Balance_Support.DataClasses.Transaction", b =>
+            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.Transaction", b =>
                 {
                     b.HasOne("Balance_Support.DataClasses.DatabaseEntities.Account", "Account")
                         .WithMany("Transactions")
@@ -178,7 +291,7 @@ namespace Balance_Support.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Balance_Support.DataClasses.User", "User")
+                    b.HasOne("Balance_Support.DataClasses.DatabaseEntities.User", "User")
                         .WithMany("Transactions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -189,11 +302,22 @@ namespace Balance_Support.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Balance_Support.DataClasses.UserToken", b =>
+            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.UserToken", b =>
                 {
-                    b.HasOne("Balance_Support.DataClasses.User", "User")
+                    b.HasOne("Balance_Support.DataClasses.DatabaseEntities.User", "User")
                         .WithMany("UserTokens")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UserSettings", b =>
+                {
+                    b.HasOne("Balance_Support.DataClasses.DatabaseEntities.User", "User")
+                        .WithOne("UserSettings")
+                        .HasForeignKey("UserSettings", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -205,11 +329,14 @@ namespace Balance_Support.Migrations
                     b.Navigation("Transactions");
                 });
 
-            modelBuilder.Entity("Balance_Support.DataClasses.User", b =>
+            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.User", b =>
                 {
                     b.Navigation("Accounts");
 
                     b.Navigation("Transactions");
+
+                    b.Navigation("UserSettings")
+                        .IsRequired();
 
                     b.Navigation("UserTokens");
                 });

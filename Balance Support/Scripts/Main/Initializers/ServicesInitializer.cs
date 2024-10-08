@@ -8,6 +8,8 @@ using Firebase.Database;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using User = Balance_Support.DataClasses.DatabaseEntities.User;
@@ -24,6 +26,17 @@ public static class ServicesInitializer
             options.UseSqlServer(
                 builder.Configuration
                     .GetConnectionString("SqlServerConnection"))); // Register EF Core DbContext with SQL Server
+        
+        services.AddDataProtection()
+            .PersistKeysToDbContext<ApplicationDbContext>()  // Store keys in the database
+            .SetDefaultKeyLifetime(TimeSpan.FromDays(90)); 
+           // Key lifetime set to 90 days
+
+        // Optionally configure SecurityStamp validation interval to fix the 30-minute logout issue
+        services.Configure<SecurityStampValidatorOptions>(options =>
+        {
+            options.ValidationInterval = TimeSpan.FromHours(10);
+        });
 
         var apiKey = JsonConvert.DeserializeObject<FirebaseAuthApiKey>(
             File.ReadAllText(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseAuthApiKey)));
@@ -53,6 +66,25 @@ public static class ServicesInitializer
             options.Cookie.IsEssential = true;
         });
 
+        
+        // services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        //     .AddCookie(options =>
+        //     {
+        //         options.Cookie.IsEssential = true;
+        //         options.Cookie.HttpOnly = true;
+        //         options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookie is sent only over HTTPS
+        //         options.Cookie.SameSite = SameSiteMode.None; // Allow cookies in cross-site requests
+        //         // Set the login path
+        //         options.LoginPath = "/Account/Login";
+        //         // Set the logout path
+        //         options.LogoutPath = "/Account/Logout";
+        //         // Set cookie expiration time
+        //         options.ExpireTimeSpan = TimeSpan.FromHours(24); 
+        //         options.SlidingExpiration = true; // Automatically renew cookie if active within expiration window
+        //         // You can also customize other settings like the access denied path
+        //         options.AccessDeniedPath = "/Account/AccessDenied";
+        //     });
+
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
@@ -72,18 +104,16 @@ public static class ServicesInitializer
 
         services.AddCors(options =>
         {
-            options.AddPolicy("AllowClientDomain", builder =>
-            {
-                builder.WithOrigins("http://localhost:5173", "https://balance-support.vercel.app",
-                        "https://localhost:7158") // Client domain
+            options.AddPolicy("AllowSpecificOrigin",
+                x => x.WithOrigins("http://localhost:5173", "https://balance-support.vercel.app",
+                        "https://localhost:7158")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .AllowCredentials(); // Allow cookies to be sent in requests
-            });
+                    .AllowCredentials());
         });
 
         services.AddAuthorization();
-        //services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<DeviceUpdateRequestValidator>());
+        
 
         services.AddSingleton(
             new FirebaseClient("https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/",
@@ -93,40 +123,19 @@ public static class ServicesInitializer
         services.AddSingleton<IFirebaseAuthProvider>(
             new FirebaseAuthProvider(new FirebaseConfig(apiKey.ApiKey))
         );
-
+//TODO:create DI installers
         services.AddScoped<IDatabaseUserProvider, DatabaseUserProvider>();
         services.AddScoped<IAuthUserProvider, AuthUserProvider>();
         services.AddScoped<IDatabaseAccountProvider, DatabaseAccountProvider>();
         services.AddScoped<ICloudMessagingProvider, CloudMessagingProvider>();
         services.AddScoped<IDatabaseTransactionProvider, DatabaseTransactionProvider>();
         services.AddScoped<INotificationHandler, NotificationHandler>();
-        services.AddScoped<FirebaseToSqlServerMigrator>();
+        services.AddScoped<IDatabaseUserSettingsProvider, DatabaseUserSettingsProvider>();
 
         var provider = services.BuildServiceProvider();
         
-        // await provider.GetService<IDatabaseUserProvider>().CreateUserAsync(new User
-        //     { Id = "testId", DisplayName = "testUser", Email = "userMail@gmail.com" });
-        
-        // await provider.GetService<IDatabaseAccountProvider>().RegisterAccount(
-        //     new AccountRegisterRequest(
-        //         "testId",
-        //         new AccountDataRequest(
-        //             "testAccountNumber",
-        //             "testName",
-        //             4,
-        //             4,
-        //             2,
-        //             "1234567890",
-        //             "1234",
-        //             "Sberbank",
-        //             "asdfasdfasdf")
-        //     )
-        // );
-        
-        // await provider.GetService<INotificationHandler>().HandleNotification(new NotificationHandleRequest(
-        //     "testId",
-        //     "MIR-1234 14:32 зачисление 2800р Sovcombank Баланс: 16 325.95р"
-        // ));
+        //TODO: split providers to smaller interfaces to provide only functions that needed and make like container.BindInterfaces() 
+
         
     }
 

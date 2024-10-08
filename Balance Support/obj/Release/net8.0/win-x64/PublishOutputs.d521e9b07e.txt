@@ -9,13 +9,16 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\publish\Balance Support.runtimeconfig.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\publish\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\publish\Config.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Requests\http-client.env.json
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Third-party configs\balance-support-b9da3-default-rtdb-export (3).json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Third-party configs\Firebase\FirebaseAuthApiKey.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Third-party configs\Firebase\FirebaseCloudMessaging.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Third-party configs\Firebase\FirebaseDatabaseClientConfig.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Balance Support.dll
-C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Balance Support.deps.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Balance Support.runtimeconfig.json
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Balance Support.pdb
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Azure.Core.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Azure.Identity.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Firebase.Auth.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\FirebaseAdmin.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Firebase.dll
@@ -31,23 +34,68 @@ C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.AspNet.Identity.Core.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.AspNet.Identity.Owin.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.AspNetCore.Connections.Abstractions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.AspNetCore.DataProtection.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.AspNetCore.DataProtection.Abstractions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.AspNetCore.Owin.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.AspNetCore.SignalR.Common.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Data.SqlClient.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.EntityFrameworkCore.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Extensions.Caching.Abstractions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Extensions.Caching.Memory.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Extensions.DependencyInjection.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Extensions.Features.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Extensions.Logging.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Extensions.Logging.Abstractions.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Extensions.Options.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Extensions.Primitives.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Identity.Client.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Identity.Client.Extensions.Msal.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.IdentityModel.Abstractions.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.IdentityModel.Logging.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.IdentityModel.Protocols.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.IdentityModel.Tokens.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.ServiceModel.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Owin.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Owin.Host.SystemWeb.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Owin.Security.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Owin.Security.Cookies.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Owin.Security.OAuth.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.SqlServer.Server.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Newtonsoft.Json.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Owin.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.ClientModel.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.CodeDom.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.Configuration.ConfigurationManager.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.Diagnostics.DiagnosticSource.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.IdentityModel.Tokens.Jwt.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.IO.Pipelines.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.Management.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.Memory.Data.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.Reactive.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.Runtime.InteropServices.WindowsRuntime.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.Security.Cryptography.ProtectedData.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.Security.Cryptography.Xml.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.Text.Encodings.Web.dll
 C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\System.Text.Json.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\de\Microsoft.Data.SqlClient.resources.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\es\Microsoft.Data.SqlClient.resources.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\fr\Microsoft.Data.SqlClient.resources.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\it\Microsoft.Data.SqlClient.resources.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\ja\Microsoft.Data.SqlClient.resources.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\ko\Microsoft.Data.SqlClient.resources.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\pt-BR\Microsoft.Data.SqlClient.resources.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\ru\Microsoft.Data.SqlClient.resources.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\zh-Hans\Microsoft.Data.SqlClient.resources.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\zh-Hant\Microsoft.Data.SqlClient.resources.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Microsoft.Data.SqlClient.SNI.dll
+C:\Projects\Asp. Net\Balance Support\Balance Support\obj\Release\net8.0\win-x64\PubTmp\Out\Balance Support.deps.json

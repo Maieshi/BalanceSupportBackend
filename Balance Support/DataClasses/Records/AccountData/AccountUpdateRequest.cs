@@ -4,5 +4,5 @@ public record AccountUpdateRequest
 (
     string UserId,
     string AccountId,
-    AccountDataRequest AccountDataRequest
+    AccountDataRequest AccountData
 );

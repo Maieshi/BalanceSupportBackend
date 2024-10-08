@@ -9,6 +9,7 @@ public class DatabaseUserProvider : IDatabaseUserProvider
     // private FirebaseClient client;
     private readonly ApplicationDbContext context;
 
+    #region Public
     public DatabaseUserProvider(ApplicationDbContext context)
     {
         // this.client = client;
@@ -54,7 +55,8 @@ public class DatabaseUserProvider : IDatabaseUserProvider
     public async Task<bool> IsUserWithUsernameExist(string userName)
     =>await FindUserByUsername(userName) != null;
     
-
+    #endregion
+    
     #region Private
 
     private async Task<User?> FindUser(User user)
@@ -75,3 +77,4 @@ public class DatabaseUserProvider : IDatabaseUserProvider
 
     #endregion
 }
+

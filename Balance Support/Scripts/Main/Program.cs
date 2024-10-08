@@ -7,3 +7,4 @@ await ServicesInitializer.Initialize(builder);
 var app = builder.Build();
 await AppInitializer.Initialize(app);
 await app.RunAsync();
+

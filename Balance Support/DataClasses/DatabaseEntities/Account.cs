@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Balance_Support.DataClasses.Records.AccountData;
+using Newtonsoft.Json;
 
 namespace Balance_Support.DataClasses.DatabaseEntities;
 
-public class Account : BaseEntity
+public class  Account : BaseEntity
 {
     [StringLength(50)]
     public string AccountNumber { get; set; }
@@ -28,23 +29,25 @@ public class Account : BaseEntity
     [StringLength(500)]
     public string? Description { get; set; } // Nullable property
 
+    [JsonIgnore]
     public ICollection<Transaction> Transactions { get; set; } // Navigation property
 
     [ForeignKey("User")]
     public string UserId { get; set; }  // Foreign key to User
-
+    
+    [JsonIgnore]
     public User User { get; set; } // Navigation property
 
     public void UpdateAccount(AccountUpdateRequest accountUpdateRequest)
     {
-        AccountNumber = accountUpdateRequest.AccountDataRequest.AccountNumber;
-        LastName = accountUpdateRequest.AccountDataRequest.LastName;
-        AccountGroup = accountUpdateRequest.AccountDataRequest.AccountGroup;
-        DeviceId = accountUpdateRequest.AccountDataRequest.DeviceId;
-        SimSlot = accountUpdateRequest.AccountDataRequest.SimSlot;
-        SimCardNumber = accountUpdateRequest.AccountDataRequest.SimCardNumber;
-        BankCardNumber = accountUpdateRequest.AccountDataRequest.BankCardNumber;
-        BankType = accountUpdateRequest.AccountDataRequest.BankType;
-        Description = accountUpdateRequest.AccountDataRequest.Description;
+        AccountNumber = accountUpdateRequest.AccountData.AccountNumber;
+        LastName = accountUpdateRequest.AccountData.LastName;
+        AccountGroup = accountUpdateRequest.AccountData.AccountGroup;
+        DeviceId = accountUpdateRequest.AccountData.DeviceId;
+        SimSlot = accountUpdateRequest.AccountData.SimSlot;
+        SimCardNumber = accountUpdateRequest.AccountData.SimCardNumber;
+        BankCardNumber = accountUpdateRequest.AccountData.BankCardNumber;
+        BankType = accountUpdateRequest.AccountData.BankType;
+        Description = accountUpdateRequest.AccountData.Description;
     }
 }

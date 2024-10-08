@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Security.Claims;
 using Balance_Support.Scripts.Providers.Interfaces;
 using Firebase.Auth;
@@ -11,7 +12,8 @@ namespace Balance_Support.Scripts.Providers;
 
 public class AuthUserProvider : IAuthUserProvider
 {
-    private IFirebaseAuthProvider provider;
+    private readonly IDatabaseUserSettingsProvider databaseUserSettingsProvider;
+    private IFirebaseAuthProvider firebaseAuthProvider;
 
     private EmailAddressAttribute emailAttribute;
 
@@ -19,10 +21,11 @@ public class AuthUserProvider : IAuthUserProvider
 
     private IHttpContextAccessor httpContextAccessor;
 
-    public AuthUserProvider(IDatabaseUserProvider databaseUserProvider, IFirebaseAuthProvider provider,
+    public AuthUserProvider(IDatabaseUserSettingsProvider databaseUserSettingsProvider, IDatabaseUserProvider databaseUserProvider, IFirebaseAuthProvider firebaseAuthProvider,
         IHttpContextAccessor httpContextAccessor)
     {
-        this.provider = provider;
+        this.databaseUserSettingsProvider = databaseUserSettingsProvider;
+        this.firebaseAuthProvider = firebaseAuthProvider;
         emailAttribute = new EmailAddressAttribute();
         this.databaseUserProvider = databaseUserProvider;
         this.httpContextAccessor = httpContextAccessor;
@@ -30,15 +33,6 @@ public class AuthUserProvider : IAuthUserProvider
 
     public async Task<IResult> RegisterNewUser(string username, string email, string pasword)
     {
-        //if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(pasword) ||
-        //    emailAttribute.IsValid(email) == false)
-        //{
-        //    return
-        //        Results.BadRequest(
-        //            $"Invalid email:{email}  username:{username} or password:{pasword}. Check your data");
-            
-        //}
-        
         if (await databaseUserProvider.IsEmailAlreadyRegistered(email)||await databaseUserProvider.IsUserWithUsernameExist(username))
             return Results.BadRequest("User already exists");
 
@@ -46,7 +40,7 @@ public class AuthUserProvider : IAuthUserProvider
 
         try
         {
-            link = await provider.CreateUserWithEmailAndPasswordAsync(email, pasword, username, true);
+            link = await firebaseAuthProvider.CreateUserWithEmailAndPasswordAsync(email, pasword, username, true);
         }
         catch (FirebaseAuthException ex)
         {
@@ -57,24 +51,27 @@ public class AuthUserProvider : IAuthUserProvider
 
         var response = await databaseUserProvider.CreateUserAsync(new User()
             { Id = link.User.LocalId, Email = link.User.Email, DisplayName = link.User.DisplayName });
+        
+        
         if (response.IsSuccess == false)
         {
             //TODO сделать удаление пользователя из базы данных
             Results.Problem(statusCode: 500,
                 title: "An error occurred while pushing user to database ", detail: response.ErrorMessage);
         }
+
+        var isSettingsCreated =await databaseUserSettingsProvider.CreateUserSetting(link.User.LocalId);
+        
+        if(!isSettingsCreated)
+            return Results.Problem(statusCode: 500,
+                title: "An error occurred while pushing user settings to database ", detail: response.ErrorMessage);
                 
-        return (Results.Created($"/Users/{link.User.LocalId}", link.User));
+        return Results.Created($"/Users/{link.User.LocalId}", link.User.DisplayName);
     }
 
     public async Task<IResult> LogInUser(HttpContext context, string userCred, string password,
         LoginDeviceType deviceType)
     {
-        //if (string.IsNullOrEmpty(userCred) || string.IsNullOrEmpty(password))
-        //{
-        //    return Results.BadRequest($"Invalid email: {userCred} or password: {password}. Check your data.");
-        //}
-
         try
         {
             var user = await databaseUserProvider.GetUser(userCred);
@@ -83,12 +80,12 @@ public class AuthUserProvider : IAuthUserProvider
                     title: "User not found");
             string userEmail = emailAttribute.IsValid(userCred) ? userCred : user.Email;
 
-            var authLink = await provider.SignInWithEmailAndPasswordAsync(userEmail, password);
+            var authLink = await firebaseAuthProvider.SignInWithEmailAndPasswordAsync(userEmail, password);
 
             // Manage claims-based session
             await SignInUserV2(userCred, password, context);
 
-            return Results.Ok(new { user.Id, authLink.FirebaseToken });
+            return Results.Ok(new { user.Id,user.DisplayName ,authLink.FirebaseToken });
         }
         catch (Exception ex)
         {
@@ -96,9 +93,9 @@ public class AuthUserProvider : IAuthUserProvider
         }
     }
 
-    public async Task<IResult> LogOutUser()
+    public async Task<IResult> LogOutUser(HttpContext context)
     {
-        await httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return Results.Ok("User has been logged out successfully.");
     }
 
@@ -155,6 +152,8 @@ public class AuthUserProvider : IAuthUserProvider
                 IsPersistent = true, // Make the session persistent (i.e., cookie will persist across sessions)
                 ExpiresUtc = DateTime.UtcNow.AddDays(7) // Set cookie expiration time
             });
+        
+        Debug.Print("aaa");
     }
     private TimeSpan GetSessionTimeout(LoginDeviceType deviceType)
     {

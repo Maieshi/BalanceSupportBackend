@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CodebuddyPersistentProjectState">
+    <option name="autoFileSelection" value="true" />
+    <option name="promptHistory">
+      <list>
+        <option value="create method in DatabaseUserSettingsProvider that adds new user settings to database. input is a record that contains user id" />
+        <option value="wirte the method" />
+        <option value="can you exactly write write but not describe method?" />
+        <option value="can you write a code&amp;" />
+      </list>
+    </option>
+    <option name="selectedModel" value="codebuddy:GPT4_Turbo_Haiku_V7" />
+    <option name="ttsEnabled" value="false" />
+  </component>
+</project>

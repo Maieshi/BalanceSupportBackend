@@ -1,0 +1,222 @@
+POST https://localhost:7158/Desktop/User/Login
+content-type: application/json
+Content-Length: 61
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.1.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+
+{
+  "UserCred":"myuser",
+  "Password": "testuser4testuser4"
+}
+
+<> 2024-09-24T151257.200.json
+
+###
+
+POST https://localhost:5001/Desktop/Transaction/GetMessages
+content-type: application/json
+Content-Length: 245
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.1.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+
+{
+  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "SearchText":"",
+  "AccountNumber":"802fcd49-e45e-43a2-a025-63cc9d6036cd",
+  "StartingDate":"2024-09-19 00:42:30.647",
+  "EndingDate":"2024-09-21 00:42:30.647",
+  "MessageType":-1,
+  "Amount":100
+}
+
+<> 2024-09-24T151150.400.txt
+
+###
+
+POST https://localhost:5001/Mobile/Transaction/GetTransactions
+content-type: application/json
+Content-Length: 62
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.1.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+
+{
+  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "Amount":100
+}
+
+###
+
+POST https://localhost:5001/Mobile/User/Login
+content-type: application/json
+Content-Length: 61
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.1.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+
+{
+  "UserCred":"myuser",
+  "Password": "testuser4testuser4"
+}
+
+<> 2024-09-24T151119.200.json
+
+###
+
+POST https://localhost:5001/Mobile/Transaction/HandleNew
+content-type: application/json
+Content-Length: 159
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.1.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+
+{
+  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "NotificationText": "СЧЁТ3684 16:00 перевод 3900р Комиссия 19.50р Баланс: 69.40р"
+}
+
+###
+
+POST https://localhost:5001/Mobile/Transaction/HandleNew
+content-type: application/json
+Content-Length: 159
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.1.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+
+{
+  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "NotificationText": "СЧЁТ3684 16:00 перевод 3900р Комиссия 19.50р Баланс: 69.40р"
+}
+
+###
+
+POST https://localhost:5001/Mobile/User/Login
+content-type: application/json
+Content-Length: 61
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.1.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+
+{
+  "UserCred":"myuser",
+  "Password": "testuser4testuser4"
+}
+
+<> 2024-09-24T150615.200.json
+
+###
+
+POST https://localhost:5001/Mobile/Transaction/HandleNew
+content-type: application/json
+Content-Length: 159
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.1.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+
+{
+  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "NotificationText": "СЧЁТ3684 16:00 перевод 3900р Комиссия 19.50р Баланс: 69.40р"
+}
+
+###
+
+POST https://localhost:5001/Desktop/Transaction/HandleNew
+content-type: application/json
+Content-Length: 159
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.1.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+
+{
+  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "NotificationText": "СЧЁТ3684 16:00 перевод 3900р Комиссия 19.50р Баланс: 69.40р"
+}
+
+###
+
+POST https://localhost:5001/Desktop/Transaction/GetMessages
+content-type: application/json
+Content-Length: 245
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.1.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+
+{
+  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "SearchText":"",
+  "AccountNumber":"802fcd49-e45e-43a2-a025-63cc9d6036cd",
+  "StartingDate":"2024-09-19 00:42:30.647",
+  "EndingDate":"2024-09-21 00:42:30.647",
+  "MessageType":-1,
+  "Amount":100
+}
+
+<> 2024-09-24T142408.400.txt
+
+###
+
+POST https://localhost:5001/Desktop/Transaction/GetMessages
+content-type: application/json
+Content-Length: 245
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.1.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+
+{
+  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "SearchText":"",
+  "AccountNumber":"802fcd49-e45e-43a2-a025-63cc9d6036cd",
+  "StartingDate":"2024-09-19 00:42:30.647",
+  "EndingDate":"2024-09-21 00:42:30.647",
+  "MessageType":-1,
+  "Amount":100
+}
+
+<> 2024-09-24T131439.400.txt
+
+###
+
+POST https://localhost:5001/Mobile/Transaction/GetTransactions
+content-type: application/json
+Content-Length: 62
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.1.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+
+{
+  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "Amount":100
+}
+
+###
+
+POST https://localhost:5001/Mobile/Transaction/GetTransactions
+content-type: application/json
+Content-Length: 62
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.1.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+
+{
+  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "Amount":100
+}
+
+###
+

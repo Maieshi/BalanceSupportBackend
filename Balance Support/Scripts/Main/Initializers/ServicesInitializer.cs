@@ -2,6 +2,8 @@ using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData;
 using Balance_Support.Scripts.Providers;
 using Balance_Support.Scripts.Providers.Interfaces;
+using Balance_Support.Scripts.WebSockets;
+using Balance_Support.Scripts.WebSockets.Interfaces;
 using Balance_Support.SerializationClasses;
 using Firebase.Auth;
 using Firebase.Database;
@@ -115,6 +117,19 @@ public static class ServicesInitializer
         services.AddAuthorization();
         
 
+        services.AddSignalR();
+
+        services.AddInterfacesSingleton<ConnectionManager>();
+
+        // services.AddInterfacesSingleton<AccountsHub>();
+        // services.AddSingleton<AccountsHub>();
+        // services.AddInterfacesSingleton<TransactionsHub>();
+        // services.AddSingleton<TransactionsHub>();
+
+        services.AddSingleton<IMessageSender,BaseHub>();
+
+        services.AddSingleton<BaseHub>();
+        
         services.AddSingleton(
             new FirebaseClient("https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/",
                 new FirebaseOptions { AuthTokenAsyncFactory = () => GetTokenByGoogleServices(), AsAccessToken = true })
@@ -130,7 +145,7 @@ public static class ServicesInitializer
         services.AddScoped<ICloudMessagingProvider, CloudMessagingProvider>();
         services.AddScoped<IDatabaseTransactionProvider, DatabaseTransactionProvider>();
         services.AddScoped<INotificationHandler, NotificationHandler>();
-        services.AddScoped<IDatabaseUserSettingsProvider, DatabaseUserSettingsProvider>();
+        services.AddScoped<FirebaseToSqlServerMigrator>();
 
         var provider = services.BuildServiceProvider();
         

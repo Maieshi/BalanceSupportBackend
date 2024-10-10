@@ -74,9 +74,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Scripts\Database\Providers\Interfaces\User\" />
-    <Folder Include="Scripts\Parsing\" />
-  </ItemGroup>
-
 </Project>

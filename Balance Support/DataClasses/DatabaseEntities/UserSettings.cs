@@ -4,6 +4,7 @@ using Balance_Support.DataClasses.DatabaseEntities;
 using Balance_Support.DataClasses.Records.UserData;
 using Newtonsoft.Json;
 
+namespace Balance_Support.DataClasses.DatabaseEntities;
 public class UserSettings : BaseEntity
 {
     public UserSettings(string userId)

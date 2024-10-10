@@ -1,46 +1,46 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Security.Claims;
-using Balance_Support.Scripts.Providers.Interfaces;
+using Balance_Support.DataClasses.Records.UserData;
+using Balance_Support.Scripts.Controllers.Interfaces;
+using Balance_Support.Scripts.Database.Providers.Interfaces;
+using Balance_Support.Scripts.Database.Providers.Interfaces.User;
+using Balance_Support.Scripts.Database.Providers.Interfaces.UserSettings;
 using Firebase.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using FirebaseAuthException = FirebaseAdmin.Auth.FirebaseAuthException;
 using User = Balance_Support.DataClasses.DatabaseEntities.User;
 
-namespace Balance_Support.Scripts.Providers;
+namespace Balance_Support.Scripts.Database.Providers;
 
-public class AuthUserProvider : IAuthUserProvider
+public class UserController: IUserController 
 {
-    private readonly IDatabaseUserSettingsProvider databaseUserSettingsProvider;
+    // private readonly IDatabaseUserSettingsProvider databaseUserSettingsProvider;
     private IFirebaseAuthProvider firebaseAuthProvider;
-
+    //
     private EmailAddressAttribute emailAttribute;
+    //
+    // private IDatabaseUserProvider databaseUserProvider;
+    //
+    // private IHttpContextAccessor httpContextAccessor;
 
-    private IDatabaseUserProvider databaseUserProvider;
-
-    private IHttpContextAccessor httpContextAccessor;
-
-    public AuthUserProvider(IDatabaseUserSettingsProvider databaseUserSettingsProvider, IDatabaseUserProvider databaseUserProvider, IFirebaseAuthProvider firebaseAuthProvider,
-        IHttpContextAccessor httpContextAccessor)
+    public UserController(IFirebaseAuthProvider firebaseAuthProvider)
     {
-        this.databaseUserSettingsProvider = databaseUserSettingsProvider;
         this.firebaseAuthProvider = firebaseAuthProvider;
         emailAttribute = new EmailAddressAttribute();
-        this.databaseUserProvider = databaseUserProvider;
-        this.httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<IResult> RegisterNewUser(string username, string email, string pasword)
+    public async Task<IResult> RegisterNewUser(UserRegisterRequest userRegisterRequest, ICheckEmailAlreadyRegistered checkEmailRegistered, ICheckUserWithUsernameExist checkUserRegistered, IRegisterUser registerUser, ICreateUserSettings createUserSettings )
     {
-        if (await databaseUserProvider.IsEmailAlreadyRegistered(email)||await databaseUserProvider.IsUserWithUsernameExist(username))
+        if (await checkEmailRegistered.CheckEmail(userRegisterRequest.Email)||await checkUserRegistered.CheckUsername(userRegisterRequest.DisplayName))
             return Results.BadRequest("User already exists");
 
         FirebaseAuthLink link;
 
         try
         {
-            link = await firebaseAuthProvider.CreateUserWithEmailAndPasswordAsync(email, pasword, username, true);
+            link = await firebaseAuthProvider.CreateUserWithEmailAndPasswordAsync(userRegisterRequest.Email,userRegisterRequest.Password,userRegisterRequest.DisplayName, true);
         }
         catch (FirebaseAuthException ex)
         {
@@ -49,41 +49,40 @@ public class AuthUserProvider : IAuthUserProvider
                     title: "An error occurred while creating the user");
         }
 
-        var response = await databaseUserProvider.CreateUserAsync(new User()
-            { Id = link.User.LocalId, Email = link.User.Email, DisplayName = link.User.DisplayName });
-        
-        
-        if (response.IsSuccess == false)
+        try
+        {
+            await registerUser.RegisterUser(link.User.LocalId, link.User.Email, link.User.DisplayName);
+        }
+        catch (Exception e)
         {
             //TODO сделать удаление пользователя из базы данных
-            Results.Problem(statusCode: 500,
-                title: "An error occurred while pushing user to database ", detail: response.ErrorMessage);
+            Results.Problem(detail: e.Message, statusCode: 500,
+                title: "An error occurred while pushing user to database");   
         }
 
-        var isSettingsCreated =await databaseUserSettingsProvider.CreateUserSetting(link.User.LocalId);
+        var isSettingsCreated =await createUserSettings.CreateUserSetting(link.User.LocalId);
         
-        if(!isSettingsCreated)
+        if(isSettingsCreated==null)
             return Results.Problem(statusCode: 500,
-                title: "An error occurred while pushing user settings to database ", detail: response.ErrorMessage);
+                title: "An error occurred while pushing user settings to database ");
                 
         return Results.Created($"/Users/{link.User.LocalId}", link.User.DisplayName);
     }
 
-    public async Task<IResult> LogInUser(HttpContext context, string userCred, string password,
-        LoginDeviceType deviceType)
+    public async Task<IResult> LogInUser(UserLoginRequest loginRequest,HttpContext context, LoginDeviceType deviceType, IGetUser getUser)
     {
         try
         {
-            var user = await databaseUserProvider.GetUser(userCred);
+            var user = await getUser.GetUser(loginRequest.UserCred);
             if (user == null)
                 return Results.Problem(detail: "Cannot find user in database", statusCode: 500,
                     title: "User not found");
-            string userEmail = emailAttribute.IsValid(userCred) ? userCred : user.Email;
+            string userEmail = emailAttribute.IsValid(loginRequest.UserCred) ? loginRequest.UserCred : user.Email;
 
-            var authLink = await firebaseAuthProvider.SignInWithEmailAndPasswordAsync(userEmail, password);
+            var authLink = await firebaseAuthProvider.SignInWithEmailAndPasswordAsync(userEmail, loginRequest.Password);
 
             // Manage claims-based session
-            await SignInUserV2(userCred, password, context);
+            await SignInUserV2(loginRequest.UserCred, loginRequest.Password, context);
 
             return Results.Ok(new { user.Id,user.DisplayName ,authLink.FirebaseToken });
         }
@@ -99,7 +98,7 @@ public class AuthUserProvider : IAuthUserProvider
         return Results.Ok("User has been logged out successfully.");
     }
 
-    private async Task SignInUser(FirebaseAuthLink authLink, LoginDeviceType deviceType)
+    private async Task SignInUser(FirebaseAuthLink authLink, LoginDeviceType deviceType,HttpContext context)
     {
         var expirationTime = DateTime.UtcNow.Add(GetSessionTimeout(deviceType));
         var claims = new List<Claim>
@@ -126,7 +125,7 @@ public class AuthUserProvider : IAuthUserProvider
             }
         };
 
-        await httpContextAccessor.HttpContext.SignInAsync(
+        await context.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(claimsIdentity),
             authProperties);

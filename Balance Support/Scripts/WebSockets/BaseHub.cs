@@ -49,14 +49,14 @@ public  class BaseHub : Hub, IMessageSender
             try
             {
                 await Clients.Client(connectionId).SendAsync(nameof(message), message);
-                return MessageSendResult.SuccessResult();
+                return MessageSendResult.Success();
             }
             catch (Exception e)
             {
-                return MessageSendResult.FailureResult(e.Message);
+                return MessageSendResult.SendingError(e.Message);
             }
         }
-        return MessageSendResult.FailureResult("Receiver not found");
+        return MessageSendResult.UserNotFound("Receiver not found");
 
     }
 }

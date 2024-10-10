@@ -1,110 +1,65 @@
-using System.Linq;
-
+using Balance_Support.DataClasses.DatabaseEntities;
+using Balance_Support.DataClasses.Records.NotificationData;
+using Balance_Support.Scripts.Database.Providers.Interfaces;
+using Balance_Support.Scripts.Database.Providers.Interfaces.Transaction;
+using Balance_Support.Scripts.Parsing;
+using FirebaseAdmin.Messaging;
+using Microsoft.EntityFrameworkCore;
 // using FireSharp.Interfaces;
 // using FireSharp.Response;
 // using FireSharp.Config;
 
-using Balance_Support.DataClasses.DatabaseEntities;
-using Balance_Support.DataClasses.Records.NotificationData;
-using Balance_Support.Scripts.Providers.Interfaces;
-using FirebaseAdmin.Messaging;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-
 // using Google.Apis.Auth.OAuth2;
 
-namespace Balance_Support.Scripts.Providers;
+namespace Balance_Support.Scripts.Database.Providers;
 
-public class DatabaseTransactionProvider : IDatabaseTransactionProvider
+public class DatabaseTransactionProvider :DbSetController<Transaction>, IRegisterTransaction, IGetMessages
 {
-    private readonly ICloudMessagingProvider cloudMessagingProvider;
-    private readonly ApplicationDbContext context;
-    private readonly IDatabaseAccountProvider accountProvider;
-
-    public DatabaseTransactionProvider(IDatabaseAccountProvider accountProvider,
-        ICloudMessagingProvider cloudMessagingProvider, ApplicationDbContext context)
+    public DatabaseTransactionProvider(IDbSetContainer container, ISaveDbChanges saver):base(container, saver)
     {
-        this.accountProvider = accountProvider;
-        this.cloudMessagingProvider = cloudMessagingProvider;
-        this.context = context;
+       
     }
 
-    public async Task<IResult> RegisterNewTransaction(
+    public async Task<Transaction> Register(
         string userId,
+        string accountId,
         TransactionType transactionType,
-        string cardNumber,
         decimal amount,
         decimal balance,
         string message
     )
     {
-        var account = await accountProvider.GetAccountByUserIdAndBankCardNumber(userId, cardNumber);
-
-        if (account == default)
-            return Results.NotFound("Account");
+       
         var newId = Guid.NewGuid().ToString();
-
+        var mskTime = DateTime.UtcNow.AddHours(3);  // Moscow is 3 hours ahead of UTC
+        
         var transactionData = new Transaction
         {
             Id = newId,
-            AccountId = account.Id,
+            AccountId = accountId,
             UserId = userId,
             TransactionType = (int)transactionType,
             Amount = amount,
             Balance = balance,
             Message = message,
-            Time = DateTime.UtcNow
+            Time = DateTime.SpecifyKind(mskTime,DateTimeKind.Utc)
         };
-
-        try
-        {
-            context.Transactions.Add(transactionData);
-            await context.SaveChangesAsync();
-            var accountIncome = await CalculateIncomeForAccount(account.Id);
-            var totalIncomes = await CalculateGlobalIncome(userId);
-            await  cloudMessagingProvider.SendTransaction(userId, account.Id, accountIncome.total, accountIncome.daily, totalIncomes.balance,totalIncomes.dailyExpression);
-        }
-        catch (FirebaseMessagingException e)
-        {
-            return Results.Problem(statusCode: 500, title: "Cannot send message to user");
-        }
-        catch (ArgumentNullException e)
-        {
-            return Results.Problem(statusCode: 500, title: "Cannot send message to user");
-        }
-        catch (ArgumentException e)
-        {
-            return Results.Problem(statusCode: 500, title: "Cannot send message to user");
-        }
-        catch (DbUpdateException e)
-        {
-            return Results.Problem(statusCode: 500, title: "Cannot put transaction to database");
-        }
-        catch (OperationCanceledException e)
-        {
-            return Results.Problem(statusCode: 500, title: "Cannot put transaction to database");
-        }
-
-        return Results.Created("Transactions", newId);
+        Table.Add(transactionData);
+        await Saver.SaveChangesAsync();
+        return transactionData;
+       
     }
 
 
-    public async Task<IResult> GetMessages(MessagesGetRequest messagesGetRequest)
+    public async Task<List<Transaction>> GetMessages(MessagesGetRequest messagesGetRequest, string? accountId=null)
     {
-        var query = context.Transactions.AsQueryable();
+        var query = Table.AsQueryable();
         query = query.Where(x => x.UserId == messagesGetRequest.UserId);
         
         Account? filteredAccount;
-        if (!string.IsNullOrEmpty(messagesGetRequest.AccountNumber))
+        if (string.IsNullOrEmpty(accountId))
         {
-            filteredAccount =
-                await accountProvider.GetAccountByUserIdAndAccountNumber(messagesGetRequest.UserId,
-                    messagesGetRequest.AccountNumber);
-            if (filteredAccount != null)
-            {
-                query = query.Where(t => t.AccountId == filteredAccount.Id);
-            }
-            else return Results.NotFound("Account with this account number");
+            query = query.Where(t => t.AccountId == accountId);
         }
     
         if (!string.IsNullOrEmpty(messagesGetRequest.SearchText))
@@ -124,43 +79,17 @@ public class DatabaseTransactionProvider : IDatabaseTransactionProvider
 
         if (messagesGetRequest.MessageType.HasValue&&messagesGetRequest.MessageType.Value!=-1)
         {
-            query.Where(t => t.TransactionType == messagesGetRequest.MessageType.Value);
+            query = query.Where(t => t.TransactionType == messagesGetRequest.MessageType.Value);
         }
 
 
-        var transactions = await query
+        return await query
             .Take(messagesGetRequest.Amount)
             .ToListAsync();
-
-        var accountIds = transactions.Select(t => t.AccountId).Distinct();
-
-        var accounts = await context.Accounts
-            .Where(a => accountIds.Contains(a.Id))
-            .ToListAsync();
-        if (transactions.Any(transaction => !accounts.Any(account => account.Id == transaction.AccountId))) 
-            return Results.NotFound("Account with the same Id as the transaction");
-        return await cloudMessagingProvider.SendMessages(messagesGetRequest.UserId, transactions, accounts);
-    }
-
-    public async Task<(float total, float daily)> CalculateIncomeForAccount(string accountId)
-    {
-        var transactions = await context.Transactions.Where(x => accountId == x.AccountId).ToListAsync();
         
-        float totalIncome = (float)transactions.Sum(x => x.Amount);
-        float dailyIncome = (float)transactions
-            .Where(x => x.Time.Date == DateTime.UtcNow.Date)
-            .Sum(x => x.Amount);
-        return (totalIncome, dailyIncome);
     }
+
+    public async Task<List<Transaction>> GetTransactionsForAccount(string accountId)
+        => await Table.Where(x => x.AccountId == accountId).ToListAsync();
     
-    public async Task<(float balance, float dailyExpression)> CalculateGlobalIncome(string userId)
-    {
-        var transactions = await context.Transactions.Where(x => userId == x.UserId).ToListAsync();
-        
-        float totalIncome = (float)transactions.Sum(x => x.Amount);
-        float dailyIncome = (float)transactions
-            .Where(x => x.Time.Date == DateTime.UtcNow.Date)
-            .Sum(x => x.Amount);
-        return (totalIncome, dailyIncome);
-    }
 }

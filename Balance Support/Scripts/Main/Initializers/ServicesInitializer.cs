@@ -1,8 +1,9 @@
 using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData;
+using Balance_Support.Scripts.Database.Providers;
+using Balance_Support.Scripts.Database.Providers.Interfaces;
 using Balance_Support.Scripts.Extensions.DIExtensions;
-using Balance_Support.Scripts.Providers;
-using Balance_Support.Scripts.Providers.Interfaces;
+using Balance_Support.Scripts.Parsing;
 using Balance_Support.Scripts.WebSockets;
 using Balance_Support.Scripts.WebSockets.Interfaces;
 using Balance_Support.SerializationClasses;
@@ -141,12 +142,12 @@ public static class ServicesInitializer
         );
 //TODO:create DI installers
         services.AddScoped<IDatabaseUserProvider, DatabaseUserProvider>();
-        services.AddScoped<IDatabaseUserSettingsProvider, DatabaseUserSettingsProvider>();
-        services.AddScoped<IAuthUserProvider, AuthUserProvider>();
+        services.AddScoped<IDatabaseUserSettingsProvider, DatabaseUserSettingsByUserIdProvider>();
+        services.AddScoped<IAuthUserProvider, UserController>();
         services.AddScoped<IDatabaseAccountProvider, DatabaseAccountProvider>();
         services.AddScoped<ICloudMessagingProvider, CloudMessagingProvider>();
         services.AddScoped<IDatabaseTransactionProvider, DatabaseTransactionProvider>();
-        services.AddScoped<INotificationHandler, NotificationHandler>();
+        services.AddScoped<INotificationMessageParser, NotificationMessageParser>();
         services.AddScoped<FirebaseToSqlServerMigrator>();
 
         var provider = services.BuildServiceProvider();

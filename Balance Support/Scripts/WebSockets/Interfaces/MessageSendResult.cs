@@ -2,11 +2,11 @@ namespace Balance_Support.Scripts.WebSockets.Interfaces;
 
 public class MessageSendResult
 {
-    public readonly bool IsSuccess;
+    public  bool IsSuccess {get; }
 
-    public ErrorType ErrorType;
+    public ErrorType ErrorType{get; set; }
     
-    public readonly string? ErrorDetails;
+    public  string? ErrorDetails{get; set; }
 
     private MessageSendResult(bool isSuccess, string? errorDetails = null)
     {

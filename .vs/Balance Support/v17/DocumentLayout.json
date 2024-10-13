@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Projects\\Asp. Net\\Balance Support\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\properties\\publishprofiles\\folderprofile.pubxml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\properties\\publishprofiles\\folderprofile.pubxml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|c:\\projects\\asp. net\\balance support\\balance support\\scripts\\main\\initializers\\appinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1CF920F7-416B-414B-8BDD-DB8ED6AA8ACE}|Balance Support\\Balance Support.csproj|solutionrelative:balance support\\scripts\\main\\initializers\\appinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -46,11 +50,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "ServicesInitializer.cs",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Main\\ServicesInitializer.cs",
               "RelativeDocumentMoniker": "Balance Support\\Scripts\\Main\\ServicesInitializer.cs",
@@ -61,12 +65,25 @@
               "IsPinned": true
             },
             {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "FolderProfile.pubxml",
+              "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Properties\\PublishProfiles\\FolderProfile.pubxml",
+              "RelativeDocumentMoniker": "Balance Support\\Properties\\PublishProfiles\\FolderProfile.pubxml",
+              "ToolTip": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Properties\\PublishProfiles\\FolderProfile.pubxml",
+              "RelativeToolTip": "Balance Support\\Properties\\PublishProfiles\\FolderProfile.pubxml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
+              "WhenOpened": "2024-10-11T16:04:22.667Z",
+              "EditorCaption": ""
+            },
+            {
               "$type": "Bookmark",
               "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "ServicesInitializer.cs",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Main\\Initializers\\ServicesInitializer.cs",
               "RelativeDocumentMoniker": "Balance Support\\Scripts\\Main\\Initializers\\ServicesInitializer.cs",
@@ -74,12 +91,11 @@
               "RelativeToolTip": "Balance Support\\Scripts\\Main\\Initializers\\ServicesInitializer.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-03T17:43:56.803Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-03T17:43:56.803Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "AppInitializer.cs",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Main\\Initializers\\AppInitializer.cs",
               "RelativeDocumentMoniker": "Balance Support\\Scripts\\Main\\Initializers\\AppInitializer.cs",
@@ -92,7 +108,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "DatabaseUserProvider.cs",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Providers\\FIrebaseProviders\\DatabaseUserProvider.cs",
               "RelativeDocumentMoniker": "Balance Support\\Scripts\\Providers\\FIrebaseProviders\\DatabaseUserProvider.cs",
@@ -103,7 +119,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "DatabaseTransactionProvider.cs",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Providers\\FIrebaseProviders\\DatabaseTransactionProvider.cs",
               "RelativeDocumentMoniker": "Balance Support\\Scripts\\Providers\\FIrebaseProviders\\DatabaseTransactionProvider.cs",
@@ -114,7 +130,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "DatabaseAccountProvider.cs",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Providers\\FIrebaseProviders\\DatabaseAccountProvider.cs",
               "RelativeDocumentMoniker": "Balance Support\\Scripts\\Providers\\FIrebaseProviders\\DatabaseAccountProvider.cs",
@@ -125,7 +141,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "AccountGetRequest.cs",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\DataClasses\\Records\\AccountData\\AccountGetRequest.cs",
               "RelativeDocumentMoniker": "Balance Support\\DataClasses\\Records\\AccountData\\AccountGetRequest.cs",
@@ -136,7 +152,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "AuthUserProvider.cs",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Providers\\FIrebaseProviders\\AuthUserProvider.cs",
               "RelativeDocumentMoniker": "Balance Support\\Scripts\\Providers\\FIrebaseProviders\\AuthUserProvider.cs",
@@ -147,7 +163,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "CloudMessagingProvider.cs",
               "DocumentMoniker": "C:\\Projects\\Asp. Net\\Balance Support\\Balance Support\\Scripts\\Providers\\FIrebaseProviders\\CloudMessagingProvider.cs",
               "RelativeDocumentMoniker": "Balance Support\\Scripts\\Providers\\FIrebaseProviders\\CloudMessagingProvider.cs",

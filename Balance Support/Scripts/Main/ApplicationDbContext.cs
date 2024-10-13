@@ -262,20 +262,22 @@ public class TransactionDto
 
     // Add other properties as needed
 
+    public TransactionDto(Transaction t)
+    {
+        
+        Id = t.Id;
+        UserId = t.UserId;
+        AccountId = t.AccountId;
+        Amount = t.Amount;
+        Balance = t.Balance;
+        Time = t.Time;
+        TransactionType = t.TransactionType;
+        Message = t.Message;
+    }
+
     public static List<TransactionDto> CreateDtos(List<Transaction> transactions)
     {
-        return transactions.Select(t => new TransactionDto
-        {
-            Id = t.Id,
-            UserId = t.UserId,
-            AccountId = t.AccountId,
-            Amount = t.Amount,
-            Balance = t.Balance,
-            Time = t.Time,
-            TransactionType = t.TransactionType,
-            Message = t.Message
-            // Map other properties as needed
-        }).ToList();
+        return transactions.Select(t => new TransactionDto(t)).ToList();
     }
 }
 

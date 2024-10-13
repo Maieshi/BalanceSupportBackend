@@ -57,14 +57,14 @@ public class TransactionController : ITransactionController
         {
             Balance = globalIncome.Item1.total,
             DailyExpression = globalIncome.Item1.daily,
-            AccountId = accIncome.accId,
-            T = accIncome.total,
-            D = accIncome.daily
+            AccountId = accIncome.AccId,
+            T = accIncome.Total,
+            D = accIncome.Daily
         });
 
         return Results.Created("Transaction/", new
         {
-            Transaction = transaction,
+            Transaction = new TransactionDto(transaction),
             transactionResult = resultTransactionMessage,
             incomeResult = resultIncomeMessage
         });
@@ -130,20 +130,22 @@ public class TransactionController : ITransactionController
         }).ToList();
         return Results.Ok(messageDtos);
     }
-
-    private async Task<((float total, float daily), List<(string accId, float total, float daily)>)>
-        CalculateIncomeForAccounts(List<Account> accounts, IGetTransactionsForAccount getTransactions)
+    
+    private async Task<((float total, float daily), List<AccountIncome>)> CalculateIncomeForAccounts(
+        List<Account> accounts, IGetTransactionsForAccount getTransactions)
     {
-        var transactionsByAccount = (await Task.WhenAll(accounts.Select(async account =>
+        var transactionsByAccount = new Dictionary<string, List<Transaction>>();
+
+        foreach (var account in accounts)
         {
             var transactions = await getTransactions.Get(account.Id);
-            return new { AccountId = account.Id, Transactions = transactions };
-        }))).ToDictionary(x => x.AccountId, x => x.Transactions);
+            transactionsByAccount[account.Id] = transactions;
+        }
 
         var incomePerAccount = transactionsByAccount.Select(x =>
         {
             var income = CalculateIncomeForTransactions(x.Value);
-            return (accId: x.Key, total: income.total, daily: income.daily); // Use tuple instead of anonymous type
+            return new AccountIncome { AccId = x.Key, Total = income.total, Daily = income.daily };
         }).ToList();
 
         var globalIncome = CalculateIncomeForTransactions(transactionsByAccount.SelectMany(kv => kv.Value).ToList());
@@ -160,4 +162,11 @@ public class TransactionController : ITransactionController
             .Sum(x => x.Amount);
         return (totalIncome, dailyIncome);
     }
+}
+
+public class AccountIncome
+{
+    public string AccId { get; set; }
+    public float Total { get; set; }
+    public float Daily { get; set; }
 }

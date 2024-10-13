@@ -1,0 +1,103 @@
+C:\Users\ilia\Downloads\current build\Balance Support.exe
+C:\Users\ilia\Downloads\current build\publish\web.config
+C:\Users\ilia\Downloads\current build\appsettings.Development.json
+C:\Users\ilia\Downloads\current build\appsettings.json
+C:\Users\ilia\Downloads\current build\Config.json
+C:\Users\ilia\Downloads\current build\publish\appsettings.Development.json
+C:\Users\ilia\Downloads\current build\publish\appsettings.json
+C:\Users\ilia\Downloads\current build\publish\Balance Support.deps.json
+C:\Users\ilia\Downloads\current build\publish\Balance Support.runtimeconfig.json
+C:\Users\ilia\Downloads\current build\publish\balance-support-b9da3-firebase-adminsdk-ingxx-2394611a79.json
+C:\Users\ilia\Downloads\current build\publish\Config.json
+C:\Users\ilia\Downloads\current build\Requests\http-client.env.json
+C:\Users\ilia\Downloads\current build\Third-party configs\balance-support-b9da3-default-rtdb-export (3).json
+C:\Users\ilia\Downloads\current build\Third-party configs\Firebase\FirebaseAuthApiKey.json
+C:\Users\ilia\Downloads\current build\Third-party configs\Firebase\FirebaseCloudMessaging.json
+C:\Users\ilia\Downloads\current build\Third-party configs\Firebase\FirebaseDatabaseClientConfig.json
+C:\Users\ilia\Downloads\current build\Balance Support.dll
+C:\Users\ilia\Downloads\current build\Balance Support.runtimeconfig.json
+C:\Users\ilia\Downloads\current build\Balance Support.pdb
+C:\Users\ilia\Downloads\current build\Autofac.dll
+C:\Users\ilia\Downloads\current build\Autofac.Extensions.DependencyInjection.dll
+C:\Users\ilia\Downloads\current build\Autofac.Integration.SignalR.dll
+C:\Users\ilia\Downloads\current build\Azure.Core.dll
+C:\Users\ilia\Downloads\current build\Azure.Identity.dll
+C:\Users\ilia\Downloads\current build\Firebase.Auth.dll
+C:\Users\ilia\Downloads\current build\FirebaseAdmin.dll
+C:\Users\ilia\Downloads\current build\Firebase.dll
+C:\Users\ilia\Downloads\current build\FluentValidation.dll
+C:\Users\ilia\Downloads\current build\FluentValidation.AspNetCore.dll
+C:\Users\ilia\Downloads\current build\FluentValidation.DependencyInjectionExtensions.dll
+C:\Users\ilia\Downloads\current build\Google.Api.Gax.dll
+C:\Users\ilia\Downloads\current build\Google.Api.Gax.Rest.dll
+C:\Users\ilia\Downloads\current build\Google.Apis.dll
+C:\Users\ilia\Downloads\current build\Google.Apis.Auth.dll
+C:\Users\ilia\Downloads\current build\Google.Apis.Core.dll
+C:\Users\ilia\Downloads\current build\LiteDB.dll
+C:\Users\ilia\Downloads\current build\Microsoft.AspNet.Identity.Core.dll
+C:\Users\ilia\Downloads\current build\Microsoft.AspNet.Identity.Owin.dll
+C:\Users\ilia\Downloads\current build\Microsoft.AspNetCore.Connections.Abstractions.dll
+C:\Users\ilia\Downloads\current build\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\ilia\Downloads\current build\Microsoft.AspNetCore.DataProtection.dll
+C:\Users\ilia\Downloads\current build\Microsoft.AspNetCore.DataProtection.Abstractions.dll
+C:\Users\ilia\Downloads\current build\Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.dll
+C:\Users\ilia\Downloads\current build\Microsoft.AspNetCore.SignalR.Common.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Data.SqlClient.dll
+C:\Users\ilia\Downloads\current build\Microsoft.EntityFrameworkCore.dll
+C:\Users\ilia\Downloads\current build\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\ilia\Downloads\current build\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\ilia\Downloads\current build\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Extensions.Caching.Abstractions.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Extensions.Caching.Memory.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Extensions.Features.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Extensions.Logging.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Extensions.Options.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Extensions.Primitives.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Identity.Client.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Identity.Client.Extensions.Msal.dll
+C:\Users\ilia\Downloads\current build\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\ilia\Downloads\current build\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\ilia\Downloads\current build\Microsoft.IdentityModel.Logging.dll
+C:\Users\ilia\Downloads\current build\Microsoft.IdentityModel.Protocols.dll
+C:\Users\ilia\Downloads\current build\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\ilia\Downloads\current build\Microsoft.IdentityModel.Tokens.dll
+C:\Users\ilia\Downloads\current build\System.ServiceModel.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Owin.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Owin.Security.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Owin.Security.Cookies.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Owin.Security.OAuth.dll
+C:\Users\ilia\Downloads\current build\Microsoft.SqlServer.Server.dll
+C:\Users\ilia\Downloads\current build\Newtonsoft.Json.dll
+C:\Users\ilia\Downloads\current build\Owin.dll
+C:\Users\ilia\Downloads\current build\System.ClientModel.dll
+C:\Users\ilia\Downloads\current build\System.CodeDom.dll
+C:\Users\ilia\Downloads\current build\System.Configuration.ConfigurationManager.dll
+C:\Users\ilia\Downloads\current build\System.Diagnostics.DiagnosticSource.dll
+C:\Users\ilia\Downloads\current build\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\ilia\Downloads\current build\System.IO.Pipelines.dll
+C:\Users\ilia\Downloads\current build\System.Management.dll
+C:\Users\ilia\Downloads\current build\System.Memory.Data.dll
+C:\Users\ilia\Downloads\current build\System.Net.WebSockets.WebSocketProtocol.dll
+C:\Users\ilia\Downloads\current build\System.Reactive.dll
+C:\Users\ilia\Downloads\current build\System.Runtime.InteropServices.WindowsRuntime.dll
+C:\Users\ilia\Downloads\current build\System.Security.Cryptography.ProtectedData.dll
+C:\Users\ilia\Downloads\current build\System.Security.Cryptography.Xml.dll
+C:\Users\ilia\Downloads\current build\System.Text.Encodings.Web.dll
+C:\Users\ilia\Downloads\current build\System.Text.Json.dll
+C:\Users\ilia\Downloads\current build\de\Microsoft.Data.SqlClient.resources.dll
+C:\Users\ilia\Downloads\current build\es\Microsoft.Data.SqlClient.resources.dll
+C:\Users\ilia\Downloads\current build\fr\Microsoft.Data.SqlClient.resources.dll
+C:\Users\ilia\Downloads\current build\it\Microsoft.Data.SqlClient.resources.dll
+C:\Users\ilia\Downloads\current build\ja\Microsoft.Data.SqlClient.resources.dll
+C:\Users\ilia\Downloads\current build\ko\Microsoft.Data.SqlClient.resources.dll
+C:\Users\ilia\Downloads\current build\pt-BR\Microsoft.Data.SqlClient.resources.dll
+C:\Users\ilia\Downloads\current build\ru\Microsoft.Data.SqlClient.resources.dll
+C:\Users\ilia\Downloads\current build\zh-Hans\Microsoft.Data.SqlClient.resources.dll
+C:\Users\ilia\Downloads\current build\zh-Hant\Microsoft.Data.SqlClient.resources.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\ilia\Downloads\current build\Balance Support.deps.json

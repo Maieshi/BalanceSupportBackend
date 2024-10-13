@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Balance_Support.Scripts.Database.Providers;
 
-public class DatabaseTransactionProvider :DbSetController<Transaction>, IRegisterTransaction, IGetMessages
+public class DatabaseTransactionProvider :DbSetController<Transaction>, IRegisterTransaction, IGetMessages,IGetTransactionsForAccount
 {
     public DatabaseTransactionProvider(IDbSetContainer container, ISaveDbChanges saver):base(container, saver)
     {
@@ -89,7 +89,8 @@ public class DatabaseTransactionProvider :DbSetController<Transaction>, IRegiste
         
     }
 
-    public async Task<List<Transaction>> GetTransactionsForAccount(string accountId)
+    public async Task<List<Transaction>> Get(string accountId)
         => await Table.Where(x => x.AccountId == accountId).ToListAsync();
+
     
 }

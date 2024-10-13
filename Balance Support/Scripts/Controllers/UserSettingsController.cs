@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Balance_Support.Scripts.Controllers;
 
-public class UserSettingsController: IUserSettingsController
+public class UserSettingsController : IUserSettingsController
 {
     public async Task<IResult> GetUserSettings(UserSettingsGetRequest userSettingsGetRequest,
         IGetUserSettingsByUserId getUserSettingsByUserId)

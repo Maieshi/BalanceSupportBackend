@@ -3,14 +3,13 @@
 GET https://localhost:5001/
 
 ###
-GET https://localhost:5001/todos/1
-
-###
 GET https://localhost:5001/GetContext
-
 
 ###
 GET https://localhost:5001/GetDatabase
+
+###
+POST  https://localhost:5001/Check
 
 ###
 POST https://localhost:5001/todos
@@ -24,6 +23,16 @@ content-type: application/json
 
 ######### User 
 
+POST https://localhost:5001/Desktop/User/Register
+content-type: application/json
+
+{
+   "Email": "my@example.com",
+  "DisplayName":"myuser",
+  "Password": "testuser4testuser4"
+}
+
+###
 POST https://localhost:5001/Mobile/User/Login
 content-type: application/json
 
@@ -126,23 +135,6 @@ GET https://localhost:5001/Mobile/Account/GetForDevice/sDAmWae7RqMsmWIC74lVdLuQR
 ###
 GET https://localhost:5001/Desktop/Account/GetAllForUser/sDAmWae7RqMsmWIC74lVdLuQRpq1
 
-######### UserToken
-
-POST https://localhost:5001/Desktop/UserToken/Set
-content-type: application/json
-
-{
-  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
-  "Token": "sampleToken"
-}
-
-###
-POST https://localhost:5001/Desktop/UserToken/Delete
-content-type: application/json
-
-{
-  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1"
-}
 
 ######### Transaction
 
@@ -166,4 +158,12 @@ content-type: application/json
   "EndingDate":"2024-09-21T00:42:30.647Z",
   "MessageType":-1,
   "Amount":100
+}
+
+###
+POST https://localhost:5001/Desktop/Transaction/CalculateBalance
+content-type: application/json
+
+{
+"UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1"
 }

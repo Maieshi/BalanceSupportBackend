@@ -4,6 +4,7 @@ using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData;
 using Balance_Support.DataClasses.Records.UserData;
 using Balance_Support.DataClasses.Validators;
+using Balance_Support.Scripts.Controllers;
 using Balance_Support.Scripts.Controllers.Interfaces;
 using Balance_Support.Scripts.Database.Providers;
 using Balance_Support.Scripts.Database.Providers.Interfaces.Account;
@@ -11,8 +12,8 @@ using Balance_Support.Scripts.Database.Providers.Interfaces.Transaction;
 using Balance_Support.Scripts.Database.Providers.Interfaces.User;
 using Balance_Support.Scripts.Database.Providers.Interfaces.UserSettings;
 using Balance_Support.Scripts.Extensions;
+using Balance_Support.Scripts.Extensions.EndpointExtensions;
 using Balance_Support.Scripts.Parsing;
-using Balance_Support.Scripts.Validators;
 using Balance_Support.Scripts.WebSockets;
 using Balance_Support.Scripts.WebSockets.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -61,7 +62,6 @@ public static class AppInitializer
             UserSettings = UserSettingsDto.CreateDtos(await context.UserSettings.ToListAsync()),
             Accounts = AccountDto.CreateDtos(await context.Accounts.ToListAsync()),
             Transactions = TransactionDto.CreateDtos(await context.Transactions.ToListAsync()),
-            UserTokens = UserTokenDto.CreateDtos(await context.UserTokens.ToListAsync())
         }));
 
         app.MapPost("/Check",
@@ -282,20 +282,19 @@ public static class AppInitializer
 
         app.MapPost("/Mobile/Transaction/HandleNew",
             async (
-                    [FromBody] NotificationHandleRequest handleNotificationRequest,
-                    [FromServices] ITransactionController controller,
-                    [FromServices] INotificationMessageParser messageParser,
-                    [FromServices] IGetAccountByUserIdAndBankCardNumber getUser,
-                    [FromServices] IRegisterTransaction transactionRegister,
-                    [FromServices] IMessageSender sender,
-                    [FromServices] IGetTransactionsForAccount getTransactions,
+                NotificationHandleRequest handleNotificationRequest,
+                ITransactionController controller,
+                INotificationMessageParser messageParser, IGetAccountByUserIdAndBankCardNumber getUser,
+                IRegisterTransaction transactionRegister, IMessageSender sender,
+                IGetTransactionsForAccount getTransactions,IGetAccountsForUser getAccounts,
+                IGetUserSettingsByUserId  getUserSettings,
                     [FromServices] IHttpContextAccessor httpContextAccessor) =>
                 (await ResultContainer
                     .Start()
                     .Validate<NotificationHandleRequest, NotificationHandleRequestValidator>(handleNotificationRequest)
-                    .Authorize(httpContextAccessor.HttpContext)
+                    // .Authorize(httpContextAccessor.HttpContext)
                     .ProcessAsync(async () => await controller.RegisterNewTransaction(handleNotificationRequest,
-                        messageParser, getUser, transactionRegister, sender, getTransactions)))
+                        messageParser, getUser, transactionRegister, sender,getTransactions ,getAccounts,getUserSettings)))
                 .GetResult()
         );
 
@@ -304,15 +303,16 @@ public static class AppInitializer
                 [FromBody] MessagesGetRequest messagesGetRequest,
                 [FromServices] ITransactionController controller,
                 [FromServices] IGetMessages getMessages,
-                [FromServices] IFindAccountByAccountId findAccount,
+                [FromServices] IFindAccountByAccountId findAccount, 
                 [FromServices] IGetAccountByUserIdAndAccountNumber getAccount,
+                [FromServices] IFindAccountsByUserId findAccounts,
                 [FromServices] IHttpContextAccessor httpContextAccessor) =>
             (await ResultContainer
                 .Start()
                 .Validate<MessagesGetRequest, MessagesGetRequestValidator>(messagesGetRequest)
-                .Authorize(httpContextAccessor.HttpContext)
+                // .Authorize(httpContextAccessor.HttpContext)
                 .ProcessAsync(async () =>
-                    await controller.GetMessages(messagesGetRequest, getMessages, findAccount, getAccount)))
+                    await controller.GetMessages(messagesGetRequest, getMessages, findAccount, getAccount, findAccounts)))
             .GetResult()
         );
 
@@ -339,7 +339,6 @@ public static class AppInitializer
 
 //TODO: create new endpoint filtration and validation
 //TODO: try to rebuild project to mvc
-//TODO: split notification handling to parser(mb static) that returns transaction and transaction handler
 //TODO: try to upgrade architecture and make the code less cohesive
     }
 

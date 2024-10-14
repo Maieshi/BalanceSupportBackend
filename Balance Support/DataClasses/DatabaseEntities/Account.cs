@@ -25,6 +25,8 @@ public class  Account : BaseEntity
 
     [StringLength(50)]
     public string BankType { get; set; }
+    
+    public decimal InitialBalance { get; set; }
 
     [StringLength(500)]
     public string? Description { get; set; } // Nullable property

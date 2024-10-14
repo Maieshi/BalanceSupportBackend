@@ -7,8 +7,10 @@ using Balance_Support.Scripts.Database.Providers.Interfaces;
 using Balance_Support.Scripts.Database.Providers.Interfaces.Account;
 using Balance_Support.Scripts.Database.Providers.Interfaces.Transaction;
 using Balance_Support.Scripts.Database.Providers.Interfaces.UserSettings;
+using Balance_Support.Scripts.Main;
 using Balance_Support.Scripts.Parsing;
 using Balance_Support.Scripts.WebSockets.Interfaces;
+using Google.Apis.Util;
 
 namespace Balance_Support.Scripts.Controllers;
 
@@ -16,7 +18,9 @@ public class TransactionController : ITransactionController
 {
     public async Task<IResult> RegisterNewTransaction(NotificationHandleRequest handleRequest,
         INotificationMessageParser messageParser, IGetAccountByUserIdAndBankCardNumber getUser,
-        IRegisterTransaction transactionRegister, IMessageSender sender, IGetTransactionsForAccount getTransactions)
+        IRegisterTransaction transactionRegister, IMessageSender sender,
+        IGetTransactionsForAccount getTransactions,IGetAccountsForUser getAccounts,
+        IGetUserSettingsByUserId  getUserSettings)
     {
         var data = await messageParser.HandleNotification(handleRequest);
         if (data == null)
@@ -49,17 +53,27 @@ public class TransactionController : ITransactionController
             Message = handleRequest.NotificationText
         });
 
-        var globalIncome = await CalculateIncomeForAccounts(new List<Account> { account }, getTransactions);
+        var settings = await getUserSettings.GetByUserId(handleRequest.UserId);
+        
+        if(settings==null)
+            return Results.Created("Transaction/", new
+            {
+                Transaction = new TransactionDto(transaction),
+                transactionResult = resultTransactionMessage,
+                incomeResult = "Cannot find user settings"
+            });
 
-        var accIncome = globalIncome.Item2.First();
+        var groupIncome = await CalculateTotalIncomeForSelectedGroup(handleRequest.UserId,settings.SelectedGroup,getTransactions,getAccounts);
+        
+        var accIncome = CalculateIncomeForTransactions(await getTransactions.Get(account.Id));
 
         var resultIncomeMessage = await sender.SendMessage(handleRequest.UserId, new IncomeMessage()
         {
-            Balance = globalIncome.Item1.total,
-            DailyExpression = globalIncome.Item1.daily,
-            AccountId = accIncome.AccId,
-            T = accIncome.Total,
-            D = accIncome.Daily
+            Balance = groupIncome.total,
+            DailyExpression = groupIncome.daily,
+            AccountId = account.Id,
+            T = accIncome.total+(float)account.InitialBalance,
+            D = accIncome.daily
         });
 
         return Results.Created("Transaction/", new
@@ -80,40 +94,45 @@ public class TransactionController : ITransactionController
             return Results.NotFound("UserSettings");
         }
 
-        var accounts = await getAccounts.GetAllAccountsForUser(request.UserId,
-            userSettings.SelectedGroup == 0 ? null : userSettings.SelectedGroup);
+        var totalIncomeForSelectedGroup = await CalculateTotalIncomeForSelectedGroup(request.UserId, userSettings.SelectedGroup,
+            getTransactions, getAccounts);
 
-        var incomeForAccounts = await CalculateIncomeForAccounts(accounts, getTransactions);
-
+        var incomeForSelectedGroup = await CalculateAccountIncomeForSelectedGroup(request.UserId, userSettings.SelectedGroup,
+            getTransactions, getAccounts);
 
         return Results.Ok(new
         {
-            Balance = incomeForAccounts.Item1.total,
-            DailyExplression = incomeForAccounts.Item1.daily,
-            AccountsIncome = incomeForAccounts.Item2
+            Balance = totalIncomeForSelectedGroup.total,
+            DailyExplression = totalIncomeForSelectedGroup.daily,
+            AccountsIncome = incomeForSelectedGroup
         });
     }
 
     public async Task<IResult> GetMessages(MessagesGetRequest messagesGetRequest,
         IGetMessages getMessages,
-        IFindAccountByAccountId findAccount, IGetAccountByUserIdAndAccountNumber getAccount)
+        IFindAccountByAccountId findAccount, IGetAccountByUserIdAndAccountNumber getAccount,IFindAccountsByUserId findAccounts)
     {
-        Account? account = null;
+        List<Account> accounts = new List<Account>();
         if (messagesGetRequest.AccountNumber != null)
-            account = await getAccount.GetAccountByUserIdAndAccountNumber(messagesGetRequest.UserId,
-                messagesGetRequest.AccountNumber);
+        {
+            var account =
+                await getAccount.GetAccountByUserIdAndAccountNumber(messagesGetRequest.UserId,
+                    messagesGetRequest.AccountNumber);
+            if (account != null)
+            {
+                accounts.Add(account);
+            }
+        }
+        else
+            accounts = await findAccounts.FindAccountsByUserId(messagesGetRequest.UserId);
 
-        var messages = await getMessages.GetMessages(messagesGetRequest, account?.Id);
+        if (!accounts.Any())
+            return Results.NotFound("Account");
+        
+        var messages = await getMessages.GetMessages(messagesGetRequest,accounts.Select(x=> x.Id).ToList());
 
         var accountDict =
-            (await Task.WhenAll(messages
-                    .Select(x => x.AccountId)
-                    .Distinct()
-                .Select(async x => await findAccount
-                            .FindAccountByAccountId(x))))
-            .Where(account => account != null)
-            .ToDictionary(account => account!.Id);
-
+            accounts.ToDictionary(account => account.Id);
 
         var messageDtos = messages.Select(x => new TransactionMessage()
         {
@@ -130,29 +149,52 @@ public class TransactionController : ITransactionController
         }).ToList();
         return Results.Ok(messageDtos);
     }
-    
-    private async Task<((float total, float daily), List<AccountIncome>)> CalculateIncomeForAccounts(
-        List<Account> accounts, IGetTransactionsForAccount getTransactions)
+
+    private async Task<(float total, float daily)> CalculateTotalIncomeForSelectedGroup(string userId,int selectedGroup,IGetTransactionsForAccount getTransactions, IGetAccountsForUser getAccounts)
     {
+        var accounts = (await getAccounts.GetAllAccountsForUser(userId,
+            selectedGroup == 0 ? null : selectedGroup)).ToDictionary(x=>x.Id);
+        
         var transactionsByAccount = new Dictionary<string, List<Transaction>>();
 
         foreach (var account in accounts)
         {
-            var transactions = await getTransactions.Get(account.Id);
-            transactionsByAccount[account.Id] = transactions;
+            var transactions = await getTransactions.Get(account.Key);
+            transactionsByAccount[account.Key] = transactions;
         }
 
         var incomePerAccount = transactionsByAccount.Select(x =>
         {
             var income = CalculateIncomeForTransactions(x.Value);
-            return new AccountIncome { AccId = x.Key, Total = income.total, Daily = income.daily };
+            return (total: income.total+(float)accounts[x.Key].InitialBalance ,daily: income.daily);
         }).ToList();
 
-        var globalIncome = CalculateIncomeForTransactions(transactionsByAccount.SelectMany(kv => kv.Value).ToList());
+        var total = incomePerAccount.Sum(x => x.total);
+        
+        var daily = incomePerAccount.Sum(x => x.daily);
 
-        return (globalIncome, incomePerAccount);
+        return (total,daily);
     }
+    
+    private async Task<List<AccountIncome>> CalculateAccountIncomeForSelectedGroup(string userId,int selectedGroup,IGetTransactionsForAccount getTransactions, IGetAccountsForUser getAccounts)
+    {
+        var accounts = (await getAccounts.GetAllAccountsForUser(userId,
+            selectedGroup == 0 ? null : selectedGroup)).ToDictionary(x=>x.Id);
+        
+        var transactionsByAccount = new Dictionary<string, List<Transaction>>();
 
+        foreach (var account in accounts)
+        {
+            var transactions = await getTransactions.Get(account.Key);
+            transactionsByAccount[account.Key] = transactions;
+        }
+
+        return transactionsByAccount.Select(x =>
+        {
+            var income = CalculateIncomeForTransactions(x.Value);
+            return new AccountIncome(){ AccId = x.Key,Total = income.total+(float)accounts[x.Key].InitialBalance , Daily = income.daily};
+        }).ToList();
+    }
 
     private (float total, float daily) CalculateIncomeForTransactions(List<Transaction> transactions)
     {

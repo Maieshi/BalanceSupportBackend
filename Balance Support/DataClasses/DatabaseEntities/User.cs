@@ -11,8 +11,6 @@ public class User : BaseEntity
     [JsonIgnore]
     public ICollection<Account> Accounts { get; set; } // Navigation property
     [JsonIgnore]
-    public ICollection<UserToken> UserTokens { get; set; } // Navigation property
-    [JsonIgnore]
     public UserSettings UserSettings { get; set; }
     [JsonIgnore]
     public ICollection<Transaction> Transactions { get; set; }

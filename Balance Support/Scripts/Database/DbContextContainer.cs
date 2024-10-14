@@ -1,5 +1,6 @@
 using Balance_Support.DataClasses.DatabaseEntities;
 using Balance_Support.Scripts.Database.Providers;
+using Balance_Support.Scripts.Main;
 using Microsoft.EntityFrameworkCore;
 
 namespace Balance_Support.Scripts.Database;
@@ -16,7 +17,6 @@ public class DbContextContainer:IDbSetContainer,ISaveDbChanges
         dbSets[typeof(User)] = context.Users;
         dbSets[typeof(Account)] = context.Accounts;
         dbSets[typeof(Transaction)] = context.Transactions;
-        dbSets[typeof(UserToken)] = context.UserTokens;
         dbSets[typeof(UserSettings)] = context.UserSettings;
     }
 

@@ -1,4 +1,4 @@
-namespace Balance_Support;
+namespace Balance_Support.Scripts.Main;
 
 public static class PathStorage
 {

@@ -3,16 +3,14 @@ using System.Diagnostics;
 using System.Security.Claims;
 using Balance_Support.DataClasses.Records.UserData;
 using Balance_Support.Scripts.Controllers.Interfaces;
-using Balance_Support.Scripts.Database.Providers.Interfaces;
 using Balance_Support.Scripts.Database.Providers.Interfaces.User;
 using Balance_Support.Scripts.Database.Providers.Interfaces.UserSettings;
 using Firebase.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using FirebaseAuthException = FirebaseAdmin.Auth.FirebaseAuthException;
-using User = Balance_Support.DataClasses.DatabaseEntities.User;
 
-namespace Balance_Support.Scripts.Database.Providers;
+namespace Balance_Support.Scripts.Controllers;
 
 public class UserController: IUserController 
 {

@@ -51,16 +51,12 @@ public class DatabaseTransactionProvider :DbSetController<Transaction>, IRegiste
     }
 
 
-    public async Task<List<Transaction>> GetMessages(MessagesGetRequest messagesGetRequest, string? accountId=null)
+    public async Task<List<Transaction>> GetMessages(MessagesGetRequest messagesGetRequest,List<string> accountIds)
     {
         var query = Table.AsQueryable();
         query = query.Where(x => x.UserId == messagesGetRequest.UserId);
-        
-        Account? filteredAccount;
-        if (string.IsNullOrEmpty(accountId))
-        {
-            query = query.Where(t => t.AccountId == accountId);
-        }
+
+        query = query.Where(x => accountIds.Contains(x.AccountId));
     
         if (!string.IsNullOrEmpty(messagesGetRequest.SearchText))
         {

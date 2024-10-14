@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Balance_Support.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241003170632_UpdateUserSettings")]
-    partial class UpdateUserSettings
+    [Migration("20241014103303_AddInitialBalance")]
+    partial class AddInitialBalance
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,6 +55,9 @@ namespace Balance_Support.Migrations
 
                     b.Property<int>("DeviceId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("InitialBalance")
+                        .HasColumnType("money");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -141,29 +144,7 @@ namespace Balance_Support.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.UserToken", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserTokens");
-                });
-
-            modelBuilder.Entity("UserSettings", b =>
+            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.UserSettings", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -257,6 +238,25 @@ namespace Balance_Support.Migrations
                     b.ToTable("UserSettings");
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FriendlyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Xml")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DataProtectionKeys");
+                });
+
             modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.Account", b =>
                 {
                     b.HasOne("Balance_Support.DataClasses.DatabaseEntities.User", "User")
@@ -287,22 +287,11 @@ namespace Balance_Support.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.UserToken", b =>
-                {
-                    b.HasOne("Balance_Support.DataClasses.DatabaseEntities.User", "User")
-                        .WithMany("UserTokens")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("UserSettings", b =>
+            modelBuilder.Entity("Balance_Support.DataClasses.DatabaseEntities.UserSettings", b =>
                 {
                     b.HasOne("Balance_Support.DataClasses.DatabaseEntities.User", "User")
                         .WithOne("UserSettings")
-                        .HasForeignKey("UserSettings", "UserId")
+                        .HasForeignKey("Balance_Support.DataClasses.DatabaseEntities.UserSettings", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -322,8 +311,6 @@ namespace Balance_Support.Migrations
 
                     b.Navigation("UserSettings")
                         .IsRequired();
-
-                    b.Navigation("UserTokens");
                 });
 #pragma warning restore 612, 618
         }

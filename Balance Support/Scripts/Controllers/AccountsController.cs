@@ -4,6 +4,7 @@ using Balance_Support.Scripts.Controllers.Interfaces;
 using Balance_Support.Scripts.Database.Providers.Interfaces.Account;
 using Balance_Support.Scripts.Database.Providers.Interfaces.User;
 using Balance_Support.Scripts.Database.Providers.Interfaces.UserSettings;
+using Balance_Support.Scripts.Main;
 
 namespace Balance_Support.Scripts.Controllers;
 
@@ -117,7 +118,6 @@ public class AccountsController:IAccountsController
             accounts = accounts.Where(x => x.AccountGroup == userSeetings.SelectedGroup).ToList();
         if (!accounts.Any())
             return Results.NotFound("Accounts");
-
 
         var accountDtos = accounts.Select(x=>new  AccountDto(x)).ToList();       
         return Results.Ok(new

@@ -43,13 +43,15 @@ public class DatabaseAccountProvider : DbSetController<Account>, IRegisterAccoun
             .ToList();
 
 
-    public async Task<List<Account>> GetAllAccountsForUser(string userId, int? selectedGroup) =>
+    public async Task<List<Account>> GetAllAccountsForUser(string userId, int? selectedGroup = null) =>
         await FindAccountsByUserId(userId)
             .ContinueWith(t => t.Result
                 .Where(x => !selectedGroup.HasValue || x.AccountGroup == selectedGroup.Value)
                 .ToList()
             );
 
+    
+    
     
     public async Task<Account?> GetAccountByUserIdAndAccountNumber(string userId, string accountNumber)
     {
@@ -75,8 +77,7 @@ public class DatabaseAccountProvider : DbSetController<Account>, IRegisterAccoun
         return await Table.Where(x => x.UserId == userId)
             .ToListAsync();
     }
-
-    public async Task<bool> CanProceedRequest(AccountDataRequest accountData, string userId, string? accountId = null)
+    public async Task<bool> CanProceedRequest(AccountDataRequest accountData, string userId, string? accountId = null) 
     {
         var existingAccounts = await Table
             .Where(x => x.UserId == userId && (accountId == null || x.Id != accountId))
@@ -88,30 +89,12 @@ public class DatabaseAccountProvider : DbSetController<Account>, IRegisterAccoun
             x.AccountGroup == accountData.AccountGroup &&
             x.DeviceId == accountData.DeviceId &&
             x.SimSlot == accountData.SimSlot);
+        var hasSameBankCardNumberInGroup = existingAccounts.Exists(x =>
+            x.AccountGroup == accountData.AccountGroup &&
+            x.BankCardNumber == accountData.BankCardNumber);
 
-        return !(hasSameAccountNumber || hasSameSimCardNumber || hasSameGroupDeviceSlot);
+        return !(hasSameAccountNumber || hasSameSimCardNumber || hasSameGroupDeviceSlot || hasSameBankCardNumberInGroup);
     }
 
-    // public async Task<(float total, float daily)> CalculateIncomeForAccount(string accountId)
-    // {
-    //     var transactions = await context.Transactions.Where(x => accountId == x.AccountId).ToListAsync();
-    //
-    //     float totalIncome = (float)transactions.Sum(x => x.Amount);
-    //     float dailyIncome = (float)transactions
-    //         .Where(x => x.Time.Date == DateTime.UtcNow.Date)
-    //         .Sum(x => x.Amount);
-    //     return (totalIncome, dailyIncome);
-    // }
-
-
-    // public async Task<(float total, float daily)> CalculateGlobalIncome(string userId)
-    // {
-    //     var transactions = await Saver.Transactions.Where(x => userId == x.UserId).ToListAsync();
-    //
-    //     float totalIncome = (float)transactions.Sum(x => x.Amount);
-    //     float dailyIncome = (float)transactions
-    //         .Where(x => x.Time.Date == DateTime.UtcNow.Date)
-    //         .Sum(x => x.Amount);
-    //     return (totalIncome, dailyIncome);
-    // }
+    
 }

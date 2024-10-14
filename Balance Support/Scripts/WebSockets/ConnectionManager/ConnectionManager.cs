@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Balance_Support.Scripts.WebSockets;
+namespace Balance_Support.Scripts.WebSockets.ConnectionManager;
 public class ConnectionManager : IConnectionManager
 {
     private readonly ConcurrentDictionary<(Type hubType, string userId), string> _connections = new();

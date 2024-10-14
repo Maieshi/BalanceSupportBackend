@@ -1,14 +1,14 @@
-using Microsoft.EntityFrameworkCore;
-using Balance_Support.DataClasses;
 using Balance_Support.DataClasses.DatabaseEntities;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+
+namespace Balance_Support.Scripts.Main;
 
 public class ApplicationDbContext : DbContext,IDataProtectionKeyContext
 {
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Account> Accounts { get; set; }
     public virtual DbSet<Transaction> Transactions { get; set; }
-    public virtual DbSet<UserToken> UserTokens { get; set; }
     public virtual DbSet<UserSettings> UserSettings { get; set; }
 
     public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
@@ -42,11 +42,6 @@ public class ApplicationDbContext : DbContext,IDataProtectionKeyContext
             .HasMany(u => u.Accounts)
             .WithOne(a => a.User)
             .HasForeignKey(a => a.UserId);
-
-        modelBuilder.Entity<User>()
-            .HasMany(u => u.UserTokens)
-            .WithOne(ut => ut.User)
-            .HasForeignKey(ut => ut.UserId);
 
         #endregion
 
@@ -136,6 +131,10 @@ public class ApplicationDbContext : DbContext,IDataProtectionKeyContext
             .HasMaxLength(50);
 
         modelBuilder.Entity<Account>()
+            .Property(t => t.InitialBalance)
+            .HasColumnType("money");
+        
+        modelBuilder.Entity<Account>()
             .Property(a => a.Description)
             .HasMaxLength(500)
             .IsRequired(false); // Nullable property
@@ -175,18 +174,6 @@ public class ApplicationDbContext : DbContext,IDataProtectionKeyContext
             .WithMany(u => u.Transactions) // Assuming User can have many Transactions
             .HasForeignKey(t => t.UserId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        #endregion
-
-        #region UserToken
-
-        modelBuilder.Entity<UserToken>()
-            .Property(ut => ut.Id)
-            .ValueGeneratedOnAdd(); // Ensure ID is generated on add
-
-        modelBuilder.Entity<UserToken>()
-            .Property(ut => ut.Token)
-            .HasMaxLength(250);
 
         #endregion
 
@@ -278,25 +265,6 @@ public class TransactionDto
     public static List<TransactionDto> CreateDtos(List<Transaction> transactions)
     {
         return transactions.Select(t => new TransactionDto(t)).ToList();
-    }
-}
-
-public class UserTokenDto
-{
-    public string Id { get; set; }
-    public string UserId { get; set; } // Foreign key to User
-    public string Token { get; set; }
-    // Add other properties as needed
-
-    public static List<UserTokenDto> CreateDtos(List<UserToken> userTokens)
-    {
-        return userTokens.Select(ut => new UserTokenDto
-        {
-            Id = ut.Id,
-            UserId = ut.UserId,
-            Token = ut.Token
-            // Map other properties as needed
-        }).ToList();
     }
 }
 

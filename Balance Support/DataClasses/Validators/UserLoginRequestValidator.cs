@@ -1,6 +1,7 @@
-using FluentValidation;
 using Balance_Support.DataClasses.Records.UserData;
-namespace Balance_Support.Scripts.Validators;
+using FluentValidation;
+
+namespace Balance_Support.DataClasses.Validators;
 
 public class UserLoginRequestValidator: AbstractValidator<UserLoginRequest>
 {

@@ -10,14 +10,17 @@ namespace Balance_Support.Scripts.Controllers.Interfaces;
 
 public interface ITransactionController
 {
-    public  Task<IResult> RegisterNewTransaction(NotificationHandleRequest handleRequest,
+    public Task<IResult> RegisterNewTransaction(NotificationHandleRequest handleRequest,
         INotificationMessageParser messageParser, IGetAccountByUserIdAndBankCardNumber getUser,
-        IRegisterTransaction transactionRegister, IMessageSender sender, IGetTransactionsForAccount getTransactions);
+        IRegisterTransaction transactionRegister, IMessageSender sender,
+        IGetTransactionsForAccount getTransactions, IGetAccountsForUser getAccounts,
+        IGetUserSettingsByUserId getUserSettings);
 
     public Task<IResult> CalculateBalance(CalculateBalanceRequest request,
         IGetTransactionsForAccount getTransactions, IGetAccountsForUser getAccounts,
         IGetUserSettingsByUserId getUserSettings);
 
-    public Task<IResult> GetMessages(MessagesGetRequest messagesGetRequest, IGetMessages getMessages,
-        IFindAccountByAccountId findAccount, IGetAccountByUserIdAndAccountNumber getAccount);
+    public Task<IResult> GetMessages(MessagesGetRequest messagesGetRequest,
+        IGetMessages getMessages,
+        IFindAccountByAccountId findAccount, IGetAccountByUserIdAndAccountNumber getAccount,IFindAccountsByUserId findAccounts);
 }

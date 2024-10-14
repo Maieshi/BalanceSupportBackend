@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Balance_Support.DataClasses.Messages;
+using Balance_Support.Scripts.WebSockets.ConnectionManager;
 using Balance_Support.Scripts.WebSockets.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 

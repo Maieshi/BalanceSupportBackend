@@ -1,6 +1,4 @@
-using System.Threading.Tasks;
-
-namespace Balance_Support.Scripts.Controllers;
+namespace Balance_Support.Scripts.Controllers.Interfaces;
 
 public interface IRequestController<T, TDependency1, TDependency2> where T : class
 {

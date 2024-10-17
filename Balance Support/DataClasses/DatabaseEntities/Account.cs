@@ -52,4 +52,23 @@ public class  Account : BaseEntity
         BankType = accountUpdateRequest.AccountData.BankType;
         Description = accountUpdateRequest.AccountData.Description;
     }
+
+    public override object Convert()
+    {
+        return new
+        {
+            UserId = UserId,
+            Id = Id,
+            AccountNumber = AccountNumber,
+            LastName = LastName,
+            AccountGroup = AccountGroup,
+            DeviceId = DeviceId,
+            SimSlot = SimSlot,
+            SimCardNumber = SimCardNumber,
+            BankCardNumber = BankCardNumber,
+            BankType = BankType,
+            InitialBalance = InitialBalance,
+            Description = Description
+        };
+    }
 }

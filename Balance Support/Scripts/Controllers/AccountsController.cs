@@ -25,7 +25,7 @@ public class AccountsController:IAccountsController
         {
             var acc = await registerAccount.RegisterAccount(accountRegisterRequest);
 
-            if (acc != null) return Results.Created("Accounts", new AccountDto(acc));
+            if (acc != null) return Results.Created("Accounts", acc.Convert());
 
             return Results.Problem(statusCode: 500,
                 title: "An error occurred while registering account");
@@ -97,7 +97,7 @@ public class AccountsController:IAccountsController
         if (!accounts.Any())
             return Results.NotFound("Accounts");
 
-        return Results.Ok(AccountDto.CreateDtos(accounts));
+        return Results.Ok(accounts.ConvertToDtoList());
     }
 
     public async Task<IResult> GetAllAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest,
@@ -110,10 +110,10 @@ public class AccountsController:IAccountsController
         if (!accounts.Any())
             return Results.NotFound("Accounts");
         
-        var accountDtos = accounts.Select(x=>new  AccountDto(x)).ToList();       
+               
         return Results.Ok(new
         {
-            Accounts = accountDtos
+            Accounts = accounts.ConvertToDtoList()
         });
     }
 }

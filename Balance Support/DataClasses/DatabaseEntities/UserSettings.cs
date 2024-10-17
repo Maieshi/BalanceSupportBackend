@@ -83,4 +83,38 @@ public class UserSettings : BaseEntity
         SelectedGroup = request.SelectedGroup;
         RowsCount = request.RowsCount;
     }
+
+    public override object Convert()
+    {
+        return new
+        {
+            Id = Id,
+            UserId = UserId, // Foreign key to User
+            UserName = UserName,
+
+            Nickname = Nickname,
+
+            PhoneNumber = PhoneNumber,
+
+            Address = Address,
+
+            Country = Country,
+
+            About = About,
+
+            CommentsOnArticle = CommentsOnArticle,
+
+            AnswersOnForm = AnswersOnForm,
+
+            OnFollower = OnFollower,
+
+            NewsAnnouncements = NewsAnnouncements,
+
+            ProductUpdates = ProductUpdates,
+
+            BlogDigest = BlogDigest,
+            SelectedGroup = SelectedGroup,
+            RowsCount = RowsCount
+        };
+    }
 }

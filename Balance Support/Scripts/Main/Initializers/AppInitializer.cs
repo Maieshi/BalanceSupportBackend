@@ -59,10 +59,10 @@ public static class AppInitializer
 
         app.MapGet("/GetDatabase", async ([FromServices] ApplicationDbContext context) => TypedResults.Ok(new
         {
-            Users = UserDto.CreateDtos(await context.Users.ToListAsync()),
-            UserSettings = UserSettingsDto.CreateDtos(await context.UserSettings.ToListAsync()),
-            Accounts = AccountDto.CreateDtos(await context.Accounts.ToListAsync()),
-            Transactions = TransactionDto.CreateDtos(await context.Transactions.ToListAsync()),
+            Users =context.Users.ConvertToDtoList(),
+            UserSettings = context.UserSettings.ConvertToDtoList(),
+            Accounts = context.Accounts.ConvertToDtoList(),
+            Transactions =context.Transactions.ConvertToDtoList()
         }));
 
         app.MapPost("/Check",
@@ -338,7 +338,6 @@ public static class AppInitializer
 
 //TODO: create new endpoint filtration and validation
 //TODO: try to rebuild project to mvc
-//TODO: try to upgrade architecture and make the code less cohesive
     }
 
 

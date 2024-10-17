@@ -56,7 +56,7 @@ public class TransactionController : ITransactionController
         if(settings==null)
             return Results.Created("Transaction/", new
             {
-                Transaction = new TransactionDto(transaction),
+                Transaction = transaction.Convert(),
                 transactionResult = resultTransactionMessage,
                 incomeResult = "Cannot find user settings"
             });
@@ -76,7 +76,7 @@ public class TransactionController : ITransactionController
 
         return Results.Created("Transaction/", new
         {
-            Transaction = new TransactionDto(transaction),
+            Transaction = transaction.Convert(),
             transactionResult = resultTransactionMessage,
             incomeResult = resultIncomeMessage
         });

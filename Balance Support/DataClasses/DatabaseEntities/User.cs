@@ -14,4 +14,14 @@ public class User : BaseEntity
     public UserSettings UserSettings { get; set; }
     [JsonIgnore]
     public ICollection<Transaction> Transactions { get; set; }
+
+    public override object Convert()
+    {
+        return new
+        {
+            Id = Id,
+            Email = Email,
+            DisplayName = DisplayName
+        };
+    }
 }

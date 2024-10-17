@@ -20,7 +20,6 @@ public interface IAccountsController
     public Task<IResult> GetAccountsForDevice(AccountGetForDeviceRequest accountGetRequest,
         ICheckUserWithIdExist idExist, IFindAccountsByUserId findAccountsByUserId);
 
-    public Task<IResult> GetAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest,
-        ICheckUserWithIdExist idExist, IFindAccountsByUserId findAccountsByUserId,
-        IGetUserSettingsByUserId getUserSettingsByUserId);
+    public Task<IResult> GetAllAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest,
+        ICheckUserWithIdExist idExist, IFindAccountsByUserId findAccountsByUserId);
 }

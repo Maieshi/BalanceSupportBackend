@@ -92,18 +92,19 @@ content-type: application/json
 {
   "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
   "AccountData": {
-    "AccountNumber": "sampleAccountNumber",
-    "LastName": "sampleLastName",
-    "AccountGroup": 1,
-    "DeviceId": 2,
-    "SimSlot": 1,
-    "SimCardNumber": "+88005553535",
-    "BankCardNumber": "1488",
+    "AccountNumber": "+9989712345478",
+    "LastName": "test",
+    "AccountGroup": "4",
+    "DeviceId": "3",
+    "SimSlot": "2",
+    "SimCardNumber": "+9989712345479",
+    "BankCardNumber": "12345",
+    "InitialBalance": "500",
     "BankType": "Sbebank",
-    "InitialBalance": 0,    
-    "Description": "sampleDescription"
+    "Description": "hello world"
   }
 }
+
 ###
 POST https://localhost:5001/Desktop/Account/Update
 content-type: application/json
@@ -136,7 +137,6 @@ GET https://localhost:5001/Mobile/Account/GetForDevice/sDAmWae7RqMsmWIC74lVdLuQR
 
 ###
 GET https://localhost:5001/Desktop/Account/GetAllForUser/sDAmWae7RqMsmWIC74lVdLuQRpq1
-
 
 ######### Transaction
 

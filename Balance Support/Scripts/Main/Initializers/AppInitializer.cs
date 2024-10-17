@@ -6,6 +6,7 @@ using Balance_Support.DataClasses.Records.UserData;
 using Balance_Support.DataClasses.Validators;
 using Balance_Support.Scripts.Controllers;
 using Balance_Support.Scripts.Controllers.Interfaces;
+using Balance_Support.Scripts.Database;
 using Balance_Support.Scripts.Database.Providers;
 using Balance_Support.Scripts.Database.Providers.Interfaces.Account;
 using Balance_Support.Scripts.Database.Providers.Interfaces.Transaction;
@@ -259,7 +260,6 @@ public static class AppInitializer
                 [FromServices] IAccountsController controller,
                 [FromServices] ICheckUserWithIdExist idExist,
                 [FromServices] IFindAccountsByUserId findAccountsByUserId,
-                [FromServices] IGetUserSettingsByUserId getUserSettingsByUserId,
                 [FromServices] IHttpContextAccessor httpContextAccessor) =>
             {
                 // Create the request object from the URL parameter
@@ -268,11 +268,10 @@ public static class AppInitializer
                 // Process the request using the same logic
                 return (await ResultContainer
                         .Start()
-                        .Validate<AccountGetAllForUserRequest, AccountGetAllForUserRequestValidator>(
-                            getAllForUserRequest)
+                        .Validate<AccountGetAllForUserRequest, AccountGetAllForUserRequestValidator>(getAllForUserRequest)
                         .Authorize(httpContextAccessor.HttpContext)
-                        .ProcessAsync(async () => await controller.GetAccountsForUser(getAllForUserRequest, idExist,
-                            findAccountsByUserId, getUserSettingsByUserId)))
+                        .ProcessAsync(async () => await controller.GetAllAccountsForUser(getAllForUserRequest, idExist,
+                            findAccountsByUserId)))
                     .GetResult();
             });
 
@@ -292,7 +291,7 @@ public static class AppInitializer
                 (await ResultContainer
                     .Start()
                     .Validate<NotificationHandleRequest, NotificationHandleRequestValidator>(handleNotificationRequest)
-                    // .Authorize(httpContextAccessor.HttpContext)
+                    .Authorize(httpContextAccessor.HttpContext)
                     .ProcessAsync(async () => await controller.RegisterNewTransaction(handleNotificationRequest,
                         messageParser, getUser, transactionRegister, sender,getTransactions ,getAccounts,getUserSettings)))
                 .GetResult()
@@ -310,7 +309,7 @@ public static class AppInitializer
             (await ResultContainer
                 .Start()
                 .Validate<MessagesGetRequest, MessagesGetRequestValidator>(messagesGetRequest)
-                // .Authorize(httpContextAccessor.HttpContext)
+                .Authorize(httpContextAccessor.HttpContext)
                 .ProcessAsync(async () =>
                     await controller.GetMessages(messagesGetRequest, getMessages, findAccount, getAccount, findAccounts)))
             .GetResult()
@@ -326,7 +325,7 @@ public static class AppInitializer
             (await ResultContainer
                 .Start()
                 .Validate<CalculateBalanceRequest, CalculateBalanceRequestValidator>(request)
-                // .Authorize(httpContextAccessor.HttpContext)
+                .Authorize(httpContextAccessor.HttpContext)
                 .ProcessAsync(async () =>
                     await controller.CalculateBalance(request, getTransactions, getAccounts, getUserSettings)))
             .GetResult()

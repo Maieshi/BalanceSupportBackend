@@ -2,16 +2,13 @@ using Balance_Support.DataClasses.DatabaseEntities;
 using Balance_Support.DataClasses.Messages;
 using Balance_Support.DataClasses.Records.NotificationData;
 using Balance_Support.Scripts.Controllers.Interfaces;
-using Balance_Support.Scripts.Database.Providers;
-using Balance_Support.Scripts.Database.Providers.Interfaces;
+using Balance_Support.Scripts.Database;
 using Balance_Support.Scripts.Database.Providers.Interfaces.Account;
 using Balance_Support.Scripts.Database.Providers.Interfaces.Transaction;
 using Balance_Support.Scripts.Database.Providers.Interfaces.UserSettings;
 using Balance_Support.Scripts.Main;
 using Balance_Support.Scripts.Parsing;
 using Balance_Support.Scripts.WebSockets.Interfaces;
-using Google.Apis.Util;
-
 namespace Balance_Support.Scripts.Controllers;
 
 public class TransactionController : ITransactionController
@@ -43,6 +40,7 @@ public class TransactionController : ITransactionController
         {
             AccountId = account.Id,
             CardNumber = data.CardNumber,
+            BankType = account.BankType,
             Channel = "sms",
             DeviceId = $"{account.AccountGroup},{account.DeviceId}",
             LastName = account.LastName,
@@ -138,6 +136,7 @@ public class TransactionController : ITransactionController
         {
             AccountId = x.AccountId,
             CardNumber =accountDict[x.AccountId].BankCardNumber,
+            BankType = accountDict[x.AccountId].BankType,
             Channel = "sms",
             DeviceId = $"{accountDict[x.AccountId].AccountGroup},{accountDict[x.AccountId].DeviceId}",
             LastName = accountDict[x.AccountId].LastName,

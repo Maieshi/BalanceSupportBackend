@@ -9,7 +9,7 @@ public class ResultContainer
     private IResult? result;
     private bool isResultRetrieved;
 
-    public static ResultContainer Start() => new ResultContainer();
+    public static ResultContainer Start() => new();
 
     public ResultContainer Validate<TData,TValidator>(TData data) where TValidator : IValidator<TData>, new()
     {

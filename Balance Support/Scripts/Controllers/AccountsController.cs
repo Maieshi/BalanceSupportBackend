@@ -1,6 +1,7 @@
 using Balance_Support.DataClasses.DatabaseEntities;
 using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.Scripts.Controllers.Interfaces;
+using Balance_Support.Scripts.Database;
 using Balance_Support.Scripts.Database.Providers.Interfaces.Account;
 using Balance_Support.Scripts.Database.Providers.Interfaces.User;
 using Balance_Support.Scripts.Database.Providers.Interfaces.UserSettings;
@@ -99,26 +100,16 @@ public class AccountsController:IAccountsController
         return Results.Ok(AccountDto.CreateDtos(accounts));
     }
 
-    public async Task<IResult> GetAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest,
-        ICheckUserWithIdExist idExist, IFindAccountsByUserId findAccountsByUserId,
-        IGetUserSettingsByUserId getUserSettingsByUserId)
+    public async Task<IResult> GetAllAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest,
+        ICheckUserWithIdExist idExist, IFindAccountsByUserId findAccountsByUserId)
     {
         if (!await idExist.CheckId(accountGetAllForUserRequest.UserId))
             return Results.NotFound("User");
-
-        var userSeetings = await getUserSettingsByUserId.GetByUserId(accountGetAllForUserRequest.UserId);
-        if (userSeetings == null)
-            return Results.NotFound("UserSettings");
-
+        
         var accounts = await findAccountsByUserId.FindAccountsByUserId(accountGetAllForUserRequest.UserId);
         if (!accounts.Any())
             return Results.NotFound("Accounts");
-
-        if (userSeetings.SelectedGroup!=0)
-            accounts = accounts.Where(x => x.AccountGroup == userSeetings.SelectedGroup).ToList();
-        if (!accounts.Any())
-            return Results.NotFound("Accounts");
-
+        
         var accountDtos = accounts.Select(x=>new  AccountDto(x)).ToList();       
         return Results.Ok(new
         {

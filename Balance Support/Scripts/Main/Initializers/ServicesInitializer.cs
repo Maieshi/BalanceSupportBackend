@@ -82,25 +82,13 @@ public static class ServicesInitializer
         // Autofac container builder
         builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         {
-
-            // Register your DbContext with SQL Server in Autofac
             containerBuilder.Register(c =>
             {
                 var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
                 optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection"));
                 return new ApplicationDbContext(optionsBuilder.Options);
             }).AsSelf().InstancePerLifetimeScope();
-
-
-            // Register data protection services
-           
-
-
-            // containerBuilder.Register(c => c.Resolve<ApplicationDbContext>())
-            //     .AsSelf()
-            //     .InstancePerLifetimeScope();
-
-            // Load Firebase configurations
+            
             var apiKey = JsonConvert.DeserializeObject<FirebaseAuthApiKey>(
                 File.ReadAllText(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseAuthApiKey)));
 

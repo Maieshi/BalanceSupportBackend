@@ -10,6 +10,7 @@ public record AccountDataRequest(
     string SimCardNumber,
     string BankCardNumber,
     string BankType,
-    float InitialBalance,
+    decimal InitialBalance,
+    decimal SmsBalance,
     string Description
 );

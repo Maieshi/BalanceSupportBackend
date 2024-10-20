@@ -90,16 +90,16 @@ public static class ServicesInitializer
             }).AsSelf().InstancePerLifetimeScope();
             
             var apiKey = JsonConvert.DeserializeObject<FirebaseAuthApiKey>(
-                File.ReadAllText(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseAuthApiKey)));
+                File.ReadAllText(Path.Combine(ConstStorage.FirebaseConfigsPath, ConstStorage.FirebaseAuthApiKey)));
 
             var databaseConfig = JsonConvert.DeserializeObject<FirebaseDatabaseClientConfig>(
                 File.ReadAllText(
-                    Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseDatabaseClientConfigJson)));
+                    Path.Combine(ConstStorage.FirebaseConfigsPath, ConstStorage.FirebaseDatabaseClientConfigJson)));
 
             FirebaseApp.Create(new AppOptions
             {
-                Credential = GoogleCredential.FromFile(Path.Combine(PathStorage.FirebaseConfigsPath,
-                    PathStorage.FirebaseCloudMessagingJson))
+                Credential = GoogleCredential.FromFile(Path.Combine(ConstStorage.FirebaseConfigsPath,
+                    ConstStorage.FirebaseCloudMessagingJson))
             });
 
             // Register Firebase Client
@@ -178,7 +178,7 @@ public static class ServicesInitializer
     private static async Task<string> GetTokenByGoogleServices()
     {
         var credential = GoogleCredential
-            .FromFile(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseCloudMessagingJson))
+            .FromFile(Path.Combine(ConstStorage.FirebaseConfigsPath, ConstStorage.FirebaseCloudMessagingJson))
             .CreateScoped("https://www.googleapis.com/auth/userinfo.email",
                 "https://www.googleapis.com/auth/firebase.database");
 

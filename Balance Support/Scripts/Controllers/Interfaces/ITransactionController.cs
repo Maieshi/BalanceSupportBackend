@@ -14,7 +14,7 @@ public interface ITransactionController
         INotificationMessageParser messageParser, IGetAccountByUserIdAndBankCardNumber getUser,
         IRegisterTransaction transactionRegister, IMessageSender sender,
         IGetTransactionsForAccount getTransactions, IGetAccountsForUser getAccounts,
-        IGetUserSettingsByUserId getUserSettings);
+        IGetUserSettingsByUserId getUserSettings, IUpdateAccount updateAccount);
 
     public Task<IResult> CalculateBalance(CalculateBalanceRequest request,
         IGetTransactionsForAccount getTransactions, IGetAccountsForUser getAccounts,

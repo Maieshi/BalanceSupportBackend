@@ -281,19 +281,20 @@ public static class AppInitializer
 
         app.MapPost("/Mobile/Transaction/HandleNew",
             async (
-                NotificationHandleRequest handleNotificationRequest,
-                ITransactionController controller,
-                INotificationMessageParser messageParser, IGetAccountByUserIdAndBankCardNumber getUser,
-                IRegisterTransaction transactionRegister, IMessageSender sender,
-                IGetTransactionsForAccount getTransactions,IGetAccountsForUser getAccounts,
-                IGetUserSettingsByUserId  getUserSettings,
+                [FromBody] NotificationHandleRequest handleNotificationRequest,
+                [FromServices] ITransactionController controller,
+                [FromServices] INotificationMessageParser messageParser, IGetAccountByUserIdAndBankCardNumber getUser,
+                [FromServices] IRegisterTransaction transactionRegister, IMessageSender sender,
+                [FromServices] IGetTransactionsForAccount getTransactions,IGetAccountsForUser getAccounts,
+                [FromServices] IGetUserSettingsByUserId  getUserSettings,
+                [FromServices] IUpdateAccount updateAccount,
                     [FromServices] IHttpContextAccessor httpContextAccessor) =>
                 (await ResultContainer
                     .Start()
                     .Validate<NotificationHandleRequest, NotificationHandleRequestValidator>(handleNotificationRequest)
                     .Authorize(httpContextAccessor.HttpContext)
-                    .ProcessAsync(async () => await controller.RegisterNewTransaction(handleNotificationRequest,
-                        messageParser, getUser, transactionRegister, sender,getTransactions ,getAccounts,getUserSettings)))
+                    .ProcessAsync(async () => await controller.RegisterNewTransaction(handleNotificationRequest,messageParser,
+                        getUser,transactionRegister,sender,getTransactions,getAccounts,getUserSettings,updateAccount)))
                 .GetResult()
         );
 

@@ -101,6 +101,7 @@ content-type: application/json
     "BankCardNumber": "12345",
     "InitialBalance": "500",
     "BankType": "Sbebank",
+    "SmsBalance":"0",
     "Description": "hello world"
   }
 }
@@ -122,6 +123,7 @@ content-type: application/json
     "BankCardNumber": "1234",
     "BankType": "sampleBankType",
     "InitialBalance": 0,
+    "SmsBalance":0,
     "Description": "sampleDescription"
   }
 }

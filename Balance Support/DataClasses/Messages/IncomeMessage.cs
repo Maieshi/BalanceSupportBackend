@@ -4,9 +4,10 @@ namespace Balance_Support.DataClasses.Messages;
 
 public class IncomeMessage : IMessage
 {
-    public float Balance { get; set; }
-    public float DailyExpression { get; set; }
+    public decimal BalanceTotal { get; set; }
+    public decimal DailyExpression { get; set; }
     public string AccountId { get; set; }
-    public float T { get; set; }
-    public float D { get; set; }
+    public decimal T { get; set; }
+    public decimal D { get; set; }
+    public decimal BalanceAccount { get; set; }
 }

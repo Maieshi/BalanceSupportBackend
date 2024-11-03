@@ -82,6 +82,16 @@ public class AccountsController:IAccountsController
         }
     }
 
+    public async Task<IResult> SetAccountBalance(AccountSetBalanceRequest accountSetBalanceRequest,
+        IFindAccountByAccountId findAccountByAccountId, IUpdateAccount updateAccount)
+    {
+        var account = await findAccountByAccountId.FindAccountByAccountId(accountSetBalanceRequest.AccountId);
+        if(account==null) return Results.NotFound("Account");       
+        account.SmsBalance = accountSetBalanceRequest.Balance;
+        updateAccount.UpdateAccount(account);
+        return Results.Ok("Balance updated");
+    }
+
     public async Task<IResult> GetAccountsForDevice(AccountGetForDeviceRequest accountGetRequest,
         ICheckUserWithIdExist idExist, IFindAccountsByUserId findAccountsByUserId)
     {

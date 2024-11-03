@@ -53,6 +53,7 @@ C:\Users\ilia\Downloads\current build\Microsoft.Extensions.Caching.Memory.dll
 C:\Users\ilia\Downloads\current build\Microsoft.Extensions.Configuration.Abstractions.dll
 C:\Users\ilia\Downloads\current build\Microsoft.Extensions.DependencyInjection.dll
 C:\Users\ilia\Downloads\current build\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\ilia\Downloads\current build\Microsoft.Extensions.DependencyModel.dll
 C:\Users\ilia\Downloads\current build\Microsoft.Extensions.Features.dll
 C:\Users\ilia\Downloads\current build\Microsoft.Extensions.Logging.dll
 C:\Users\ilia\Downloads\current build\Microsoft.Extensions.Logging.Abstractions.dll
@@ -74,6 +75,15 @@ C:\Users\ilia\Downloads\current build\Microsoft.Owin.Security.OAuth.dll
 C:\Users\ilia\Downloads\current build\Microsoft.SqlServer.Server.dll
 C:\Users\ilia\Downloads\current build\Newtonsoft.Json.dll
 C:\Users\ilia\Downloads\current build\Owin.dll
+C:\Users\ilia\Downloads\current build\Serilog.dll
+C:\Users\ilia\Downloads\current build\Serilog.AspNetCore.dll
+C:\Users\ilia\Downloads\current build\Serilog.Extensions.Hosting.dll
+C:\Users\ilia\Downloads\current build\Serilog.Extensions.Logging.dll
+C:\Users\ilia\Downloads\current build\Serilog.Formatting.Compact.dll
+C:\Users\ilia\Downloads\current build\Serilog.Settings.Configuration.dll
+C:\Users\ilia\Downloads\current build\Serilog.Sinks.Console.dll
+C:\Users\ilia\Downloads\current build\Serilog.Sinks.Debug.dll
+C:\Users\ilia\Downloads\current build\Serilog.Sinks.File.dll
 C:\Users\ilia\Downloads\current build\System.ClientModel.dll
 C:\Users\ilia\Downloads\current build\System.CodeDom.dll
 C:\Users\ilia\Downloads\current build\System.Configuration.ConfigurationManager.dll

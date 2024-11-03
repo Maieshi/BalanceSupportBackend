@@ -16,6 +16,9 @@ public interface IAccountsController
 
     public Task<IResult> DeleteAccount(AccountDeleteRequest accountDeleteRequest,
         IFindAccountByAccountId findAccountByAccountId, IDeleteAccount deleteAccount);
+    
+    public Task<IResult> SetAccountBalance(AccountSetBalanceRequest accountSetBalanceRequest,
+        IFindAccountByAccountId findAccountByAccountId, IUpdateAccount updateAccount);
 
     public Task<IResult> GetAccountsForDevice(AccountGetForDeviceRequest accountGetRequest,
         ICheckUserWithIdExist idExist, IFindAccountsByUserId findAccountsByUserId);

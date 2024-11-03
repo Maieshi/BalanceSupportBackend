@@ -9,5 +9,5 @@ public class IncomeMessage : IMessage
     public string AccountId { get; set; }
     public decimal T { get; set; }
     public decimal D { get; set; }
-    public decimal BalanceAccount { get; set; }
+    public decimal Balance { get; set; }
 }

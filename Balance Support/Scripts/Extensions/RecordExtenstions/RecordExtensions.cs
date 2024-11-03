@@ -16,7 +16,8 @@ public static class RecordExtensions
             SimSlot= request.AccountData.SimSlot,
             SimCardNumber= request.AccountData.SimCardNumber,
             BankCardNumber= request.AccountData.BankCardNumber,
-            InitialBalance = (decimal)request.AccountData.InitialBalance,
+            InitialBalance = request.AccountData.InitialBalance,
+            SmsBalance = 0,
             Description= request.AccountData.Description,
             BankType= request.AccountData.BankType
         };

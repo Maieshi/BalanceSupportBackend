@@ -33,7 +33,7 @@ public class TransactionController : ITransactionController
             return Results.NotFound("Account not found");
         }
 
-        var currentTransactions = (await getTransactions.Get(handleRequest.UserId)).ToList();
+        var currentTransactions = (await getTransactions.Get(account.Id)).ToList();
         var transaction = await transactionRegister.Register(handleRequest.UserId, account.Id, data.Type, data.Amount,
             data.Balance,
             handleRequest.NotificationText);
@@ -42,8 +42,14 @@ public class TransactionController : ITransactionController
         if (!currentTransactions.Any())
         {
             account.SmsBalance = transaction.Balance;
-            await updateAccount.UpdateAccount(account);
+            
         }
+        else
+        {
+            account.SmsBalance += transaction.Amount*(transaction.TransactionType==(int)TransactionType.Debiting?-1:1);
+        }
+        
+        await updateAccount.UpdateAccount(account);
 
         var resultTransactionMessage = await sender.SendMessage(handleRequest.UserId, new TransactionMessage()
         {
@@ -81,7 +87,7 @@ public class TransactionController : ITransactionController
         var selectedGroupValues = await CalculateValuesForSelectedGroup(handleRequest.UserId, settings.SelectedGroup,
             getTransactions, getAccounts);
 
-        var balance = CalculateBalance(selectedGroupValues);
+        var balance = CalculateTotalBalance(selectedGroupValues.Keys.ToList());
 
         var dailyExplession = CalculateDailyExplession(selectedGroupValues);
 
@@ -90,7 +96,7 @@ public class TransactionController : ITransactionController
             BalanceTotal = balance,
             DailyExpression = dailyExplession,
             AccountId= account.Id,
-            BalanceAccount = selectedGroupValues[account].balance,
+            Balance = account.SmsBalance,
             D =  selectedGroupValues[account].daily,
             T =  selectedGroupValues[account].total
         });
@@ -119,7 +125,7 @@ public class TransactionController : ITransactionController
 
         return Results.Ok(new
         {
-            Balance = CalculateBalance(valuesForSelectedGoup),
+            Balance = CalculateTotalBalance(valuesForSelectedGoup.Keys.ToList()),
             DailyExplression = CalculateDailyExplession(valuesForSelectedGoup),
             AccountsIncome = ConvertToAccountsIncome(valuesForSelectedGoup)
         });
@@ -169,7 +175,7 @@ public class TransactionController : ITransactionController
         return Results.Ok(messageDtos);
     }
 
-    private async Task<Dictionary<Account, (decimal balance, decimal total, decimal daily)>>
+    private async Task<Dictionary<Account, ( decimal total, decimal daily)>>
         CalculateValuesForSelectedGroup(string userId, int selectedGroup,
             IGetTransactionsForAccount getTransactions, IGetAccountsForUser getAccounts)
     {
@@ -180,7 +186,7 @@ public class TransactionController : ITransactionController
         return await CalculateValuesForAccounts(accounts, getTransactions);
     }
 
-    private async Task<Dictionary<Account, (decimal balance, decimal total, decimal daily)>> CalculateValuesForAccounts(
+    private async Task<Dictionary<Account, (decimal total, decimal daily)>> CalculateValuesForAccounts(
         List<Account> accounts, IGetTransactionsForAccount getTransactions)
     {
         var transactionsByAccount = await GetTransactionsForAccounts(accounts, getTransactions);
@@ -190,68 +196,59 @@ public class TransactionController : ITransactionController
             .ToDictionary(x => x.Key, x => x.Values);
     }
 
-    private async Task<(decimal balance, decimal total, decimal daily)> CalculateValuesForTransactions(
+    private async Task<(decimal total, decimal daily)> CalculateValuesForTransactions(
         List<Transaction> transactions)
     {
-        var balance = CalculateBalance(transactions);
-
+        
         var total = CalculateIncome(transactions);
 
         var daily = CalculateIncomeForToday(transactions);
 
-        return (balance, total, daily);
+        return ( total, daily);
     }
 
-    private (decimal balance, decimal total, decimal daily) AddBalances(
-        (decimal balance, decimal total, decimal daily) data, Account account)
+    private (decimal total, decimal daily) AddBalances(
+        ( decimal total, decimal daily) data, Account account)
     {
-        return (data.balance + account.SmsBalance, data.total + account.InitialBalance, data.daily);
+        return ( data.total + account.InitialBalance, data.daily);
     }
 
     private List<AccountIncome> ConvertToAccountsIncome(
-        Dictionary<Account, (decimal balance, decimal total, decimal daily)> accountValues)
+        Dictionary<Account, (decimal total, decimal daily)> accountValues)
     {
         return accountValues.Select(x =>
             new AccountIncome()
             {
                 AccId = x.Key.Id,
+                Balance= x.Key.SmsBalance,
                 Total = x.Value.total,
                 Daily = x.Value.daily
             }).ToList();
     }
 
     private decimal CalculateDailyExplession(
-        Dictionary<Account, (decimal balance, decimal total, decimal daily)> valuesForAcounts)
+        Dictionary<Account, (decimal total, decimal daily)> valuesForAcounts)
     {
         return valuesForAcounts.Values.Sum(x => x.daily);
     }
 
-    private decimal CalculateBalance(
-        Dictionary<Account, (decimal balance, decimal total, decimal daily)> valuesForAcounts)
-    {
-        return valuesForAcounts.Values.Sum(x => x.balance);
-    }
+    
+    
 
-    private decimal CalculateBalance(List<Transaction> transactions, decimal smsBalance)
+    private decimal CalculateTotalBalance(List<Account> accounts)
     {
-        return transactions.Sum(x =>
-            x.Amount * (x.TransactionType == (int)TransactionType.Crediting ? -1 : 1) + smsBalance);
-    }
-
-    private decimal CalculateBalance(List<Transaction> transactions)
-    {
-        return transactions.Sum(x => x.Amount * (x.TransactionType == (int)TransactionType.Crediting ? -1 : 1));
+        return accounts.Sum(x => x.SmsBalance);
     }
 
     private decimal CalculateIncome(List<Transaction> transactions)
     {
-        return transactions.Where(x => x.TransactionType == (int)TransactionType.Debiting).Sum(x => x.Amount);
+        return transactions.Where(x => x.TransactionType == (int)TransactionType.Crediting).Sum(x => x.Amount);
     }
 
     private decimal CalculateIncomeForToday(List<Transaction> transactions)
     {
         return transactions.Where(x =>
-                x.TransactionType == (int)TransactionType.Debiting && x.Time.Date == ConstStorage.MoscowUtcNow.Date)
+                x.TransactionType == (int)TransactionType.Crediting && x.Time.Date == ConstStorage.MoscowUtcNow.Date)
             .Sum(x => x.Amount);
     }
 

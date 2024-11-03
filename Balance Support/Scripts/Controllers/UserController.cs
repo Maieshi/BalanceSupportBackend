@@ -80,7 +80,7 @@ public class UserController: IUserController
             var authLink = await firebaseAuthProvider.SignInWithEmailAndPasswordAsync(userEmail, loginRequest.Password);
 
             // Manage claims-based session
-            await SignInUserV2(loginRequest.UserCred, loginRequest.Password, context);
+            await SignInUserV2(user.Id, context);
 
             return Results.Ok(new { user.Id,user.DisplayName ,authLink.FirebaseToken });
         }
@@ -129,12 +129,12 @@ public class UserController: IUserController
             authProperties);
     }
 
-    public async Task SignInUserV2(string username, string password, HttpContext httpContext)
+    public async Task SignInUserV2(string UserId,  HttpContext httpContext)
     {
         // Create the claims for the user
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, username),
+            new Claim(ClaimTypes.NameIdentifier, UserId),
             new Claim(ClaimTypes.Role, "User") // Add roles if needed
         };
 
@@ -149,8 +149,6 @@ public class UserController: IUserController
                 IsPersistent = true, // Make the session persistent (i.e., cookie will persist across sessions)
                 ExpiresUtc = DateTime.UtcNow.AddDays(7) // Set cookie expiration time
             });
-        
-        Debug.Print("aaa");
     }
     private TimeSpan GetSessionTimeout(LoginDeviceType deviceType)
     {

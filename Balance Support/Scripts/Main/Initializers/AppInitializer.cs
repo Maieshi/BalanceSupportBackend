@@ -16,6 +16,7 @@ using Balance_Support.Scripts.Extensions;
 using Balance_Support.Scripts.Extensions.EndpointExtensions;
 using Balance_Support.Scripts.Parsing;
 using Balance_Support.Scripts.WebSockets;
+using Balance_Support.Scripts.WebSockets.ConnectionManager;
 using Balance_Support.Scripts.WebSockets.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -68,6 +69,10 @@ public static class AppInitializer
         app.MapPost("/Check",
             ([FromServices] IRegisterUser reg, [FromServices] IGetUser get) =>
                 TypedResults.Ok(object.ReferenceEquals(reg, get)));
+        
+        app.MapGet("/GetConnections",
+            ([FromServices] IConnectionManager connectionManager) =>
+                $"connections{connectionManager.Test()} ");
 
         #endregion
 
@@ -230,6 +235,21 @@ public static class AppInitializer
                     await controller.DeleteAccount(accountDeleteRequest, findAccount, deleteAccount)))
             .GetResult()
         );
+        
+        app.MapPost("/Desktop/Account/SetBalance", async (
+                [FromBody] AccountSetBalanceRequest accountSetBalanceRequest,
+                [FromServices] IAccountsController controller,
+                [FromServices] IFindAccountByAccountId findAccount,
+                [FromServices] IUpdateAccount updateAccount,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
+            (await ResultContainer
+                .Start()
+                .Validate<AccountSetBalanceRequest, AccountSetBalanceRequestValidator>(accountSetBalanceRequest)
+                .Authorize(httpContextAccessor.HttpContext)
+                .ProcessAsync(async () =>
+                    await controller.SetAccountBalance(accountSetBalanceRequest, findAccount, updateAccount)))
+            .GetResult()
+        );
 
         app.MapGet("/Mobile/Account/GetForDevice/{userId}/{accountGroup:int}/{deviceId:int}",
             async (
@@ -292,7 +312,7 @@ public static class AppInitializer
                 (await ResultContainer
                     .Start()
                     .Validate<NotificationHandleRequest, NotificationHandleRequestValidator>(handleNotificationRequest)
-                    .Authorize(httpContextAccessor.HttpContext)
+                    // .Authorize(httpContextAccessor.HttpContext)
                     .ProcessAsync(async () => await controller.RegisterNewTransaction(handleNotificationRequest,messageParser,
                         getUser,transactionRegister,sender,getTransactions,getAccounts,getUserSettings,updateAccount)))
                 .GetResult()
@@ -326,7 +346,7 @@ public static class AppInitializer
             (await ResultContainer
                 .Start()
                 .Validate<CalculateBalanceRequest, CalculateBalanceRequestValidator>(request)
-                .Authorize(httpContextAccessor.HttpContext)
+                // .Authorize(httpContextAccessor.HttpContext)
                 .ProcessAsync(async () =>
                     await controller.CalculateBalance(request, getTransactions, getAccounts, getUserSettings)))
             .GetResult()
@@ -350,6 +370,7 @@ public static class AppInitializer
         var queryParams = request.Query;
         var method = request.Method;
         var path = request.Path;
+        var connectionId = context.Connection.Id;
         var scheme = request.Scheme;
         var host = request.Host.ToString();
         var protocol = request.Protocol;
@@ -407,6 +428,7 @@ public static class AppInitializer
             QueryParams = queryParams.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToString()),
             QueryString = queryString,
             PathBase = pathBase,
+            ConnectionId = connectionId,
             ContentType = contentType,
             RemoteIpAddress = remoteIpAddress,
             Cookies = cookies.ToDictionary(c => c.Key, c => c.Value),

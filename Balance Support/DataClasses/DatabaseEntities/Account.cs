@@ -44,7 +44,6 @@ public class Account : BaseEntity
         BankCardNumber = accountUpdateRequest.AccountData.BankCardNumber;
         BankType = accountUpdateRequest.AccountData.BankType;
         InitialBalance = accountUpdateRequest.AccountData.InitialBalance;
-        SmsBalance = accountUpdateRequest.AccountData.SmsBalance;
         Description = accountUpdateRequest.AccountData.Description;
     }
 

@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Serilog;
 using User = Balance_Support.DataClasses.DatabaseEntities.User;
 
 namespace Balance_Support.Scripts.Main.Initializers;
@@ -69,12 +70,26 @@ public static class ServicesInitializer
 
         builder.Services.AddHttpContextAccessor();
         
+        
+        
         // Add SignalR support
         builder.Services.AddSignalR();
         
         builder.Services.AddDataProtection()
             .PersistKeysToDbContext<ApplicationDbContext>() // Persist keys to the database
             .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+        
+        
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Verbose()
+            .WriteTo.File(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "stdout", $"{DateTime.Now:yyyy-MM-dd}", "Log.txt"),
+                rollingInterval: RollingInterval.Infinite,
+                outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff}] [{Level}] {Message}{NewLine}{Exception}")
+            .WriteTo.Console()
+            .CreateLogger();
+
+        builder.Host.UseSerilog();
         
         builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         
@@ -120,6 +135,7 @@ public static class ServicesInitializer
 
             containerBuilder.RegisterType<BaseHub>()
                 .AsImplementedInterfaces()
+                .AsSelf()
                 .SingleInstance()
                 .ExternallyOwned();  
             

@@ -4,33 +4,36 @@ public class MessageSendResult
 {
     public  bool IsSuccess {get; }
 
-    public ErrorType ErrorType{get; set; }
+    public MessageStatus MessageStatus{get; set; }
     
-    public  string? ErrorDetails{get; set; }
+    public  string? StatusDetails{get; set; }
 
-    private MessageSendResult(bool isSuccess, string? errorDetails = null)
+    private MessageSendResult(bool isSuccess, string? statusDetails = null)
     {
         IsSuccess = isSuccess;
-        ErrorDetails = errorDetails;
+        StatusDetails = statusDetails;
     }
 
     
-    private MessageSendResult(bool isSuccess,ErrorType errorType ,string? errorDetails = null)
+    private MessageSendResult(bool isSuccess,MessageStatus messageStatus ,string? statusDetails = null)
     {
         IsSuccess = isSuccess;
-        ErrorDetails = errorDetails;
-        ErrorType = errorType;
+        StatusDetails = statusDetails;
+        MessageStatus = messageStatus;
     }
     // Factory methods to create success or failure results
-    public static MessageSendResult Success() => new MessageSendResult(true);
+    public static MessageSendResult Success(string? message = null) => new MessageSendResult(true,MessageStatus.Success,message);
+    
+    // public static MessageSendResult Success() => new MessageSendResult(true);
     public static MessageSendResult SendingError(string? errorDetails = null) 
-        => new MessageSendResult(false, ErrorType.SendingError,errorDetails);
+        => new MessageSendResult(false, MessageStatus.SendingError,errorDetails);
     public static MessageSendResult UserNotFound(string? errorDetails = null) 
-        => new MessageSendResult(false, ErrorType.UserNotFound,errorDetails);
+        => new MessageSendResult(false, MessageStatus.UserNotFound,errorDetails);
 }
 
-public enum ErrorType
+public enum MessageStatus
 {
+    Success,
     UserNotFound,
     SendingError
 }

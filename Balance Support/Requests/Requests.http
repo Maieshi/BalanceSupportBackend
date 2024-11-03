@@ -21,6 +21,9 @@ content-type: application/json
 "isComplited":true
 }
 
+###
+GET https://localhost:5001/GetConnections
+
 ######### User 
 
 POST https://localhost:5001/Desktop/User/Register
@@ -135,6 +138,14 @@ content-type: application/json
   "AccountId": "sampleAccountId"
 }
 ###
+POST https://localhost:5001/Desktop/Account/SetBalance
+content-type: application/json
+
+{
+  "AccountId": "02ac5ca2-9bdf-4261-80a0-787c3c0c4bc3",
+  "Balance":10
+}
+###
 GET https://localhost:5001/Mobile/Account/GetForDevice/sDAmWae7RqMsmWIC74lVdLuQRpq1/3/3
 
 ###
@@ -146,8 +157,8 @@ POST https://localhost:5001/Mobile/Transaction/HandleNew
 content-type: application/json
 
 {
-  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
-  "NotificationText": "СЧЁТ2280 16:00 перевод 3900р Комиссия 19.50р Баланс: 69.40р"
+  "UserId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2",
+  "NotificationText": "Карта *1234 списание 300р. OTP Bank. Доступно 15408р. otpbank.ru/tr"
 }
 
 ###
@@ -169,5 +180,5 @@ POST https://localhost:5001/Desktop/Transaction/CalculateBalance
 content-type: application/json
 
 {
-"UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1"
+"UserId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2"
 }

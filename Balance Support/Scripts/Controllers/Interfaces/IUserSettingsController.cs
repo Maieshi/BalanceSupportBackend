@@ -5,9 +5,7 @@ namespace Balance_Support.Scripts.Controllers.Interfaces;
 
 public interface IUserSettingsController
 {
-    public Task<IResult> GetUserSettings(UserSettingsGetRequest userSettingsGetRequest,
-        IGetUserSettingsByUserId getUserSettingsByUserId);
+    public Task<IResult> GetUserSettings(UserSettingsGetRequest userSettingsGetRequest);
 
-    public Task<IResult> UpdateUserSettings(UserSettingsUpdateRequest userSettingsUpdateRequest,
-        IGetUserSettingsByUserId getUserSettingsByUserId, IUpdateUserSettings updateUserSettings);
+    public Task<IResult> UpdateUserSettings(UserSettingsUpdateRequest userSettingsUpdateRequest);
 }

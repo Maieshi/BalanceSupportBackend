@@ -6,9 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Balance_Support.Scripts.Database.Providers;
 
-public class DatabaseAccountProvider : DbSetController<Account>, IRegisterAccount, IUpdateAccount, IDeleteAccount,
-    IGetAccountForDevice, IGetAccountsForUser, IGetAccountByUserIdAndAccountNumber,
-    IGetAccountByUserIdAndBankCardNumber, IFindAccountByAccountId, ICanProceedRequest, IFindAccountsByUserId
+public class DatabaseAccountProvider : DbSetController<Account>,IDatabaseAccountProvider
 {
     public DatabaseAccountProvider(IDbSetContainer container, ISaveDbChanges saver) : base(container, saver)
     {

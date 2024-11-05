@@ -7,12 +7,9 @@ namespace Balance_Support.Scripts.Controllers.Interfaces;
 
 public interface IUserController
 {
-    public Task<IResult> RegisterNewUser(UserRegisterRequest userRegisterRequest,
-        ICheckEmailAlreadyRegistered checkEmailRegistered, ICheckUserWithUsernameExist checkUserRegistered,
-        IRegisterUser registerUser, ICreateUserSettings createUserSettings);
+    public Task<IResult> RegisterNewUser(UserRegisterRequest userRegisterRequest);
 
-    public Task<IResult> LogInUser(UserLoginRequest loginRequest, HttpContext context, LoginDeviceType deviceType,
-        IGetUser getUser);
+    public Task<IResult> LogInUser(UserLoginRequest loginRequest, HttpContext context, LoginDeviceType deviceType);
 
     public Task<IResult> LogOutUser(HttpContext context);
 }

@@ -5,7 +5,7 @@ using User = Balance_Support.DataClasses.DatabaseEntities.User;
 
 namespace Balance_Support.Scripts.Database.Providers;
 
-public class DatabaseUserProvider :  DbSetController<User>, IRegisterUser,IGetUser,ICheckEmailAlreadyRegistered,ICheckUserWithIdExist,ICheckUserWithUsernameExist
+public class DatabaseUserProvider :  DbSetController<User>, IDatabaseUserProvider
 {
     // private FirebaseClient client;
     // private readonly ApplicationDbContext context;
@@ -59,13 +59,13 @@ public class DatabaseUserProvider :  DbSetController<User>, IRegisterUser,IGetUs
             .Where(u => u.Email == userCred || u.DisplayName == userCred || u.Id == userCred)
             .FirstOrDefaultAsync();
     
-    public async Task<bool> CheckEmail(string email)
+    public async Task<bool> CheckUserWithEmailExist(string email)
     => await FindUserByEmail(email) != null;
     
-    public async Task<bool> CheckId(string userId)
+    public async Task<bool> CheckUserWithIdExist(string userId)
     => await FindUserById(userId) != null;
 
-    public async Task<bool> CheckUsername(string userName)
+    public async Task<bool> CheckUserWithUsernameExist(string userName)
     =>await FindUserByUsername(userName) != null;
     
     #endregion

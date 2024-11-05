@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Balance_Support.Scripts.Database.Providers;
 
-public class DatabaseUserSettingsProvider: DbSetController<UserSettings>, ICreateUserSettings,IUpdateUserSettings, IGetUserSettingsByUserId
+public class DatabaseUserSettingsProvider: DbSetController<UserSettings>,IDatabaseUserSettingProvider
 {
     public DatabaseUserSettingsProvider(IDbSetContainer container,ISaveDbChanges saver) : base(container,saver)
     {

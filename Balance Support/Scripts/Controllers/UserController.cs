@@ -16,6 +16,10 @@ public class UserController: IUserController
 {
     // private readonly IDatabaseUserSettingsProvider databaseUserSettingsProvider;
     private IFirebaseAuthProvider firebaseAuthProvider;
+
+    private readonly IDatabaseUserSettingProvider userSettings;
+    private readonly IDatabaseUserProvider users;
+
     //
     private EmailAddressAttribute emailAttribute;
     //
@@ -23,15 +27,17 @@ public class UserController: IUserController
     //
     // private IHttpContextAccessor httpContextAccessor;
 
-    public UserController(IFirebaseAuthProvider firebaseAuthProvider)
+    public UserController(IFirebaseAuthProvider firebaseAuthProvider,IDatabaseUserSettingProvider userSettings, IDatabaseUserProvider users)
     {
         this.firebaseAuthProvider = firebaseAuthProvider;
+        this.userSettings = userSettings;
+        this.users = users;
         emailAttribute = new EmailAddressAttribute();
     }
 
-    public async Task<IResult> RegisterNewUser(UserRegisterRequest userRegisterRequest, ICheckEmailAlreadyRegistered checkEmailRegistered, ICheckUserWithUsernameExist checkUserRegistered, IRegisterUser registerUser, ICreateUserSettings createUserSettings )
+    public async Task<IResult> RegisterNewUser(UserRegisterRequest userRegisterRequest)
     {
-        if (await checkEmailRegistered.CheckEmail(userRegisterRequest.Email)||await checkUserRegistered.CheckUsername(userRegisterRequest.DisplayName))
+        if (await users.CheckUserWithEmailExist(userRegisterRequest.Email)||await users.CheckUserWithEmailExist(userRegisterRequest.DisplayName))
             return Results.BadRequest("User already exists");
 
         FirebaseAuthLink link;
@@ -49,7 +55,7 @@ public class UserController: IUserController
 
         try
         {
-            await registerUser.RegisterUser(link.User.LocalId, link.User.Email, link.User.DisplayName);
+            await users.RegisterUser(link.User.LocalId, link.User.Email, link.User.DisplayName);
         }
         catch (Exception e)
         {
@@ -58,7 +64,7 @@ public class UserController: IUserController
                 title: "An error occurred while pushing user to database");   
         }
 
-        var isSettingsCreated =await createUserSettings.CreateUserSetting(link.User.LocalId);
+        var isSettingsCreated =await userSettings.CreateUserSetting(link.User.LocalId);
         
         if(isSettingsCreated==null)
             return Results.Problem(statusCode: 500,
@@ -67,11 +73,11 @@ public class UserController: IUserController
         return Results.Created($"/Users/{link.User.LocalId}", link.User.DisplayName);
     }
 
-    public async Task<IResult> LogInUser(UserLoginRequest loginRequest,HttpContext context, LoginDeviceType deviceType, IGetUser getUser)
+    public async Task<IResult> LogInUser(UserLoginRequest loginRequest,HttpContext context, LoginDeviceType deviceType)
     {
         try
         {
-            var user = await getUser.GetUser(loginRequest.UserCred);
+            var user = await users.GetUser(loginRequest.UserCred);
             if (user == null)
                 return Results.Problem(detail: "Cannot find user in database", statusCode: 500,
                     title: "User not found");

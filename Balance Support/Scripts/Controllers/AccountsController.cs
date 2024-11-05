@@ -11,19 +11,27 @@ namespace Balance_Support.Scripts.Controllers;
 
 public class AccountsController:IAccountsController
 {
-    public async Task<IResult> RegisterAccount(AccountRegisterRequest accountRegisterRequest,
-        ICanProceedRequest canProceedRequest, IRegisterAccount registerAccount, ICheckUserWithIdExist idExist)
+    private readonly IDatabaseAccountProvider accounts;
+    private readonly IDatabaseUserProvider users;
+
+    public AccountsController(IDatabaseAccountProvider accounts,
+        IDatabaseUserProvider users)
     {
-        if (!await idExist.CheckId(accountRegisterRequest.UserId))
+        this.accounts = accounts;
+        this.users = users;
+    }
+    public async Task<IResult> RegisterAccount(AccountRegisterRequest accountRegisterRequest)
+    {
+        if (!await users.CheckUserWithIdExist(accountRegisterRequest.UserId))
             return Results.NotFound("User");
         //TODO: check if account with same account number exists for this user
-        if (!await canProceedRequest.CanProceedRequest(accountRegisterRequest.AccountData,
+        if (!await accounts.CanProceedRequest(accountRegisterRequest.AccountData,
                 accountRegisterRequest.UserId))
             return Results.Problem(statusCode: 500,
                 title: "One account with same unique data already registered");
         try
         {
-            var acc = await registerAccount.RegisterAccount(accountRegisterRequest);
+            var acc = await accounts.RegisterAccount(accountRegisterRequest);
 
             if (acc != null) return Results.Created("Accounts", acc.Convert());
 
@@ -37,23 +45,21 @@ public class AccountsController:IAccountsController
         }
     }
 
-    public async Task<IResult> UpdateAccount(AccountUpdateRequest accountUpdateRequest,
-        IFindAccountByAccountId findAccountByAccountId, ICanProceedRequest canProceedRequest,
-        IUpdateAccount updateAccount)
+    public async Task<IResult> UpdateAccount(AccountUpdateRequest accountUpdateRequest)
     {
         try
         {
-            var account = await findAccountByAccountId.FindAccountByAccountId(accountUpdateRequest.AccountId);
+            var account = await accounts.FindAccountByAccountId(accountUpdateRequest.AccountId);
             if (account == null)
                 return Results.NotFound("Account");
 
-            if (!await canProceedRequest.CanProceedRequest(accountUpdateRequest.AccountData,
+            if (!await accounts.CanProceedRequest(accountUpdateRequest.AccountData,
                     accountUpdateRequest.UserId,
                     accountUpdateRequest.AccountId))
                 return Results.Problem(statusCode: 500,
                     title: "One account with same unique data already registered");
 
-            await updateAccount.UpdateAccount(account, accountUpdateRequest);
+            await accounts.UpdateAccount(account, accountUpdateRequest);
             return Results.Ok($"Accounts/{accountUpdateRequest.AccountId}");
         }
         catch (Exception ex)
@@ -63,16 +69,15 @@ public class AccountsController:IAccountsController
         }
     }
 
-    public async Task<IResult> DeleteAccount(AccountDeleteRequest accountDeleteRequest,
-        IFindAccountByAccountId findAccountByAccountId, IDeleteAccount deleteAccount)
+    public async Task<IResult> DeleteAccount(AccountDeleteRequest accountDeleteRequest)
     {
         try
         {
-            var currentAccount = await findAccountByAccountId.FindAccountByAccountId(accountDeleteRequest.AccountId);
+            var currentAccount = await accounts.FindAccountByAccountId(accountDeleteRequest.AccountId);
             if (currentAccount == null)
                 return Results.NotFound("Account");
 
-            await deleteAccount.Delete(currentAccount);
+            await accounts.Delete(currentAccount);
             return Results.Ok($"Devices/{accountDeleteRequest.AccountId}");
         }
         catch (Exception e)
@@ -82,48 +87,45 @@ public class AccountsController:IAccountsController
         }
     }
 
-    public async Task<IResult> SetAccountBalance(AccountSetBalanceRequest accountSetBalanceRequest,
-        IFindAccountByAccountId findAccountByAccountId, IUpdateAccount updateAccount)
+    public async Task<IResult> SetAccountBalance(AccountSetBalanceRequest accountSetBalanceRequest)
     {
-        var account = await findAccountByAccountId.FindAccountByAccountId(accountSetBalanceRequest.AccountId);
+        var account = await accounts.FindAccountByAccountId(accountSetBalanceRequest.AccountId);
         if(account==null) return Results.NotFound("Account");       
         account.SmsBalance = accountSetBalanceRequest.Balance;
-        updateAccount.UpdateAccount(account);
+        accounts.UpdateAccount(account);
         return Results.Ok("Balance updated");
     }
 
-    public async Task<IResult> GetAccountsForDevice(AccountGetForDeviceRequest accountGetRequest,
-        ICheckUserWithIdExist idExist, IFindAccountsByUserId findAccountsByUserId)
+    public async Task<IResult> GetAccountsForDevice(AccountGetForDeviceRequest accountGetRequest)
     {
-        if (!await idExist.CheckId(accountGetRequest.UserId))
+        if (!await users.CheckUserWithIdExist(accountGetRequest.UserId))
             return Results.NotFound("User");
 
-        var accounts = (await findAccountsByUserId.FindAccountsByUserId(accountGetRequest.UserId))
+        var accountsFound = (await accounts.FindAccountsByUserId(accountGetRequest.UserId))
             .Where(x =>
                 x.AccountGroup == accountGetRequest.AccountGroup
                 && x.DeviceId == accountGetRequest.DeviceId)
             .ToList();
 
-        if (!accounts.Any())
+        if (!accountsFound.Any())
             return Results.NotFound("Accounts");
 
-        return Results.Ok(accounts.ConvertToDtoList());
+        return Results.Ok(accountsFound.ConvertToDtoList());
     }
 
-    public async Task<IResult> GetAllAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest,
-        ICheckUserWithIdExist idExist, IFindAccountsByUserId findAccountsByUserId)
+    public async Task<IResult> GetAllAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest)
     {
-        if (!await idExist.CheckId(accountGetAllForUserRequest.UserId))
+        if (!await users.CheckUserWithIdExist(accountGetAllForUserRequest.UserId))
             return Results.NotFound("User");
         
-        var accounts = await findAccountsByUserId.FindAccountsByUserId(accountGetAllForUserRequest.UserId);
-        if (!accounts.Any())
+        var accountsFound = await accounts.FindAccountsByUserId(accountGetAllForUserRequest.UserId);
+        if (!accountsFound.Any())
             return Results.NotFound("Accounts");
         
                
         return Results.Ok(new
         {
-            Accounts = accounts.ConvertToDtoList()
+            Accounts = accountsFound.ConvertToDtoList()
         });
     }
 }

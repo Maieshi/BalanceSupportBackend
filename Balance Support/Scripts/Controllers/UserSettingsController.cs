@@ -8,10 +8,16 @@ namespace Balance_Support.Scripts.Controllers;
 
 public class UserSettingsController : IUserSettingsController
 {
-    public async Task<IResult> GetUserSettings(UserSettingsGetRequest userSettingsGetRequest,
-        IGetUserSettingsByUserId getUserSettingsByUserId)
+    private readonly IDatabaseUserSettingProvider userSettings;
+
+    public UserSettingsController(IDatabaseUserSettingProvider userSettings)
     {
-        var userSettings = await getUserSettingsByUserId.GetByUserId(userSettingsGetRequest.UserId);
+        this.userSettings = userSettings;
+    }
+    
+    public async Task<IResult> GetUserSettings(UserSettingsGetRequest userSettingsGetRequest)
+    {
+        var userSettings = await this.userSettings.GetByUserId(userSettingsGetRequest.UserId);
 
         if (userSettings == null)
         {
@@ -21,10 +27,9 @@ public class UserSettingsController : IUserSettingsController
         return Results.Ok(userSettings);
     }
 
-    public async Task<IResult> UpdateUserSettings(UserSettingsUpdateRequest userSettingsUpdateRequest,
-        IGetUserSettingsByUserId getUserSettingsByUserId, IUpdateUserSettings updateUserSettings)
+    public async Task<IResult> UpdateUserSettings(UserSettingsUpdateRequest userSettingsUpdateRequest)
     {
-        var existingSettings = await getUserSettingsByUserId.GetByUserId(userSettingsUpdateRequest.UserId);
+        var existingSettings = await userSettings.GetByUserId(userSettingsUpdateRequest.UserId);
 
         if (existingSettings == null)
         {
@@ -33,7 +38,7 @@ public class UserSettingsController : IUserSettingsController
 
         try
         {
-            await updateUserSettings.Update(existingSettings, userSettingsUpdateRequest);
+            await userSettings.Update(existingSettings, userSettingsUpdateRequest);
         }
         catch
         {

@@ -263,16 +263,22 @@ public class TransactionController : ITransactionController
     }
 
 
-    public async Task<Dictionary<Account, List<Transaction>>> GetAccountWithTransactions(string userId,
-        List<int>? selectedGroup = null)
-        => (await Task.WhenAll(
-                (await accountProvider.GetAccountsForUserSelectedGroupandIsDeleted(userId, selectedGroup, true)).Select(
-                    async account => new
-                    {
-                        Account = account,
-                        Transactions = await transactionProvider.GetTransactionsByAccountId(account.Id)
-                    })))
-            .ToDictionary(x => x!.Account, x => x.Transactions);
+    public async Task<Dictionary<Account, List<Transaction>>> GetAccountWithTransactions(
+        string userId, List<int>? selectedGroup = null)
+    {
+        var accounts = await accountProvider.GetAccountsForUserSelectedGroupandIsDeleted(userId, selectedGroup, true);
+
+        var accountTransactions = new Dictionary<Account, List<Transaction>>();
+
+        foreach (var account in accounts)
+        {
+            var transactions = await transactionProvider.GetTransactionsByAccountId(account.Id);
+            accountTransactions[account] = transactions;
+        }
+
+        return accountTransactions;
+    }
+
 }
 
 public class AccountIncomeData

@@ -340,7 +340,7 @@ public static class AppInitializer
             (await ResultContainer
                 .Start()
                 .Validate<CalculateBalanceRequest, CalculateBalanceRequestValidator>(request)
-                .Authorize(httpContextAccessor.HttpContext)
+                // .Authorize(httpContextAccessor.HttpContext)
                 .ProcessAsync(async () =>
                     await controller.CalculateBalance(request)))
             .GetResult()

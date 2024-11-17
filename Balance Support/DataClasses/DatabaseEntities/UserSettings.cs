@@ -25,7 +25,7 @@ public class UserSettings : BaseEntity
         ProductUpdates = false;
         BlogDigest = false;
 
-        SelectedGroup = 0;
+        SelectedGroups = Enumerable.Empty<int>().ToList();
         RowsCount = 0;
     }
 
@@ -55,8 +55,8 @@ public class UserSettings : BaseEntity
     public bool ProductUpdates { get; set; }
 
     public bool BlogDigest { get; set; }
-
-    public int SelectedGroup { get; set; }
+    
+    public List<int> SelectedGroups { get; set; } = new List<int>();
 
     public int RowsCount { get; set; }
 
@@ -80,7 +80,7 @@ public class UserSettings : BaseEntity
         ProductUpdates = request.ProductUpdates;
         BlogDigest = request.BlogDigest;
 
-        SelectedGroup = request.SelectedGroup;
+        SelectedGroups = request.SelectedGroups;
         RowsCount = request.RowsCount;
     }
 
@@ -113,7 +113,7 @@ public class UserSettings : BaseEntity
             ProductUpdates = ProductUpdates,
 
             BlogDigest = BlogDigest,
-            SelectedGroup = SelectedGroup,
+            SelectedGroups = SelectedGroups,
             RowsCount = RowsCount
         };
     }

@@ -1,0 +1,3 @@
+namespace Balance_Support.DataClasses.Records.AccountData;
+
+public record AccountGetAllAccountNumbersForUserRequest(string userId);

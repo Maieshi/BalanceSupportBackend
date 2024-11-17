@@ -9,6 +9,7 @@ using Balance_Support.Scripts.Database.Providers.Interfaces.UserSettings;
 using Balance_Support.Scripts.Main;
 using Balance_Support.Scripts.Parsing;
 using Balance_Support.Scripts.WebSockets.Interfaces;
+using Newtonsoft.Json;
 
 namespace Balance_Support.Scripts.Controllers;
 
@@ -36,21 +37,20 @@ public class TransactionController : ITransactionController
         this.messageSender = messageSender;
     }
 
-    public async Task<IResult> RegisterNewTransaction(NotificationHandleRequest handleRequest)
+
+    public async Task<IResult> RegisterNewTransaction(HttpContext context, NotificationHandleRequest handleRequest)
     {
         var data = await messageParser.HandleNotification(handleRequest);
         if (data == null) return Results.BadRequest("Incorrect notification text");
 
         var account = await accountProvider.GetAccountByUserIdAndBankCardNumber(handleRequest.UserId, data.CardNumber);
-
         if (account == null) return Results.NotFound("Account not found");
 
-        var currentTransactions = (await transactionProvider.GetByAccountId(account.Id)).ToList();
+        var currentTransactions = (await transactionProvider.GetTransactionsByAccountId(account.Id)).ToList();
         var transaction = await transactionProvider.Register(handleRequest.UserId, account.Id, data.Type, data.Amount,
-            data.Balance,
-            handleRequest.NotificationText);
+            data.Balance, handleRequest.NotificationText);
 
-
+        // Update account balance based on transaction type
         if (!currentTransactions.Any())
             account.SmsBalance = transaction.Balance;
         else
@@ -59,55 +59,85 @@ public class TransactionController : ITransactionController
 
         await accountProvider.UpdateAccount(account);
 
-        var resultTransactionMessage = await messageSender.SendMessage(handleRequest.UserId, new TransactionMessage
+        // Retrieve MessagesGetRequest from session and deserialize it
+        var messagesGetRequestJson = context.Session.GetString("MessagesGetRequest");
+        MessagesGetRequest? messagesGetRequest = null;
+
+        if (!string.IsNullOrEmpty(messagesGetRequestJson))
         {
-            AccountId = account.Id,
-            CardNumber = data.CardNumber,
-            BankType = account.BankType,
-            Channel = "sms",
-            DeviceId = $"{account.AccountGroup},{account.DeviceId}",
-            LastName = account.LastName,
-            Incoming = data.Type == TransactionType.Debiting,
-            Outgoing = data.Type == TransactionType.Crediting,
-            SmsTime = $"{transaction.Time.TimeOfDay}",
-            SmsDate = $"{transaction.Time:M/d/yyyy}",
-            Message = handleRequest.NotificationText
-        });
+            messagesGetRequest = JsonConvert.DeserializeObject<MessagesGetRequest>(messagesGetRequestJson);
+        }
 
+        // Check if transaction should be sent (if no filter or it matches the filter)
+        var shouldSendTransactionMessage = messagesGetRequest == null ||
+                                           messagesGetRequest.Matches(transaction, account.AccountNumber);
+
+        MessageSendResult? resultTransactionMessage = null;
+        if (shouldSendTransactionMessage)
+        {
+            // Send TransactionMessage if filter is null or matches
+            resultTransactionMessage = await messageSender.SendMessage(handleRequest.UserId, new TransactionMessage
+            {
+                AccountId = account.Id,
+                CardNumber = data.CardNumber,
+                BankType = account.BankType,
+                Channel = "sms",
+                DeviceId = $"{account.AccountGroup},{account.DeviceId}",
+                LastName = account.LastName,
+                Incoming = data.Type == TransactionType.Debiting,
+                Outgoing = data.Type == TransactionType.Crediting,
+                SmsTime = $"{transaction.Time.TimeOfDay}",
+                SmsDate = $"{transaction.Time:M/d/yyyy}",
+                Message = handleRequest.NotificationText
+            });
+        }
+
+        // Retrieve user settings for income message logic
         var settings = await userSettingProvider.GetByUserId(handleRequest.UserId);
-
         if (settings == null)
+        {
             return Results.Created("Transaction/", new
             {
                 Transaction = transaction.Convert(),
                 TransactionResult = resultTransactionMessage,
                 IncomeResult = "Cannot find user settings"
             });
+        }
 
-        if (account.AccountGroup != settings.SelectedGroup && settings.SelectedGroup != 0)
+        if (settings.SelectedGroups.Any() && !settings.SelectedGroups.Contains(account.AccountGroup))
+        {
             return Results.Created("Transaction/", new
             {
                 Transaction = transaction.Convert(),
                 transactionResult = resultTransactionMessage,
                 IncomeResult = "Account not in selected group"
             });
+        }
 
-        var selectedGroupValues = await CalculateValuesForSelectedGroup(
-            handleRequest.UserId,
-            settings.SelectedGroup);
+        // Calculate values and send income message if needed
+        var income = await CalculateAccountIncome(handleRequest.UserId, settings.SelectedGroups);
 
-        var balance = CalculateTotalBalance(selectedGroupValues.Keys.ToList());
+        var curAccIncome = income.accsIncome.FirstOrDefault(x => x.Key.Id == account.Id).Value;
 
-        var dailyExplession = CalculateDailyExplession(selectedGroupValues);
+        if (curAccIncome == null)
+        {
+            return Results.Created("Transaction/", new
+            {
+                Transaction = transaction.Convert(),
+                transactionResult = resultTransactionMessage,
+                IncomeResult = "Not found account income"
+            });
+        }
+
 
         var resultIncomeMessage = await messageSender.SendMessage(handleRequest.UserId, new IncomeMessage
         {
-            BalanceTotal = balance,
-            DailyExpression = dailyExplession,
-            AccountId = account.Id,
-            Balance = account.SmsBalance,
-            D = selectedGroupValues[account].daily,
-            T = selectedGroupValues[account].total
+            BalanceTotal = income.balance,
+            DailyExpression = income.dailyExpression,
+            AccountId = curAccIncome.AccId,
+            Balance = curAccIncome.Balance,
+            D = curAccIncome.Daily,
+            T = curAccIncome.Total
         });
 
         return Results.Created("Transaction/", new
@@ -124,18 +154,24 @@ public class TransactionController : ITransactionController
         var userSettings = await userSettingProvider.GetByUserId(request.UserId);
         if (userSettings == null) return Results.NotFound("UserSettings");
 
-        var valuesForSelectedGoup = await CalculateValuesForSelectedGroup(request.UserId, userSettings.SelectedGroup);
+        var valuesForSelectedGoup = await CalculateAccountIncome(request.UserId, userSettings.SelectedGroups);
 
         return Results.Ok(new
         {
-            Balance = CalculateTotalBalance(valuesForSelectedGoup.Keys.ToList()),
-            DailyExplression = CalculateDailyExplession(valuesForSelectedGoup),
-            AccountsIncome = ConvertToAccountsIncome(valuesForSelectedGoup)
+            Balance = valuesForSelectedGoup.balance,
+            DailyExplression = valuesForSelectedGoup.dailyExpression,
+            AccountsIncome = valuesForSelectedGoup.accsIncome.Where(x => !x.Key.IsDeleted).Select(x => x.Value).ToList()
         });
     }
 
-    public async Task<IResult> GetMessages(MessagesGetRequest messagesGetRequest)
+
+    public async Task<IResult> GetMessages(HttpContext httpContext, MessagesGetRequest messagesGetRequest)
     {
+        // Save MessagesGetRequest to session as JSON
+        var messagesGetRequestJson = JsonConvert.SerializeObject(messagesGetRequest);
+        httpContext.Session.SetString("MessagesGetRequest", messagesGetRequestJson);
+
+        // Your existing logic
         var accounts = new List<Account>();
         if (messagesGetRequest.AccountNumber != null)
         {
@@ -146,7 +182,7 @@ public class TransactionController : ITransactionController
         }
         else
         {
-            accounts = await accountProvider.FindAccountsByUserId(messagesGetRequest.UserId);
+            accounts = await accountProvider.FindAccountsByUserId(messagesGetRequest.UserId, true);
         }
 
         if (!accounts.Any())
@@ -154,8 +190,7 @@ public class TransactionController : ITransactionController
 
         var messages = await transactionProvider.GetMessages(messagesGetRequest, accounts.Select(x => x.Id).ToList());
 
-        var accountDict =
-            accounts.ToDictionary(account => account.Id);
+        var accountDict = accounts.ToDictionary(account => account.Id);
 
         var messageDtos = messages.Select(x => new TransactionMessage
         {
@@ -171,109 +206,76 @@ public class TransactionController : ITransactionController
             SmsDate = $"{x.Time:M/d/yyyy}",
             Message = x.Message
         }).ToList();
+
         return Results.Ok(messageDtos);
     }
 
-    private async Task<Dictionary<Account, ( decimal total, decimal daily)>>
-        CalculateValuesForSelectedGroup(string userId, int selectedGroup)
+
+    private async Task<(decimal balance, decimal dailyExpression, Dictionary<Account, AccountIncomeData> accsIncome)>
+        CalculateAccountIncome(string userId, List<int>? selectedGroups)
     {
-        var accounts = await accountProvider.GetAllAccountsForUser(userId,
-            selectedGroup == 0 ? null : selectedGroup);
+        var accounts = await GetAccountWithTransactions(userId, selectedGroups);
 
+        var accountsIncome = ConvertToAccountIncomeData(accounts);
 
-        return await CalculateValuesForAccounts(accounts);
+        var balance = CalculateBalance(accountsIncome);
+
+        var dailyExpression = CalculateDailyExpression(accountsIncome);
+        return (balance, dailyExpression, accountsIncome);
     }
 
-    private async Task<Dictionary<Account, (decimal total, decimal daily)>> CalculateValuesForAccounts(
-        List<Account> accounts)
+    private decimal CalculateBalance(Dictionary<Account, AccountIncomeData> incme)
+        => incme.Where(x => !x.Key.IsDeleted).Sum(x => x.Value.Balance);
+
+    private decimal CalculateDailyExpression(Dictionary<Account, AccountIncomeData> incme)
+        => incme.Sum(x => x.Value.Daily);
+
+    public Dictionary<Account, AccountIncomeData> ConvertToAccountIncomeData(
+        Dictionary<Account, List<Transaction>> accountTransactions)
     {
-        var transactionsByAccount = await GetTransactionsForAccounts(accounts);
-
-        return (await Task.WhenAll(transactionsByAccount.Select(async kvp =>
-                new { kvp.Key, Values = AddBalances(await CalculateValuesForTransactions(kvp.Value), kvp.Key) })))
-            .ToDictionary(x => x.Key, x => x.Values);
-    }
-
-    private async Task<(decimal total, decimal daily)> CalculateValuesForTransactions(
-        List<Transaction> transactions)
-    {
-        var total = CalculateIncome(transactions);
-
-        var daily = CalculateIncomeForToday(transactions);
-
-        return (total, daily);
-    }
-
-    private (decimal total, decimal daily) AddBalances(
-        ( decimal total, decimal daily) data, Account account)
-    {
-        return (data.total + account.InitialBalance, data.daily);
-    }
-
-    private List<AccountIncome> ConvertToAccountsIncome(
-        Dictionary<Account, (decimal total, decimal daily)> accountValues)
-    {
-        return accountValues.Select(x =>
-            new AccountIncome
+        return accountTransactions.ToDictionary(
+            kvp => kvp.Key, // Account as the key
+            kvp =>
             {
-                AccId = x.Key.Id,
-                Balance = x.Key.SmsBalance,
-                Total = x.Value.total,
-                Daily = x.Value.daily
-            }).ToList();
+                var account = kvp.Key;
+                var transactions = kvp.Value;
+
+                // Calculate total income
+                var totalIncome = transactions
+                    .Where(t => t.TransactionType == (int)TransactionType.Crediting)
+                    .Sum(t => t.Amount) + account.InitialBalance;
+
+                // Calculate daily income
+                var dailyIncome = transactions
+                    .Where(t => t.TransactionType == (int)TransactionType.Crediting &&
+                                t.Time.Date == DateTime.UtcNow.Date)
+                    .Sum(t => t.Amount);
+
+                // Create AccountIncome
+                return new AccountIncomeData
+                {
+                    AccId = account.Id,
+                    Total = totalIncome,
+                    Daily = dailyIncome,
+                    Balance = account.SmsBalance
+                };
+            });
     }
 
-    private decimal CalculateDailyExplession(
-        Dictionary<Account, (decimal total, decimal daily)> valuesForAcounts)
-    {
-        return valuesForAcounts.Values.Sum(x => x.daily);
-    }
 
-
-    private decimal CalculateTotalBalance(List<Account> accounts)
-    {
-        return accounts.Sum(x => x.SmsBalance);
-    }
-
-    private decimal CalculateIncome(List<Transaction> transactions)
-    {
-        return transactions.Where(x => x.TransactionType == (int)TransactionType.Crediting).Sum(x => x.Amount);
-    }
-
-    private decimal CalculateIncomeForToday(List<Transaction> transactions)
-    {
-        return transactions.Where(x =>
-                x.TransactionType == (int)TransactionType.Crediting && x.Time.Date == ConstStorage.MoscowUtcNow.Date)
-            .Sum(x => x.Amount);
-    }
-
-    private async Task<Dictionary<Account, List<Transaction>>> GetTransactionsForAccounts(
-        Dictionary<string, Account> accounts)
-    {
-        return (await Task.WhenAll(
-            accounts.Select(async account => new
-            {
-                Key = account.Value,
-                Transactions = await transactionProvider.GetByAccountId(account.Key)
-            })
-        )).ToDictionary(x => x.Key, x => x.Transactions);
-    }
-
-    private async Task<Dictionary<Account, List<Transaction>>> GetTransactionsForAccounts(
-        List<Account> accounts)
-    {
-        var result = new Dictionary<Account, List<Transaction>>();
-        foreach (var account in accounts)
-        {
-            var transactions = await transactionProvider.GetByAccountId(account.Id);
-            result[account] = transactions;
-        }
-
-        return result;
-    }
+    public async Task<Dictionary<Account, List<Transaction>>> GetAccountWithTransactions(string userId,
+        List<int>? selectedGroup = null)
+        => (await Task.WhenAll(
+                (await accountProvider.GetAccountsForUserSelectedGroupandIsDeleted(userId, selectedGroup, true)).Select(
+                    async account => new
+                    {
+                        Account = account,
+                        Transactions = await transactionProvider.GetTransactionsByAccountId(account.Id)
+                    })))
+            .ToDictionary(x => x!.Account, x => x.Transactions);
 }
 
-public class AccountIncome
+public class AccountIncomeData
 {
     public string AccId { get; set; }
     public decimal Total { get; set; }

@@ -85,7 +85,7 @@ public class DatabaseTransactionProvider :DbSetController<Transaction>, IDatabas
         
     }
 
-    public async Task<List<Transaction>> GetByAccountId(string accountId)
+    public async Task<List<Transaction>> GetTransactionsByAccountId(string accountId)
         => await Table.Where(x => x.AccountId == accountId).ToListAsync();
 
     

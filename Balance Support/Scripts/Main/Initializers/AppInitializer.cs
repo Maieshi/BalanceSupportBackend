@@ -265,6 +265,43 @@ public static class AppInitializer
                     .GetResult();
             });
 
+        app.MapGet("/Desktop/Account/GetAllGroupsForUser/{userId}",
+            async (
+                string userId,
+                [FromServices] IAccountsController controller,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
+            {
+                // Create the request object from the URL parameter
+                var getAllForUserRequest = new AccountGetAllGroupsForUserRequest(userId);
+
+                // Process the request using the same logic
+                return (await ResultContainer
+                        .Start()
+                        .Validate<AccountGetAllGroupsForUserRequest,AccountGetAllGroupsForUserRequestValidator>(
+                            getAllForUserRequest)
+                        .Authorize(httpContextAccessor.HttpContext)
+                        .ProcessAsync(async () => await controller.GetAllAccountGroupsForUser(getAllForUserRequest)))
+                    .GetResult();
+            });
+        
+        app.MapGet("/Desktop/Account/GetAllAccountNumbersForUser/{userId}",
+            async (
+                string userId,
+                [FromServices] IAccountsController controller,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
+            {
+                // Create the request object from the URL parameter
+                var getAllForUserRequest = new AccountGetAllAccountNumbersForUserRequest(userId);
+                
+                // Process the request using the same logic
+                return (await ResultContainer
+                        .Start()
+                        .Validate<AccountGetAllAccountNumbersForUserRequest,AccountGetAllAccountNumbersForUserRequestValidator>(
+                            getAllForUserRequest)
+                        .Authorize(httpContextAccessor.HttpContext)
+                        .ProcessAsync(async () => await controller.GetAllAccountNumbersForUser(getAllForUserRequest)))
+                    .GetResult();
+            });
         #endregion
 
         #region Transaction
@@ -277,8 +314,8 @@ public static class AppInitializer
                 (await ResultContainer
                     .Start()
                     .Validate<NotificationHandleRequest, NotificationHandleRequestValidator>(handleNotificationRequest)
-                    // .Authorize(httpContextAccessor.HttpContext)
-                    .ProcessAsync(async () => await controller.RegisterNewTransaction(handleNotificationRequest)))
+                    .Authorize(httpContextAccessor.HttpContext)
+                    .ProcessAsync(async () => await controller.RegisterNewTransaction(httpContextAccessor.HttpContext,handleNotificationRequest)))
                 .GetResult()
         );
 
@@ -292,7 +329,7 @@ public static class AppInitializer
                 .Validate<MessagesGetRequest, MessagesGetRequestValidator>(messagesGetRequest)
                 .Authorize(httpContextAccessor.HttpContext)
                 .ProcessAsync(async () =>
-                    await controller.GetMessages(messagesGetRequest)))
+                    await controller.GetMessages(httpContextAccessor.HttpContext,messagesGetRequest)))
             .GetResult()
         );
 
@@ -303,7 +340,7 @@ public static class AppInitializer
             (await ResultContainer
                 .Start()
                 .Validate<CalculateBalanceRequest, CalculateBalanceRequestValidator>(request)
-                // .Authorize(httpContextAccessor.HttpContext)
+                .Authorize(httpContextAccessor.HttpContext)
                 .ProcessAsync(async () =>
                     await controller.CalculateBalance(request)))
             .GetResult()

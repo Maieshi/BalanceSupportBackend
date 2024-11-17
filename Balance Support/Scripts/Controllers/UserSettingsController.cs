@@ -18,7 +18,7 @@ public class UserSettingsController : IUserSettingsController
     public async Task<IResult> GetUserSettings(UserSettingsGetRequest userSettingsGetRequest)
     {
         var userSettings = await this.userSettings.GetByUserId(userSettingsGetRequest.UserId);
-
+        
         if (userSettings == null)
         {
             return Results.NotFound("Settings not found");

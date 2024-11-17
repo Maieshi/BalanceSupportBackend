@@ -11,9 +11,9 @@ namespace Balance_Support.Scripts.Controllers.Interfaces;
 
 public interface ITransactionController
 {
-    public Task<IResult> RegisterNewTransaction(NotificationHandleRequest handleRequest);
+    public Task<IResult> RegisterNewTransaction(HttpContext context,NotificationHandleRequest handleRequest);
 
     public Task<IResult> CalculateBalance(CalculateBalanceRequest request);
 
-    public Task<IResult> GetMessages(MessagesGetRequest messagesGetRequest);
+    public Task<IResult> GetMessages(HttpContext httpContext, MessagesGetRequest messagesGetRequest);
 }

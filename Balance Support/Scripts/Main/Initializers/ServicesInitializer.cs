@@ -70,14 +70,14 @@ public static class ServicesInitializer
 
         builder.Services.AddHttpContextAccessor();
         
-        
-        
         // Add SignalR support
         builder.Services.AddSignalR();
         
         builder.Services.AddDataProtection()
             .PersistKeysToDbContext<ApplicationDbContext>() // Persist keys to the database
             .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+        
+        
         
         
         Log.Logger = new LoggerConfiguration()
@@ -117,6 +117,10 @@ public static class ServicesInitializer
                     ConstStorage.FirebaseCloudMessagingJson))
             });
 
+            containerBuilder.RegisterType<AccountCleanupService>()
+                .As<IHostedService>()
+                .SingleInstance();
+            
             // Register Firebase Client
             containerBuilder.Register(c =>
                 new FirebaseClient("https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/",

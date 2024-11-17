@@ -1,6 +1,7 @@
 using Balance_Support.DataClasses.DatabaseEntities;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Balance_Support.Scripts.Database;
 
@@ -107,8 +108,13 @@ public class ApplicationDbContext : DbContext, IDataProtectionKeyContext
             .Property(us => us.BlogDigest)
             .HasDefaultValue(false);
 
-        modelBuilder.Entity<UserSettings>().Property(us => us.SelectedGroup)
-            .HasDefaultValue(1);
+        modelBuilder.Entity<UserSettings>()
+            .Property(us => us.SelectedGroups)
+            .HasColumnType("nvarchar(max)")
+            .HasConversion(
+                v => JsonConvert.SerializeObject(v),  // Convert list to JSON string for storage
+                v => JsonConvert.DeserializeObject<List<int>>(v) ?? new List<int>() // Convert JSON string back to list
+            );
 
 
         modelBuilder.Entity<UserSettings>()
@@ -141,10 +147,20 @@ public class ApplicationDbContext : DbContext, IDataProtectionKeyContext
             .IsRequired(false); // Nullable property
 
         modelBuilder.Entity<Account>()
+            .Property(a => a.IsDeleted)
+            .HasDefaultValue(false);
+        
+        modelBuilder.Entity<Account>()
+            .Property(t => t.DeletedAt)
+            .HasColumnType("datetime");
+
+        modelBuilder.Entity<Account>()
             .HasMany(a => a.Transactions)
             .WithOne(t => t.Account)
             .HasForeignKey(t => t.AccountId);
 
+        
+        
         #endregion
 
         #region Transaction

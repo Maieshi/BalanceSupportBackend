@@ -25,9 +25,16 @@ public class DatabaseUserSettingsProvider: DbSetController<UserSettings>,IDataba
     {
         
         existingSettings.Update(userSettingsUpdateRequest);
+        Table.Update(existingSettings);
         await Saver.SaveChangesAsync();
     }
-    
+
+    public async Task Update(UserSettings existingSettings)
+    {
+        Table.Update(existingSettings);
+        await Saver.SaveChangesAsync();
+    }
+
     public async Task<UserSettings?> GetByUserId(string user)
     =>await Table.FirstOrDefaultAsync(s => s.UserId == user);
 }

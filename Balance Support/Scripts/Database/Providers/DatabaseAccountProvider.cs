@@ -45,16 +45,21 @@ public class DatabaseAccountProvider : DbSetController<Account>,IDatabaseAccount
             (await FindAccountsByUserId(userId))
             .Where(x =>
                 x.AccountGroup == accountGroup
-                && x.DeviceId == deviceId)
+                && x.DeviceId == deviceId&& x.IsDeleted == false)
             .ToList();
 
 
-    public async Task<List<Account>> GetAllAccountsForUser(string userId, int? selectedGroup = null) =>
-        await FindAccountsByUserId(userId)
-            .ContinueWith(t => t.Result
-                .Where(x => !selectedGroup.HasValue || x.AccountGroup == selectedGroup.Value)
-                .ToList()
-            );
+    public async Task<List<Account>> GetAccountsForUserSelectedGroupandIsDeleted(string userId, List<int>? selectedGroup = null, bool includeDeleted = false)
+    {
+        var a = await FindAccountsByUserId(userId, includeDeleted);
+        var b = a.Where(x =>
+                (includeDeleted || !x.IsDeleted) && // Add non-deleted accounts if includeDeleted is false
+                (selectedGroup == null || !selectedGroup.Any() ||
+                 selectedGroup.Contains(x.AccountGroup))) // Filter by selected group
+            .ToList();
+        return b;
+    }
+
 
     public async Task<Account?> GetAccountByUserIdAndAccountNumber(string userId, string accountNumber)
     {
@@ -74,16 +79,16 @@ public class DatabaseAccountProvider : DbSetController<Account>,IDatabaseAccount
         return await Table.FindAsync(accountId);
     }
 
-    public async Task<List<Account>> FindAccountsByUserId(string userId)
+    public async Task<List<Account>> FindAccountsByUserId(string userId, bool includeDeleted = false)
     {
-        return await Table.Where(x => x.UserId == userId)
+        return await Table.Where(x => x.UserId == userId &&  (includeDeleted || !x.IsDeleted))
             .ToListAsync();
     }
 
     public async Task<bool> CanProceedRequest(AccountDataRequest accountData, string userId, string? accountId = null)
     {
         var existingAccounts = await Table
-            .Where(x => x.UserId == userId && (accountId == null || x.Id != accountId))
+            .Where(x => x.UserId == userId && (accountId == null || x.Id != accountId) && !x.IsDeleted)
             .ToListAsync();
 
         var hasSameAccountNumber = existingAccounts.Exists(x => x.AccountNumber == accountData.AccountNumber);
@@ -99,4 +104,5 @@ public class DatabaseAccountProvider : DbSetController<Account>,IDatabaseAccount
         return !(hasSameAccountNumber || hasSameSimCardNumber || hasSameGroupDeviceSlot ||
                  hasSameBankCardNumberInGroup);
     }
+
 }

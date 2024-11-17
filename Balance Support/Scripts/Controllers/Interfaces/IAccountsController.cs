@@ -1,4 +1,5 @@
 using Balance_Support.DataClasses.Records.AccountData;
+using Balance_Support.DataClasses.Validators;
 using Balance_Support.Scripts.Database.Providers.Interfaces.Account;
 using Balance_Support.Scripts.Database.Providers.Interfaces.User;
 using Balance_Support.Scripts.Database.Providers.Interfaces.UserSettings;
@@ -18,4 +19,7 @@ public interface IAccountsController
     public Task<IResult> GetAccountsForDevice(AccountGetForDeviceRequest accountGetRequest);
 
     public Task<IResult> GetAllAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest);
+    
+    public Task<IResult> GetAllAccountGroupsForUser(AccountGetAllGroupsForUserRequest accountGetAllGroupsForUserRequest);
+    public Task<IResult> GetAllAccountNumbersForUser(AccountGetAllAccountNumbersForUserRequest accountGetAllGroupsForUserRequest);
 }

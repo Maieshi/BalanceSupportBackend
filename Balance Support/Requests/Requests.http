@@ -69,7 +69,7 @@ POST https://localhost:5001/Desktop/UserSettings/Update
 content-type: application/json
 
 {
-  "userId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "userId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2",
   "userName": null,
   "nickname": null,
   "phoneNumber": null,
@@ -82,9 +82,8 @@ content-type: application/json
   "newsAnnouncements": false,
   "productUpdates": false,
   "blogDigest": false,
-  "selectedGroup": 1,
+  "selectedGroups": [1, 2],
   "rowsCount": 100
-  
 }
 
 ######### Account
@@ -158,7 +157,7 @@ content-type: application/json
 
 {
   "UserId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2",
-  "NotificationText": "Карта *1234 списание 300р. OTP Bank. Доступно 15408р. otpbank.ru/tr"
+  "NotificationText": "СЧЁТ1234 15:35 зачисление 320р Баланс: 4186р"
 }
 
 ###

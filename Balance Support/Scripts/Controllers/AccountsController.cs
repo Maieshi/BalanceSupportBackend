@@ -1,5 +1,6 @@
 using Balance_Support.DataClasses.DatabaseEntities;
 using Balance_Support.DataClasses.Records.AccountData;
+using Balance_Support.DataClasses.Validators;
 using Balance_Support.Scripts.Controllers.Interfaces;
 using Balance_Support.Scripts.Database;
 using Balance_Support.Scripts.Database.Providers.Interfaces.Account;
@@ -13,12 +14,14 @@ public class AccountsController:IAccountsController
 {
     private readonly IDatabaseAccountProvider accounts;
     private readonly IDatabaseUserProvider users;
+    private readonly IDatabaseUserSettingProvider settings;
 
     public AccountsController(IDatabaseAccountProvider accounts,
-        IDatabaseUserProvider users)
+        IDatabaseUserProvider users,IDatabaseUserSettingProvider settings)
     {
         this.accounts = accounts;
         this.users = users;
+        this.settings = settings;
     }
     public async Task<IResult> RegisterAccount(AccountRegisterRequest accountRegisterRequest)
     {
@@ -60,6 +63,7 @@ public class AccountsController:IAccountsController
                     title: "One account with same unique data already registered");
 
             await accounts.UpdateAccount(account, accountUpdateRequest);
+            await UpdateSelectedGroups(account.UserId);
             return Results.Ok($"Accounts/{accountUpdateRequest.AccountId}");
         }
         catch (Exception ex)
@@ -76,8 +80,11 @@ public class AccountsController:IAccountsController
             var currentAccount = await accounts.FindAccountByAccountId(accountDeleteRequest.AccountId);
             if (currentAccount == null)
                 return Results.NotFound("Account");
+            
+            currentAccount.MarkAsDeleted();
 
-            await accounts.Delete(currentAccount);
+            await accounts.UpdateAccount(currentAccount);
+            await UpdateSelectedGroups(currentAccount.UserId);
             return Results.Ok($"Devices/{accountDeleteRequest.AccountId}");
         }
         catch (Exception e)
@@ -127,6 +134,38 @@ public class AccountsController:IAccountsController
         {
             Accounts = accountsFound.ConvertToDtoList()
         });
+    }
+
+    public async Task<IResult> GetAllAccountGroupsForUser(AccountGetAllGroupsForUserRequest accountGetAllGroupsForUserRequest)
+    {
+        var  accs = await accounts.GetAccountsForUserSelectedGroupandIsDeleted(accountGetAllGroupsForUserRequest.userId,null,true);
+        var groups = accs.Select(x => x.AccountGroup).Distinct().ToList();
+        return Results.Ok(groups);
+    }
+    
+    public async Task<IResult> GetAllAccountNumbersForUser(AccountGetAllAccountNumbersForUserRequest accountNumbersRequest)
+    {
+        var  accs = await accounts.GetAccountsForUserSelectedGroupandIsDeleted(accountNumbersRequest.userId,null,true);
+        var groups = accs.Select(x => x.AccountNumber).Distinct().ToList();
+        return Results.Ok(groups);
+    }
+
+    private async Task UpdateSelectedGroups(string userId)
+    {
+        var setting =await settings.GetByUserId(userId);
+        var userAccs = await accounts.FindAccountsByUserId(userId);
+        if(setting == null && !userAccs.Any())return;
+        var userGroupIds = userAccs.Select(acc => acc.AccountGroup).Distinct().ToList();
+        
+        // Remove values from SelectedGroups that do not exist in userGroupIds
+        var upd = setting.SelectedGroups
+            .Where(groupId => userGroupIds.Contains(groupId))
+            .Distinct()
+            .ToArray();
+        
+        setting.SelectedGroups = upd.ToList();
+
+        settings.Update(setting);
     }
 }
 

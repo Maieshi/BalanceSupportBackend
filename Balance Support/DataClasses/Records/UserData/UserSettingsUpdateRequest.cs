@@ -14,5 +14,5 @@ public record UserSettingsUpdateRequest(
     bool NewsAnnouncements,
     bool ProductUpdates,
     bool BlogDigest,
-    int SelectedGroup,
+    List<int> SelectedGroups,
     int RowsCount);

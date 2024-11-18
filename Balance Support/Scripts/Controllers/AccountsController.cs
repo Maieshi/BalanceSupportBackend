@@ -138,14 +138,14 @@ public class AccountsController:IAccountsController
 
     public async Task<IResult> GetAllAccountGroupsForUser(AccountGetAllGroupsForUserRequest accountGetAllGroupsForUserRequest)
     {
-        var  accs = await accounts.GetAccountsForUserSelectedGroupandIsDeleted(accountGetAllGroupsForUserRequest.userId,null,true);
+        var  accs = await accounts.GetAccountsForUserSelectedGroupAndIsDeleted(accountGetAllGroupsForUserRequest.userId,null,false);
         var groups = accs.Select(x => x.AccountGroup).Distinct().ToList();
         return Results.Ok(groups);
     }
     
     public async Task<IResult> GetAllAccountNumbersForUser(AccountGetAllAccountNumbersForUserRequest accountNumbersRequest)
     {
-        var  accs = await accounts.GetAccountsForUserSelectedGroupandIsDeleted(accountNumbersRequest.userId,null,true);
+        var  accs = await accounts.GetAccountsForUserSelectedGroupAndIsDeleted(accountNumbersRequest.userId,null,true);
         var groups = accs.Select(x => x.AccountNumber).Distinct().ToList();
         return Results.Ok(groups);
     }

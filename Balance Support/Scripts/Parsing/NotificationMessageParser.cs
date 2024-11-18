@@ -36,11 +36,25 @@ public class NotificationMessageParser : INotificationMessageParser
         creditingPattern =  new Regex(@"Карта\s*\*?(\d{4})\s+зачисление\s+([\d\s,.]+)[рpRUR].*?Доступно\s+([\d\s,.]+)[рpRUR]", RegexOptions.IgnoreCase);
         debitingPattern = new Regex(@"Карта\s*\*?(\d{4})\s+списание\s+([\d\s,.]+)[рpRUR].*?Доступно\s+([\d\s,.]+)[рpRUR]", RegexOptions.IgnoreCase);
     }
+    else if (bank == "MTS Money")
+    {
+        creditingPattern = new Regex(@"Перевод с карты\s+([\d\s,.]+)\s+RUB.*?Остаток:\s+([\d\s,.]+)\s+RUB;?\s*\*?(\d{4})?", RegexOptions.IgnoreCase);
+        var alternateCreditingPattern = new Regex(@"Поступление\s+([\d\s,.]+)[рRUR].*?через СБП", RegexOptions.IgnoreCase);
+
+        debitingPattern = new Regex(@"([\d\s,.]+)\s+RUB.*?Остаток:\s+([\d\s,.]+)\s+RUB;?\s*\*?(\d{4})?", RegexOptions.IgnoreCase);
+        var alternateDebitingPattern = new Regex(@"Выполнен перевод\s+([\d\s,.]+)[рRUR].*?со счёта\s*\*?(\d{4})", RegexOptions.IgnoreCase);
+
+        // Determine which pattern matches the message
+        Match messageMatch = alternateCreditingPattern.Match(message);
+        if (messageMatch.Success) creditingPattern = alternateCreditingPattern;
+
+        messageMatch = alternateDebitingPattern.Match(message);
+        if (messageMatch.Success) debitingPattern = alternateDebitingPattern;
+    }
     else
     {
         return null; // If the bank is not recognized, skip parsing
     }
-
     // Match the message against crediting and debiting patterns
     Match match;
     TransactionType type;
@@ -78,6 +92,12 @@ private static string DetectBank(string message)
     {
         return "OTP Bank";
     }
+    if ((message.Contains("RUB", StringComparison.OrdinalIgnoreCase) &&
+         message.Contains("Остаток", StringComparison.OrdinalIgnoreCase)) ||
+        message.Contains("Выполнен перевод"))
+    {
+        return "MTS Money";
+    }
     return string.Empty;
 }
 
@@ -88,6 +108,7 @@ private static TransactionParsedData ParseTransactionData(Match match, string ba
          "Sberbank"=>  2,
          "AlphaBank"=> 1,
          "OTP Bank"=>  1,
+         "MTS Money"=>3,
          _=>  2
     };
     
@@ -96,6 +117,7 @@ private static TransactionParsedData ParseTransactionData(Match match, string ba
         "Sberbank"=>  3,
         "AlphaBank"=> 2,
         "OTP Bank"=>  2,
+        "MTS Money"=>1,
         _=>  3
     };
     
@@ -104,8 +126,15 @@ private static TransactionParsedData ParseTransactionData(Match match, string ba
         "Sberbank"=>  4,
         "AlphaBank"=> 3,
         "OTP Bank"=>  3,
+        "MTS Money"=>2,
         _=>  4
     };
+
+    if (bank == "MTS Money" && type == TransactionType.Debiting && match.Groups.Count == 3)
+    {
+        cardIndex = 2;
+        balanceIndex = 0;
+    }
     
     // Capture card/account number, or leave as empty string if not present
     var cardNumber = match.Groups[cardIndex].Success ? match.Groups[cardIndex].Value.Trim() : string.Empty;

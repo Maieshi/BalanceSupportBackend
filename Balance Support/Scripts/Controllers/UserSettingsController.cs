@@ -24,7 +24,7 @@ public class UserSettingsController : IUserSettingsController
             return Results.NotFound("Settings not found");
         }
 
-        return Results.Ok(userSettings);
+        return Results.Ok(userSettings.Convert());
     }
 
     public async Task<IResult> UpdateUserSettings(UserSettingsUpdateRequest userSettingsUpdateRequest)

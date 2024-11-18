@@ -49,7 +49,7 @@ public class DatabaseAccountProvider : DbSetController<Account>,IDatabaseAccount
             .ToList();
 
 
-    public async Task<List<Account>> GetAccountsForUserSelectedGroupandIsDeleted(string userId, List<int>? selectedGroup = null, bool includeDeleted = false)
+    public async Task<List<Account>> GetAccountsForUserSelectedGroupAndIsDeleted(string userId, List<int>? selectedGroup = null, bool includeDeleted = false)
     {
         var a = await FindAccountsByUserId(userId, includeDeleted);
         var b = a.Where(x =>
@@ -87,17 +87,19 @@ public class DatabaseAccountProvider : DbSetController<Account>,IDatabaseAccount
 
     public async Task<bool> CanProceedRequest(AccountDataRequest accountData, string userId, string? accountId = null)
     {
-        var existingAccounts = await Table
-            .Where(x => x.UserId == userId && (accountId == null || x.Id != accountId) && !x.IsDeleted)
+        var deletedIncluded = await Table
+            .Where(x => x.UserId == userId && (accountId == null || x.Id != accountId))
             .ToListAsync();
 
-        var hasSameAccountNumber = existingAccounts.Exists(x => x.AccountNumber == accountData.AccountNumber);
-        var hasSameSimCardNumber = existingAccounts.Exists(x => x.SimCardNumber == accountData.SimCardNumber);
-        var hasSameGroupDeviceSlot = existingAccounts.Exists(x =>
+        var deletedNotIncluded = deletedIncluded.Where(x => !x.IsDeleted).ToList();
+        
+        var hasSameAccountNumber = deletedIncluded.Exists(x => x.AccountNumber == accountData.AccountNumber);
+        var hasSameSimCardNumber = deletedNotIncluded.Exists(x => x.SimCardNumber == accountData.SimCardNumber);
+        var hasSameGroupDeviceSlot = deletedNotIncluded.Exists(x =>
             x.AccountGroup == accountData.AccountGroup &&
             x.DeviceId == accountData.DeviceId &&
             x.SimSlot == accountData.SimSlot);
-        var hasSameBankCardNumberInGroup = existingAccounts.Exists(x =>
+        var hasSameBankCardNumberInGroup = deletedNotIncluded.Exists(x =>
             x.AccountGroup == accountData.AccountGroup &&
             x.BankCardNumber == accountData.BankCardNumber);
 

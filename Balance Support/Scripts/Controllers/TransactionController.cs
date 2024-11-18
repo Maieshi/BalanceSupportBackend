@@ -19,21 +19,18 @@ public class TransactionController : ITransactionController
     private readonly INotificationMessageParser messageParser;
     private readonly IMessageSender messageSender;
     private readonly IDatabaseTransactionProvider transactionProvider;
-    private readonly IDatabaseUserProvider userProvider;
     private readonly IDatabaseUserSettingProvider userSettingProvider;
 
     public TransactionController(INotificationMessageParser messageParser,
         IDatabaseAccountProvider accountProvider,
         IDatabaseTransactionProvider transactionProvider,
         IDatabaseUserSettingProvider userSettingProvider,
-        IDatabaseUserProvider userProvider,
         IMessageSender messageSender)
     {
         this.messageParser = messageParser;
         this.accountProvider = accountProvider;
         this.transactionProvider = transactionProvider;
         this.userSettingProvider = userSettingProvider;
-        this.userProvider = userProvider;
         this.messageSender = messageSender;
     }
 
@@ -266,7 +263,7 @@ public class TransactionController : ITransactionController
     public async Task<Dictionary<Account, List<Transaction>>> GetAccountWithTransactions(
         string userId, List<int>? selectedGroup = null)
     {
-        var accounts = await accountProvider.GetAccountsForUserSelectedGroupandIsDeleted(userId, selectedGroup, true);
+        var accounts = await accountProvider.GetAccountsForUserSelectedGroupAndIsDeleted(userId, selectedGroup, true);
 
         var accountTransactions = new Dictionary<Account, List<Transaction>>();
 

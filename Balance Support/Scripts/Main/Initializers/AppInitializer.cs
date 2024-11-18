@@ -225,6 +225,25 @@ public static class AppInitializer
             .GetResult()
         );
 
+        app.MapGet("/Desktop/Account/GetAllForUser/{userId}",
+            async (
+                string userId,
+                [FromServices] IAccountsController controller,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
+            {
+                // Create the request object from the URL parameter
+                var getAllForUserRequest = new AccountGetAllForUserRequest(userId);
+
+                // Process the request using the same logic
+                return (await ResultContainer
+                        .Start()
+                        .Validate<AccountGetAllForUserRequest, AccountGetAllForUserRequestValidator>(
+                            getAllForUserRequest)
+                        .Authorize(httpContextAccessor.HttpContext)
+                        .ProcessAsync(async () => await controller.GetAllAccountsForUser(getAllForUserRequest)))
+                    .GetResult();
+            });
+        
         app.MapGet("/Mobile/Account/GetForDevice/{userId}/{accountGroup:int}/{deviceId:int}",
             async (
                 string userId,
@@ -246,24 +265,7 @@ public static class AppInitializer
                     .GetResult();
             });
 
-        app.MapGet("/Desktop/Account/GetAllForUser/{userId}",
-            async (
-                string userId,
-                [FromServices] IAccountsController controller,
-                [FromServices] IHttpContextAccessor httpContextAccessor) =>
-            {
-                // Create the request object from the URL parameter
-                var getAllForUserRequest = new AccountGetAllForUserRequest(userId);
-
-                // Process the request using the same logic
-                return (await ResultContainer
-                        .Start()
-                        .Validate<AccountGetAllForUserRequest, AccountGetAllForUserRequestValidator>(
-                            getAllForUserRequest)
-                        .Authorize(httpContextAccessor.HttpContext)
-                        .ProcessAsync(async () => await controller.GetAllAccountsForUser(getAllForUserRequest)))
-                    .GetResult();
-            });
+       
 
         app.MapGet("/Desktop/Account/GetAllGroupsForUser/{userId}",
             async (
@@ -314,9 +316,22 @@ public static class AppInitializer
                 (await ResultContainer
                     .Start()
                     .Validate<NotificationHandleRequest, NotificationHandleRequestValidator>(handleNotificationRequest)
-                    .Authorize(httpContextAccessor.HttpContext)
+                    // .Authorize(httpContextAccessor.HttpContext)
                     .ProcessAsync(async () => await controller.RegisterNewTransaction(httpContextAccessor.HttpContext,handleNotificationRequest)))
                 .GetResult()
+        );
+        
+        app.MapPost("/Desktop/Transaction/CalculateBalance", async (
+                [FromBody] CalculateBalanceRequest request,
+                [FromServices] ITransactionController controller,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
+            (await ResultContainer
+                .Start()
+                .Validate<CalculateBalanceRequest, CalculateBalanceRequestValidator>(request)
+                .Authorize(httpContextAccessor.HttpContext)
+                .ProcessAsync(async () =>
+                    await controller.CalculateBalance(request)))
+            .GetResult()
         );
 
 
@@ -332,19 +347,7 @@ public static class AppInitializer
                     await controller.GetMessages(httpContextAccessor.HttpContext,messagesGetRequest)))
             .GetResult()
         );
-
-        app.MapPost("/Desktop/Transaction/CalculateBalance", async (
-                [FromBody] CalculateBalanceRequest request,
-                [FromServices] ITransactionController controller,
-                [FromServices] IHttpContextAccessor httpContextAccessor) =>
-            (await ResultContainer
-                .Start()
-                .Validate<CalculateBalanceRequest, CalculateBalanceRequestValidator>(request)
-                // .Authorize(httpContextAccessor.HttpContext)
-                .ProcessAsync(async () =>
-                    await controller.CalculateBalance(request)))
-            .GetResult()
-        );
+        
 
         #endregion
 

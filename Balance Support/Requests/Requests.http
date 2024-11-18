@@ -82,7 +82,9 @@ content-type: application/json
   "newsAnnouncements": false,
   "productUpdates": false,
   "blogDigest": false,
-  "selectedGroups": [1, 2],
+  "selectedGroups": [
+    2
+  ],
   "rowsCount": 100
 }
 
@@ -92,19 +94,19 @@ POST https://localhost:5001/Desktop/Account/Register
 content-type: application/json
 
 {
-  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "UserId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2",
   "AccountData": {
-    "AccountNumber": "+9989712345478",
-    "LastName": "test",
-    "AccountGroup": "4",
-    "DeviceId": "3",
-    "SimSlot": "2",
-    "SimCardNumber": "+9989712345479",
-    "BankCardNumber": "12345",
+    "AccountNumber": "1234",
+    "LastName": "asdfsadf",
+    "AccountGroup": 1,
+    "DeviceId": 1,
+    "SimSlot": 1,
+    "SimCardNumber": "+1111111111",
+    "BankCardNumber": "2222",
     "InitialBalance": "500",
-    "BankType": "Sbebank",
-    "SmsBalance":"0",
-    "Description": "hello world"
+    "BankType": "Sberbank",
+    "SmsBalance":"2000",
+    "Description": "111111"
   }
 }
 
@@ -113,20 +115,20 @@ POST https://localhost:5001/Desktop/Account/Update
 content-type: application/json
 
 {
-  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
-  "AccountId": "53bc6280-1f8c-40b5-88a7-5a0e3e5e3f75",
+  "UserId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2",
+  "AccountId": "0999d646-6f7a-4057-81ef-8ae7e1115e32",
   "AccountData": {
-    "AccountNumber": "sampleAccountNumber3",
-    "LastName": "sampleLastName",
-    "AccountGroup": 3,
+    "AccountNumber": "1234",
+    "LastName": "asdfsadf",
+    "AccountGroup": 1,
     "DeviceId": 1,
     "SimSlot": 1,
-    "SimCardNumber": "+88005553566",
-    "BankCardNumber": "1234",
-    "BankType": "sampleBankType",
-    "InitialBalance": 0,
-    "SmsBalance":0,
-    "Description": "sampleDescription"
+    "SimCardNumber": "+1111111111",
+    "BankCardNumber": "2222",
+    "InitialBalance": "500",
+    "BankType": "Sberbank",
+    "SmsBalance":"2000",
+    "Description": "111111"
   }
 }
 ###
@@ -145,10 +147,13 @@ content-type: application/json
   "Balance":10
 }
 ###
-GET https://localhost:5001/Mobile/Account/GetForDevice/sDAmWae7RqMsmWIC74lVdLuQRpq1/3/3
+GET https://localhost:5001/Mobile/Account/GetForDevice/Ex6YYoPzbJhiuAefYYbwNbjQF9k2/3/3
 
 ###
-GET https://localhost:5001/Desktop/Account/GetAllForUser/sDAmWae7RqMsmWIC74lVdLuQRpq1
+GET https://localhost:5001/Desktop/Account/GetAllForUser/Ex6YYoPzbJhiuAefYYbwNbjQF9k2
+
+###
+GET https://localhost:5001/Desktop/Account/GetAllAccountNumbersForUser/Ex6YYoPzbJhiuAefYYbwNbjQF9k2
 
 ######### Transaction
 
@@ -157,7 +162,7 @@ content-type: application/json
 
 {
   "UserId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2",
-  "NotificationText": "СЧЁТ1234 15:35 зачисление 320р Баланс: 4186р"
+  "NotificationText": "20,00 RUB P2PC0011, pr. Andropova Остаток: 255,00 RUB; *9980"
 }
 
 ###

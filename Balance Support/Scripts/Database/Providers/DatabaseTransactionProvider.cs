@@ -53,29 +53,36 @@ public class DatabaseTransactionProvider :DbSetController<Transaction>, IDatabas
 
     public async Task<List<Transaction>> GetMessages(MessagesGetRequest messagesGetRequest,List<string> accountIds)
     {
+        List<Transaction> check = new List<Transaction>();
         var query = Table.AsQueryable();
         query = query.Where(x => x.UserId == messagesGetRequest.UserId);
+        check = await query.ToListAsync();
 
         query = query.Where(x => accountIds.Contains(x.AccountId));
+        check = await query.ToListAsync();
     
         if (!string.IsNullOrEmpty(messagesGetRequest.SearchText))
         {
             query = query.Where(t => t.Message.Contains(messagesGetRequest.SearchText));
+            check = await query.ToListAsync();
         }
 
         if (messagesGetRequest.StartingDate.HasValue)
         {
             query = query.Where(t => t.Time >= messagesGetRequest.StartingDate.Value);
+            check = await query.ToListAsync();
         }
 
         if (messagesGetRequest.EndingDate.HasValue)
         {
             query = query.Where(t => t.Time <= messagesGetRequest.EndingDate.Value);
+            check = await query.ToListAsync();
         }
 
         if (messagesGetRequest.MessageType.HasValue&&messagesGetRequest.MessageType.Value!=-1)
         {
             query = query.Where(t => t.TransactionType == messagesGetRequest.MessageType.Value);
+            check = await query.ToListAsync();
         }
 
 

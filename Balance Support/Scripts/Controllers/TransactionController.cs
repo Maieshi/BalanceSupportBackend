@@ -37,11 +37,24 @@ public class TransactionController : ITransactionController
 
     public async Task<IResult> RegisterNewTransaction(HttpContext context, NotificationHandleRequest handleRequest)
     {
-        var data = await messageParser.HandleNotification(handleRequest);
-        if (data == null) return Results.BadRequest("Incorrect notification text");
+        var accs = await accountProvider.GetAccountByUserGroupDevice(handleRequest.UserId, handleRequest.GroupId, handleRequest.DeviceId);
+        if (!accs.Any()) return Results.NotFound("Account");
+        TransactionParsedData? data = await messageParser.ParseMessage(handleRequest);
+        if (data == null)
+        {
+            if (accs.Count > 1)
+                return Results.Problem(statusCode: 500,
+                    title: "More than one account found. Cannot parse short notification");
+            data = await messageParser.ParseSimpleMessage(accs[0],handleRequest.NotificationText);
+        }
 
-        var account = await accountProvider.GetAccountByUserIdAndBankCardNumber(handleRequest.UserId, data.CardNumber);
-        if (account == null) return Results.NotFound("Account not found");
+        if (data == null)
+        {
+            return Results.BadRequest("Incorrect notification text");
+        }
+
+        var account = accs.FirstOrDefault(x => string.Equals(x.BankCardNumber, data.CardNumber));
+        if (account == null) return Results.NotFound("Account for parsed data");
 
         var currentTransactions = (await transactionProvider.GetTransactionsByAccountId(account.Id)).ToList();
         var transaction = await transactionProvider.Register(handleRequest.UserId, account.Id, data.Type, data.Amount,
@@ -275,7 +288,6 @@ public class TransactionController : ITransactionController
 
         return accountTransactions;
     }
-
 }
 
 public class AccountIncomeData

@@ -342,7 +342,7 @@ public static class AppInitializer
             (await ResultContainer
                 .Start()
                 .Validate<MessagesGetRequest, MessagesGetRequestValidator>(messagesGetRequest)
-                .Authorize(httpContextAccessor.HttpContext)
+                // .Authorize(httpContextAccessor.HttpContext)
                 .ProcessAsync(async () =>
                     await controller.GetMessages(httpContextAccessor.HttpContext,messagesGetRequest)))
             .GetResult()

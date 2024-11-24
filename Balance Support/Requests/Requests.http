@@ -162,7 +162,9 @@ content-type: application/json
 
 {
   "UserId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2",
-  "NotificationText": "20,00 RUB P2PC0011, pr. Andropova Остаток: 255,00 RUB; *9980"
+  "GroupId": 1,
+  "DeviceId": 1,
+  "NotificationText": "Поступление 15000.00р. Глеб Владимирович Е. через СБП."
 }
 
 ###
@@ -170,13 +172,13 @@ POST https://localhost:5001/Desktop/Transaction/GetMessages
 content-type: application/json
 
 {
-  "UserId":"sDAmWae7RqMsmWIC74lVdLuQRpq1",
-  "SearchText":null,
-  "AccountNumber":null,
-  "StartingDate":null,
-  "EndingDate":null,
+  "AccountNumber":"8692",
+  "Amount": 100,
+  "EndingDate":"2024-10-21T00:00:00.000Z",
   "MessageType":null,
-  "Amount":100
+  "SearchText":null,
+  "StartingDate":"2024-10-20T00:00:00.000Z",
+  "UserId":"Ex6YYoPzbJhiuAefYYbwNbjQF9k2"
 }
 
 ###

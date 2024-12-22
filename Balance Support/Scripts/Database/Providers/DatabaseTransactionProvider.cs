@@ -87,7 +87,6 @@ public class DatabaseTransactionProvider :DbSetController<Transaction>, IDatabas
 
 
         return await query
-            .Take(messagesGetRequest.Amount)
             .ToListAsync();
         
     }

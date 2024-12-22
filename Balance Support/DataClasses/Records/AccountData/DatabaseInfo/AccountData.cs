@@ -11,5 +11,6 @@ public record AccountDataRequest(
     string BankCardNumber,
     string BankType,
     decimal InitialBalance,
+    decimal? InitialSmsBalance,
     string Description
 );

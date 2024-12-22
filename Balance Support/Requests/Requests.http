@@ -105,7 +105,7 @@ content-type: application/json
     "BankCardNumber": "2222",
     "InitialBalance": "500",
     "BankType": "Sberbank",
-    "SmsBalance":"2000",
+    "InitialSmsBalance":"2000",
     "Description": "111111"
   }
 }
@@ -127,7 +127,7 @@ content-type: application/json
     "BankCardNumber": "2222",
     "InitialBalance": "500",
     "BankType": "Sberbank",
-    "SmsBalance":"2000",
+    "InitialSmsBalance":"2000",
     "Description": "111111"
   }
 }
@@ -136,7 +136,7 @@ POST https://localhost:5001/Desktop/Account/Delete
 content-type: application/json 
 
 {
-  "AccountId": "sampleAccountId"
+  "AccountId": "1c202e1d-9456-43c0-94cb-3df998267277"
 }
 ###
 POST https://localhost:5001/Desktop/Account/SetBalance
@@ -147,13 +147,13 @@ content-type: application/json
   "Balance":10
 }
 ###
-GET https://localhost:5001/Mobile/Account/GetForDevice/Ex6YYoPzbJhiuAefYYbwNbjQF9k2/3/3
+GET https://localhost:5001/Mobile/Account/GetForDevice/Ex6YYoPzbJhiuAefYYbwNbjQF9k2/21/1
 
 ###
 GET https://localhost:5001/Desktop/Account/GetAllForUser/Ex6YYoPzbJhiuAefYYbwNbjQF9k2
 
 ###
-GET https://localhost:5001/Desktop/Account/GetAllAccountNumbersForUser/Ex6YYoPzbJhiuAefYYbwNbjQF9k2
+GET https://localhost:5001/Desktop/Account/GetAllAccountNameNumberBankForUser/Ex6YYoPzbJhiuAefYYbwNbjQF9k2
 
 ######### Transaction
 
@@ -162,9 +162,9 @@ content-type: application/json
 
 {
   "UserId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2",
-  "GroupId": 1,
-  "DeviceId": 1,
-  "NotificationText": "Поступление 15000.00р. Глеб Владимирович Е. через СБП."
+  "GroupId": 2,
+  "DeviceId": 2,
+  "NotificationText": "Выполнен перевод 10000р со счёта *1234. Павел Николаевич М через СБП."
 }
 
 ###
@@ -172,13 +172,15 @@ POST https://localhost:5001/Desktop/Transaction/GetMessages
 content-type: application/json
 
 {
-  "AccountNumber":"8692",
-  "Amount": 100,
-  "EndingDate":"2024-10-21T00:00:00.000Z",
-  "MessageType":null,
-  "SearchText":null,
-  "StartingDate":"2024-10-20T00:00:00.000Z",
-  "UserId":"Ex6YYoPzbJhiuAefYYbwNbjQF9k2"
+  "UserId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2",
+  "SearchText": null,
+  "LastName": "Саламатин",
+  "SimCard": "+79604917306",
+  "BankType": "Sberbank",
+  "StartingDate": null,
+  "EndingDate": null,
+  "MessageType": null,
+  "Amount": 100
 }
 
 ###

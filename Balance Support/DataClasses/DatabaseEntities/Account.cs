@@ -61,6 +61,24 @@ public class Account : BaseEntity
         BankType = accountUpdateRequest.AccountData.BankType;
         InitialBalance = accountUpdateRequest.AccountData.InitialBalance;
         Description = accountUpdateRequest.AccountData.Description;
+        if (accountUpdateRequest.AccountData.InitialSmsBalance.HasValue) // Check if not null
+        {
+            SmsBalance = accountUpdateRequest.AccountData.InitialSmsBalance.Value; // Set SmsBalance to the value of InitialSmsBalance
+        }
+    }
+    
+    public void UpdateAccount(AccountDataRequest accountData)
+    {
+        AccountNumber = accountData.AccountNumber;
+        LastName = accountData.LastName;
+        AccountGroup = accountData.AccountGroup;
+        DeviceId = accountData.DeviceId;
+        SimSlot = accountData.SimSlot;
+        SimCardNumber = accountData.SimCardNumber;
+        BankCardNumber = accountData.BankCardNumber;
+        BankType = accountData.BankType;
+        InitialBalance = accountData.InitialBalance;
+        Description = accountData.Description;
     }
 
     public override object Convert()

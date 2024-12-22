@@ -39,49 +39,44 @@ public class TransactionController : ITransactionController
     {
         var accs = await accountProvider.GetAccountByUserGroupDevice(handleRequest.UserId, handleRequest.GroupId, handleRequest.DeviceId);
         if (!accs.Any()) return Results.NotFound("Account");
+        if (accs.Count > 1)
+            return Results.Problem(statusCode: 500,
+                title: "More than one account found. Cannot parse short notification");
         TransactionParsedData? data = await messageParser.ParseMessage(handleRequest);
         if (data == null)
         {
-            if (accs.Count > 1)
-                return Results.Problem(statusCode: 500,
-                    title: "More than one account found. Cannot parse short notification");
-            data = await messageParser.ParseSimpleMessage(accs[0],handleRequest.NotificationText);
+            data = await messageParser.ParseShortMessage(accs[0],handleRequest.NotificationText);
         }
-
+        
         if (data == null)
         {
             return Results.BadRequest("Incorrect notification text");
         }
-
-        var account = accs.FirstOrDefault(x => string.Equals(x.BankCardNumber, data.CardNumber));
+        
+        var account = accs.FirstOrDefault();
         if (account == null) return Results.NotFound("Account for parsed data");
-
-        var currentTransactions = (await transactionProvider.GetTransactionsByAccountId(account.Id)).ToList();
+        
         var transaction = await transactionProvider.Register(handleRequest.UserId, account.Id, data.Type, data.Amount,
             data.Balance, handleRequest.NotificationText);
-
-        // Update account balance based on transaction type
-        if (!currentTransactions.Any())
-            account.SmsBalance = transaction.Balance;
-        else
+        
             account.SmsBalance += transaction.Amount *
                                   (transaction.TransactionType == (int)TransactionType.Debiting ? -1 : 1);
-
+        
         await accountProvider.UpdateAccount(account);
-
+        
         // Retrieve MessagesGetRequest from session and deserialize it
         var messagesGetRequestJson = context.Session.GetString("MessagesGetRequest");
         MessagesGetRequest? messagesGetRequest = null;
-
+        
         if (!string.IsNullOrEmpty(messagesGetRequestJson))
         {
             messagesGetRequest = JsonConvert.DeserializeObject<MessagesGetRequest>(messagesGetRequestJson);
         }
-
+        
         // Check if transaction should be sent (if no filter or it matches the filter)
         var shouldSendTransactionMessage = messagesGetRequest == null ||
-                                           messagesGetRequest.Matches(transaction, account.AccountNumber);
-
+                                           messagesGetRequest.Matches(transaction, account);
+        
         MessageSendResult? resultTransactionMessage = null;
         if (shouldSendTransactionMessage)
         {
@@ -101,7 +96,7 @@ public class TransactionController : ITransactionController
                 Message = handleRequest.NotificationText
             });
         }
-
+        
         // Retrieve user settings for income message logic
         var settings = await userSettingProvider.GetByUserId(handleRequest.UserId);
         if (settings == null)
@@ -113,7 +108,7 @@ public class TransactionController : ITransactionController
                 IncomeResult = "Cannot find user settings"
             });
         }
-
+        
         if (settings.SelectedGroups.Any() && !settings.SelectedGroups.Contains(account.AccountGroup))
         {
             return Results.Created("Transaction/", new
@@ -123,12 +118,12 @@ public class TransactionController : ITransactionController
                 IncomeResult = "Account not in selected group"
             });
         }
-
+        
         // Calculate values and send income message if needed
         var income = await CalculateAccountIncome(handleRequest.UserId, settings.SelectedGroups);
-
+        
         var curAccIncome = income.accsIncome.FirstOrDefault(x => x.Key.Id == account.Id).Value;
-
+        
         if (curAccIncome == null)
         {
             return Results.Created("Transaction/", new
@@ -138,8 +133,8 @@ public class TransactionController : ITransactionController
                 IncomeResult = "Not found account income"
             });
         }
-
-
+        
+        
         var resultIncomeMessage = await messageSender.SendMessage(handleRequest.UserId, new IncomeMessage
         {
             BalanceTotal = income.balance,
@@ -149,13 +144,15 @@ public class TransactionController : ITransactionController
             D = curAccIncome.Daily,
             T = curAccIncome.Total
         });
-
+        
         return Results.Created("Transaction/", new
         {
             Transaction = transaction.Convert(),
             transactionResult = resultTransactionMessage,
             incomeResult = resultIncomeMessage
         });
+
+        return Results.Ok();
     }
 
 
@@ -183,11 +180,11 @@ public class TransactionController : ITransactionController
 
         // Your existing logic
         var accounts = new List<Account>();
-        if (messagesGetRequest.AccountNumber != null)
+        if (messagesGetRequest.LastName != null&& messagesGetRequest.SimCard!=null&& messagesGetRequest.BankType!= null)
         {
             var account =
-                await accountProvider.GetAccountByUserIdAndAccountNumber(messagesGetRequest.UserId,
-                    messagesGetRequest.AccountNumber);
+                await accountProvider.GetAccountByUserIdNameSimBankType(messagesGetRequest.UserId,
+                    messagesGetRequest.LastName,messagesGetRequest.SimCard,messagesGetRequest.BankType);
             if (account != null) accounts.Add(account);
         }
         else

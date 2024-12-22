@@ -4,20 +4,23 @@ namespace Balance_Support.DataClasses.Records.NotificationData;
 public record MessagesGetRequest(
     string UserId,
     string? SearchText,
-    string? AccountNumber,
+    string? LastName,
+    string? SimCard,
+    string? BankType,
     DateTime? StartingDate,
     DateTime? EndingDate,
-    int? MessageType,
-    int Amount
+    int? MessageType
 )
 {
-    public bool Matches(Transaction transaction, string accountNumber)
+    public bool Matches(Transaction transaction, Account account)
     {
         // Check if transaction UserId matches
         if (transaction.UserId != UserId) return false;
 
         // Check if AccountNumber is specified and matches
-        if (!string.IsNullOrEmpty(AccountNumber) && accountNumber != AccountNumber) return false;
+        if (
+            (!string.IsNullOrEmpty(LastName) && LastName!=account.LastName)
+            ) return false;
 
         // Check if SearchText is specified and contained within the message
         if (!string.IsNullOrEmpty(SearchText) && !transaction.Message.Contains(SearchText, StringComparison.OrdinalIgnoreCase))

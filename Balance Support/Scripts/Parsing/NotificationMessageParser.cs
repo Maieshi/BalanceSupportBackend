@@ -12,7 +12,7 @@ public class NotificationMessageParser : INotificationMessageParser
 {
     public async Task<TransactionParsedData?> ParseMessage(NotificationHandleRequest request)
     {
-        var message = request.NotificationText;
+        var message = NormalizeMessage(request.NotificationText);
         string bank = DetectBank(message);
         if (string.IsNullOrEmpty(bank))
         {
@@ -25,40 +25,38 @@ public class NotificationMessageParser : INotificationMessageParser
 
         if (bank == "Sberbank")
         {
-            creditingPattern =
-                new Regex(
-                    @"^(СЧЁТ|MIR)?[\s*-]?(\d{4,})?\s+\d{2}:\d{2}\s+(?:зачисление|Перевод из).+?([\d\s,.]+)[рRUR].*?Баланс:\s*([\d\s,.]+)[рRUR]",
-                    RegexOptions.IgnoreCase);
-            debitingPattern =
-                new Regex(
-                    @"^(СЧЁТ|MIR)?[\s*-]?(\d{4,})?\s+\d{2}:\d{2}\s+(?:перевод).+?([\d\s,.]+)[рRUR].*?Баланс:\s*([\d\s,.]+)[рRUR]",
-                    RegexOptions.IgnoreCase);
+            creditingPattern = new Regex(
+                @"^(СЧЁТ|MIR)?[\s*-]?(\d{4,})?\s+\d{2}:\d{2}\s+(?:зачисление|Перевод из).+?([\d,.\s]+)[рRUR]\s.*?Баланс:\s*([\d,.\s]+)[рRUR]",
+                RegexOptions.IgnoreCase);
+            debitingPattern = new Regex(
+                @"^(СЧЁТ|MIR)?[\s*-]?(\d{4,})?\s+\d{2}:\d{2}\s+перевод.+?([\d,.\s]+)[рRUR]\s.*?Баланс:\s*([\d,.\s]+)[рRUR]",
+                RegexOptions.IgnoreCase);
         }
         else if (bank == "AlphaBank")
         {
             creditingPattern =
-                new Regex(@"Пополнение\s*\*?(\d{4})?\s*на\s*([\d\s,.]+)\s*[рRUR].*?Баланс:\s*([\d\s,.]+)",
+                new Regex(@"Пополнение\s*\*?(\d{4})?\s*на\s*([\d\s,.]+)\s*RUR\s*Баланс:\s*([\d\s,.]+)\s*RUR",
                     RegexOptions.IgnoreCase);
         }
         else if (bank == "OTP Bank")
         {
             creditingPattern =
-                new Regex(@"Карта\s*\*?(\d{4})\s+зачисление\s+([\d\s,.]+)[рpRUR].*?Доступно\s+([\d\s,.]+)[рpRUR]",
+                new Regex(@"Карта\s*\*?(\d{4})\s+зачисление\s+([\d,.]+)[рp].*?Доступно\s+([\d,.]+)[рp]",
                     RegexOptions.IgnoreCase);
             debitingPattern =
-                new Regex(@"Карта\s*\*?(\d{4})\s+списание\s+([\d\s,.]+)[рpRUR].*?Доступно\s+([\d\s,.]+)[рpRUR]",
+                new Regex(@"Карта\s*\*?(\d{4})\s+списание\s+([\d,.]+)[рp].*?Доступно\s+([\d,.]+)[рp]",
                     RegexOptions.IgnoreCase);
         }
         else if (bank == "MTS Money")
         {
             creditingPattern =
-                new Regex(@"Перевод с карты\s+([\d\s,.]+)\s+RUB.*?Остаток:\s+([\d\s,.]+)\s+RUB;?\s*\*?(\d{4})?",
+                new Regex(@"Перевод с карты\s+([\d,.]+)\s+RUB.*?Остаток:\s+([\d,.]+)\s+RUB;?\s*\*?(\d{4})?",
                     RegexOptions.IgnoreCase);
 
 
-            debitingPattern = new Regex(@"([\d\s,.]+)\s+RUB.*?Остаток:\s+([\d\s,.]+)\s+RUB;?\s*\*?(\d{4})?",
+            debitingPattern = new Regex(@"([\d,.]+)\s+RUB.*?Остаток:\s+([\d,.]+)\s+RUB;?\s*\*?(\d{4})?",
                 RegexOptions.IgnoreCase);
-            var alternateDebitingPattern = new Regex(@"Выполнен перевод\s+([\d\s,.]+)[рRUR].*?со счёта\s*\*?(\d{4})",
+            var alternateDebitingPattern = new Regex(@"Выполнен перевод\s+([\d,.]+)[р]?\s+.*?со счёта\s*\*?(\d{4})",
                 RegexOptions.IgnoreCase);
 
             Match messageMatch = alternateDebitingPattern.Match(message);
@@ -91,11 +89,11 @@ public class NotificationMessageParser : INotificationMessageParser
         return ParseTransactionData(match, bank, type);
     }
 
-    public async Task<TransactionParsedData?> ParseSimpleMessage(Account account, string message)
+    public async Task<TransactionParsedData?> ParseShortMessage(Account account, string message)
     {
         if (account == null || string.IsNullOrWhiteSpace(message))
             return null;
-
+        message = NormalizeMessage(message);
         string bank = account.BankType;
         string cardNumber = account.BankCardNumber ?? string.Empty;
         decimal amount = 0;
@@ -215,6 +213,22 @@ public class NotificationMessageParser : INotificationMessageParser
     {
         return input.Replace(" ", "").Replace("\u00A0", "").Replace(",", ".")
             .Trim(); // Replace both regular spaces and non-breaking spaces
+    }
+    
+    public static string NormalizeMessage(string message)
+    {
+        // Replace all line breaks with a space
+        message = message
+            .Replace("\r\n", " ")
+            .Replace("\r", " ")    // Remove carriage return (CR)
+            .Replace("\n", " ")    // Remove line feed (LF)
+            .Replace("&#x20;", " ")         // Normalize HTML space character if applicable
+            .Replace("\u00A0", " ") ;
+
+        // Collapse multiple spaces into one
+        message = Regex.Replace(message, @"\s+", " ").Trim();
+
+        return message;
     }
 }
 

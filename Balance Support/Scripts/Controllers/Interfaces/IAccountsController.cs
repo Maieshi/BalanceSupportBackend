@@ -21,5 +21,5 @@ public interface IAccountsController
     public Task<IResult> GetAllAccountsForUser(AccountGetAllForUserRequest accountGetAllForUserRequest);
     
     public Task<IResult> GetAllAccountGroupsForUser(AccountGetAllGroupsForUserRequest accountGetAllGroupsForUserRequest);
-    public Task<IResult> GetAllAccountNumbersForUser(AccountGetAllAccountNumbersForUserRequest accountGetAllGroupsForUserRequest);
+    public Task<IResult> GetAllAccountNameNubmerBankForUser(AccountGetAllNameNumberBankForUserRequest accountGetAllGroupsForUserRequest);
 }

@@ -10,25 +10,40 @@ using Balance_Support.Scripts.Main;
 
 namespace Balance_Support.Scripts.Controllers;
 
-public class AccountsController:IAccountsController
+public class AccountsController : IAccountsController
 {
     private readonly IDatabaseAccountProvider accounts;
     private readonly IDatabaseUserProvider users;
     private readonly IDatabaseUserSettingProvider settings;
 
     public AccountsController(IDatabaseAccountProvider accounts,
-        IDatabaseUserProvider users,IDatabaseUserSettingProvider settings)
+        IDatabaseUserProvider users, IDatabaseUserSettingProvider settings)
     {
         this.accounts = accounts;
         this.users = users;
         this.settings = settings;
     }
+
     public async Task<IResult> RegisterAccount(AccountRegisterRequest accountRegisterRequest)
     {
         if (!await users.CheckUserWithIdExist(accountRegisterRequest.UserId))
             return Results.NotFound("User");
+
+        var accountToRestore = await accounts.FindAccountBySimCardAndBank(accountRegisterRequest.UserId,
+            accountRegisterRequest.AccountData.SimCardNumber, accountRegisterRequest.AccountData.BankType);
+
+        if (accountToRestore != null && await CanProceedRequest(accountRegisterRequest.AccountData,
+                accountRegisterRequest.UserId, accountToRestore.Id))
+        {
+            accountToRestore.UpdateAccount(accountRegisterRequest.AccountData);
+            accountToRestore.IsDeleted = false;
+            accountToRestore.DeletedAt = null;
+            await accounts.UpdateAccount(accountToRestore);
+            return Results.Created("Account updated", accountToRestore.Convert());
+        }
+
         //TODO: check if account with same account number exists for this user
-        if (!await accounts.CanProceedRequest(accountRegisterRequest.AccountData,
+        if (!await CanProceedRequest(accountRegisterRequest.AccountData,
                 accountRegisterRequest.UserId))
             return Results.Problem(statusCode: 500,
                 title: "One account with same unique data already registered");
@@ -56,7 +71,7 @@ public class AccountsController:IAccountsController
             if (account == null)
                 return Results.NotFound("Account");
 
-            if (!await accounts.CanProceedRequest(accountUpdateRequest.AccountData,
+            if (!await CanProceedRequest(accountUpdateRequest.AccountData,
                     accountUpdateRequest.UserId,
                     accountUpdateRequest.AccountId))
                 return Results.Problem(statusCode: 500,
@@ -80,7 +95,7 @@ public class AccountsController:IAccountsController
             var currentAccount = await accounts.FindAccountByAccountId(accountDeleteRequest.AccountId);
             if (currentAccount == null)
                 return Results.NotFound("Account");
-            
+
             currentAccount.MarkAsDeleted();
 
             await accounts.UpdateAccount(currentAccount);
@@ -97,7 +112,7 @@ public class AccountsController:IAccountsController
     public async Task<IResult> SetAccountBalance(AccountSetBalanceRequest accountSetBalanceRequest)
     {
         var account = await accounts.FindAccountByAccountId(accountSetBalanceRequest.AccountId);
-        if(account==null) return Results.NotFound("Account");       
+        if (account == null) return Results.NotFound("Account");
         account.SmsBalance = accountSetBalanceRequest.Balance;
         accounts.UpdateAccount(account);
         return Results.Ok("Balance updated");
@@ -124,49 +139,73 @@ public class AccountsController:IAccountsController
     {
         if (!await users.CheckUserWithIdExist(accountGetAllForUserRequest.UserId))
             return Results.NotFound("User");
-        
+
         var accountsFound = await accounts.FindAccountsByUserId(accountGetAllForUserRequest.UserId);
         if (!accountsFound.Any())
             return Results.NotFound("Accounts");
-        
-               
+
+
         return Results.Ok(new
         {
             Accounts = accountsFound.ConvertToDtoList()
         });
     }
 
-    public async Task<IResult> GetAllAccountGroupsForUser(AccountGetAllGroupsForUserRequest accountGetAllGroupsForUserRequest)
+    public async Task<IResult> GetAllAccountGroupsForUser(
+        AccountGetAllGroupsForUserRequest accountGetAllGroupsForUserRequest)
     {
-        var  accs = await accounts.GetAccountsForUserSelectedGroupAndIsDeleted(accountGetAllGroupsForUserRequest.userId,null,false);
+        var accs = await accounts.GetAccountsForUserSelectedGroupAndIsDeleted(accountGetAllGroupsForUserRequest.userId,
+            null, false);
         var groups = accs.Select(x => x.AccountGroup).Distinct().ToList();
         return Results.Ok(groups);
     }
-    
-    public async Task<IResult> GetAllAccountNumbersForUser(AccountGetAllAccountNumbersForUserRequest accountNumbersRequest)
+
+    public async Task<IResult> GetAllAccountNameNubmerBankForUser(
+        AccountGetAllNameNumberBankForUserRequest accountNumbersRequest)
     {
-        var  accs = await accounts.GetAccountsForUserSelectedGroupAndIsDeleted(accountNumbersRequest.userId,null,true);
-        var groups = accs.Select(x => x.AccountNumber).Distinct().ToList();
+        var accs = await accounts.GetAccountsForUserSelectedGroupAndIsDeleted(accountNumbersRequest.userId, null, true);
+        var groups = accs.Select(x => new { LastName = x.LastName, SimCardNumber = x.SimCardNumber, BankType = x.BankType }).ToList();
         return Results.Ok(groups);
     }
 
     private async Task UpdateSelectedGroups(string userId)
     {
-        var setting =await settings.GetByUserId(userId);
+        var setting = await settings.GetByUserId(userId);
         var userAccs = await accounts.FindAccountsByUserId(userId);
-        if(setting == null && !userAccs.Any())return;
+        if (setting == null && !userAccs.Any()) return;
         var userGroupIds = userAccs.Select(acc => acc.AccountGroup).Distinct().ToList();
-        
+
         // Remove values from SelectedGroups that do not exist in userGroupIds
         var upd = setting.SelectedGroups
             .Where(groupId => userGroupIds.Contains(groupId))
             .Distinct()
             .ToArray();
-        
+
         setting.SelectedGroups = upd.ToList();
 
         settings.Update(setting);
     }
+
+    public async Task<bool> CanProceedRequest(AccountDataRequest accountData, string userId, string? accountId = null)
+    {
+        var deletedIncluded = (await accounts.FindAccountsByUserId(userId))
+            .Where(x => (accountId == null || x.Id != accountId))
+            .ToList();
+
+        var deletedNotIncluded = deletedIncluded.Where(x => !x.IsDeleted).ToList();
+
+        var hasSameNameSimNumberBank = deletedNotIncluded.Exists(x =>
+            x.LastName == accountData.LastName &&
+            x.SimCardNumber == accountData.SimCardNumber &&
+            x.BankType == accountData.BankType);
+        var hasSameGroupDeviceSlot = deletedNotIncluded.Exists(x =>
+            x.AccountGroup == accountData.AccountGroup &&
+            x.DeviceId == accountData.DeviceId);
+        var hasSameBankCardNumberInGroup = deletedNotIncluded.Exists(x =>
+            x.AccountGroup == accountData.AccountGroup &&
+            x.BankCardNumber == accountData.BankCardNumber);
+
+        return !(hasSameNameSimNumberBank || hasSameGroupDeviceSlot ||
+                 hasSameBankCardNumberInGroup);
+    }
 }
-
-

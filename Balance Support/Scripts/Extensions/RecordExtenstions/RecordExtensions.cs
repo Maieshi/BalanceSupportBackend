@@ -6,7 +6,7 @@ public static class RecordExtensions
 {
     public static Account NewAccount(this AccountRegisterRequest request)
     {
-        return new Account(){
+       var acc =  new Account(){
             Id= Guid.NewGuid().ToString(), // Generate a new GUID as the AccountId
             UserId = request.UserId,
             AccountNumber= request.AccountData.AccountNumber,
@@ -20,6 +20,12 @@ public static class RecordExtensions
             SmsBalance = 0,
             Description= request.AccountData.Description,
             BankType= request.AccountData.BankType
+            
         };
+        if (request.AccountData.InitialSmsBalance.HasValue) // Check if not null
+        {
+            acc.SmsBalance = request.AccountData.InitialSmsBalance.Value; // Set SmsBalance to the value of InitialSmsBalance
+        }
+        return acc;
     }
 }

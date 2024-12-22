@@ -25,6 +25,7 @@ using Newtonsoft.Json;
 using Microsoft.Owin;
 using Owin;
 
+
 namespace Balance_Support.Scripts.Main.Initializers;
 
 public static class AppInitializer
@@ -286,22 +287,22 @@ public static class AppInitializer
                     .GetResult();
             });
         
-        app.MapGet("/Desktop/Account/GetAllAccountNumbersForUser/{userId}",
+        app.MapGet("/Desktop/Account/GetAllAccountNameNumberBankForUser/{userId}",
             async (
                 string userId,
                 [FromServices] IAccountsController controller,
                 [FromServices] IHttpContextAccessor httpContextAccessor) =>
             {
                 // Create the request object from the URL parameter
-                var getAllForUserRequest = new AccountGetAllAccountNumbersForUserRequest(userId);
+                var getAllForUserRequest = new AccountGetAllNameNumberBankForUserRequest(userId);
                 
                 // Process the request using the same logic
                 return (await ResultContainer
                         .Start()
-                        .Validate<AccountGetAllAccountNumbersForUserRequest,AccountGetAllAccountNumbersForUserRequestValidator>(
+                        .Validate<AccountGetAllNameNumberBankForUserRequest,AccountGetAllNameNumberBankForUserRequestValidator>(
                             getAllForUserRequest)
                         .Authorize(httpContextAccessor.HttpContext)
-                        .ProcessAsync(async () => await controller.GetAllAccountNumbersForUser(getAllForUserRequest)))
+                        .ProcessAsync(async () => await controller.GetAllAccountNameNubmerBankForUser(getAllForUserRequest)))
                     .GetResult();
             });
         #endregion
@@ -342,7 +343,7 @@ public static class AppInitializer
             (await ResultContainer
                 .Start()
                 .Validate<MessagesGetRequest, MessagesGetRequestValidator>(messagesGetRequest)
-                // .Authorize(httpContextAccessor.HttpContext)
+                .Authorize(httpContextAccessor.HttpContext)
                 .ProcessAsync(async () =>
                     await controller.GetMessages(httpContextAccessor.HttpContext,messagesGetRequest)))
             .GetResult()

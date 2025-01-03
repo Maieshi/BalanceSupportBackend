@@ -11,9 +11,17 @@ public class User : BaseEntity
     [JsonIgnore]
     public ICollection<Account> Accounts { get; set; } // Navigation property
     [JsonIgnore]
-    public ICollection<UserToken> UserTokens { get; set; } // Navigation property
-    [JsonIgnore]
     public UserSettings UserSettings { get; set; }
     [JsonIgnore]
     public ICollection<Transaction> Transactions { get; set; }
+
+    public override object Convert()
+    {
+        return new
+        {
+            Id = Id,
+            Email = Email,
+            DisplayName = DisplayName
+        };
+    }
 }

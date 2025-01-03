@@ -1,42 +1,53 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Balance_Support.DataClasses.Records.AccountData;
+using Balance_Support.Scripts.Main;
 using Newtonsoft.Json;
 
 namespace Balance_Support.DataClasses.DatabaseEntities;
 
-public class  Account : BaseEntity
+public class Account : BaseEntity
 {
-    [StringLength(50)]
-    public string AccountNumber { get; set; }
+    [StringLength(50)] public string AccountNumber { get; set; }
 
-    [StringLength(50)]
-    public string LastName { get; set; }
+    [StringLength(50)] public string LastName { get; set; }
 
     public int AccountGroup { get; set; }
     public int DeviceId { get; set; }
     public int SimSlot { get; set; }
+
+    [StringLength(50)] public string SimCardNumber { get; set; }
+
+    [StringLength(50)] public string BankCardNumber { get; set; }
+
+    [StringLength(50)] public string BankType { get; set; }
+
+    public decimal InitialBalance { get; set; }
+
+    public decimal SmsBalance { get; set; }
+
+    [StringLength(500)] public string? Description { get; set; } // Nullable property
     
-    [StringLength(50)]
-    public string SimCardNumber { get; set; }
-
-    [StringLength(50)]
-    public string BankCardNumber { get; set; }
-
-    [StringLength(50)]
-    public string BankType { get; set; }
-
-    [StringLength(500)]
-    public string? Description { get; set; } // Nullable property
-
-    [JsonIgnore]
-    public ICollection<Transaction> Transactions { get; set; } // Navigation property
-
-    [ForeignKey("User")]
-    public string UserId { get; set; }  // Foreign key to User
+    public bool IsDeleted { get; set; } // Flag for soft deletion
     
-    [JsonIgnore]
-    public User User { get; set; } // Navigation property
+    public DateTime? DeletedAt { get; set; } // Timestamp of deletion
+
+    [JsonIgnore] public ICollection<Transaction> Transactions { get; set; } // Navigation property
+
+    [ForeignKey("User")] public string UserId { get; set; } // Foreign key to User
+
+    [JsonIgnore] public User User { get; set; } // Navigation property
+    
+    public void MarkAsDeleted()
+    {
+        IsDeleted = true;
+        DeletedAt = ConstStorage.MoscowUtcNow;
+    }
+    
+    public bool IsWithinRetentionPeriod()
+    {
+        return IsDeleted&& DeletedAt.HasValue && DeletedAt.Value.AddDays(30) >= DateTime.UtcNow;
+    }
 
     public void UpdateAccount(AccountUpdateRequest accountUpdateRequest)
     {
@@ -48,6 +59,45 @@ public class  Account : BaseEntity
         SimCardNumber = accountUpdateRequest.AccountData.SimCardNumber;
         BankCardNumber = accountUpdateRequest.AccountData.BankCardNumber;
         BankType = accountUpdateRequest.AccountData.BankType;
+        InitialBalance = accountUpdateRequest.AccountData.InitialBalance;
         Description = accountUpdateRequest.AccountData.Description;
+        if (accountUpdateRequest.AccountData.InitialSmsBalance.HasValue) // Check if not null
+        {
+            SmsBalance = accountUpdateRequest.AccountData.InitialSmsBalance.Value; // Set SmsBalance to the value of InitialSmsBalance
+        }
+    }
+    
+    public void UpdateAccount(AccountDataRequest accountData)
+    {
+        AccountNumber = accountData.AccountNumber;
+        LastName = accountData.LastName;
+        AccountGroup = accountData.AccountGroup;
+        DeviceId = accountData.DeviceId;
+        SimSlot = accountData.SimSlot;
+        SimCardNumber = accountData.SimCardNumber;
+        BankCardNumber = accountData.BankCardNumber;
+        BankType = accountData.BankType;
+        InitialBalance = accountData.InitialBalance;
+        Description = accountData.Description;
+    }
+
+    public override object Convert()
+    {
+        return new
+        {
+            UserId = UserId,
+            Id = Id,
+            AccountNumber = AccountNumber,
+            LastName = LastName,
+            AccountGroup = AccountGroup,
+            DeviceId = DeviceId,
+            SimSlot = SimSlot,
+            SimCardNumber = SimCardNumber,
+            BankCardNumber = BankCardNumber,
+            BankType = BankType,
+            InitialBalance = InitialBalance,
+            SmsBalance = SmsBalance,
+            Description = Description
+        };
     }
 }

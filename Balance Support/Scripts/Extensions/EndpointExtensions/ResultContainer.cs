@@ -1,29 +1,27 @@
-using System.Diagnostics.Eventing.Reader;
+using Balance_Support.Scripts.Extensions.AuthorizationStrategies;
 using FluentValidation;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Balance_Support.Scripts.Extensions;
-namespace Balance_Support.Scripts.Extensions;
+
+namespace Balance_Support.Scripts.Extensions.EndpointExtensions;
 
 public class ResultContainer
 {
-    private bool _isCancelled;
-    private IResult _result;
-    private bool _isResultRetrieved;
+    private bool isCancelled;
+    private IResult? result;
+    private bool isResultRetrieved;
 
-    public static ResultContainer Start() => new ResultContainer();
+    public static ResultContainer Start() => new();
 
     public ResultContainer Validate<TData,TValidator>(TData data) where TValidator : IValidator<TData>, new()
     {
-        if (_isCancelled) return this;
+        if (isCancelled) return this;
 
         var validator = new TValidator();
         var validationResult = validator.Validate(data);
 
         if (!validationResult.IsValid)
         {
-            _isCancelled = true;
-            _result = Results.BadRequest(validationResult.Errors);
+            isCancelled = true;
+            result = Results.BadRequest(validationResult.Errors);
         }
 
         return this;
@@ -31,7 +29,7 @@ public class ResultContainer
 
     public ResultContainer Authorize(HttpContext context, ContextStrategy? strategy =null)
     {
-        if (_isCancelled) return this;
+        if (isCancelled) return this;
 
         bool isAuthorized = strategy != null
             ? strategy.IsUserAuthorized(context)
@@ -39,8 +37,8 @@ public class ResultContainer
 
         if (!isAuthorized)
         {
-            _isCancelled = true;
-            _result = Results.Unauthorized();
+            isCancelled = true;
+            result = Results.Unauthorized();
         }
 
         return this;
@@ -48,19 +46,19 @@ public class ResultContainer
 
     public ResultContainer Process(Func<Task<IResult>> processFunc)
     {
-        if (_isCancelled) return this;
+        if (isCancelled) return this;
 
         if (processFunc == null)
             throw new ArgumentNullException(nameof(processFunc));
 
         try
         {
-            _result = processFunc.Invoke().Result;
+            result = processFunc.Invoke().Result;
         }
         catch (Exception ex)
         {
-            _isCancelled = true;
-            _result = Results.Problem(detail: ex.Message);
+            isCancelled = true;
+            result = Results.Problem(detail: ex.Message);
         }
 
         return this;
@@ -68,19 +66,19 @@ public class ResultContainer
     
     public async Task<ResultContainer> ProcessAsync(Func<Task<IResult>> processFunc)
     {
-        if (_isCancelled) return this;
+        if (isCancelled) return this;
 
         if (processFunc == null)
             throw new ArgumentNullException(nameof(processFunc));
 
         try
         {
-            _result = await processFunc.Invoke();
+            result = await processFunc.Invoke();
         }
         catch (Exception ex)
         {
-            _isCancelled = true;
-            _result = Results.Problem(detail: ex.Message);
+            isCancelled = true;
+            result = Results.Problem(detail: ex.Message);
         }
 
         return this;
@@ -88,10 +86,10 @@ public class ResultContainer
 
     public IResult GetResult()
     {
-        if (_isResultRetrieved)
+        if (isResultRetrieved)
             throw new InvalidOperationException("Result has already been retrieved.");
 
-        _isResultRetrieved = true;
-        return _result ?? Results.Problem("No result was produced.");
+        isResultRetrieved = true;
+        return result ?? Results.Problem("No result was produced.");
     }
 }

@@ -1,20 +1,30 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData;
 using Balance_Support.DataClasses.Records.UserData;
 using Balance_Support.DataClasses.Validators;
+using Balance_Support.Scripts.Controllers;
+using Balance_Support.Scripts.Controllers.Interfaces;
+using Balance_Support.Scripts.Database;
+using Balance_Support.Scripts.Database.Providers;
+using Balance_Support.Scripts.Database.Providers.Interfaces.Account;
+using Balance_Support.Scripts.Database.Providers.Interfaces.Transaction;
+using Balance_Support.Scripts.Database.Providers.Interfaces.User;
+using Balance_Support.Scripts.Database.Providers.Interfaces.UserSettings;
 using Balance_Support.Scripts.Extensions;
-using Balance_Support.Scripts.Providers;
-using Balance_Support.Scripts.Providers.Interfaces;
-using Balance_Support.Scripts.Validators;
+using Balance_Support.Scripts.Extensions.EndpointExtensions;
+using Balance_Support.Scripts.Parsing;
+using Balance_Support.Scripts.WebSockets;
+using Balance_Support.Scripts.WebSockets.ConnectionManager;
+using Balance_Support.Scripts.WebSockets.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 // using Microsoft.AspNetCore.Owin;
 using Microsoft.Owin;
 using Owin;
+
 
 namespace Balance_Support.Scripts.Main.Initializers;
 
@@ -25,11 +35,11 @@ public static class AppInitializer
         app.UseCors("AllowSpecificOrigin");
         app.UseHttpsRedirection();
         app.UseSession();
-        
+
         app.UseAuthentication();
         app.UseAuthorization();
 
-
+        app.MapHub<BaseHub>("/baseHub");
         var todos = new List<ToDo>();
 
         #region RequestsMapping
@@ -37,78 +47,85 @@ public static class AppInitializer
         #region testovaya huinya
 
         app.MapGet("/", () => "Hello World!");
-        app.MapGet("/GetContext", async (HttpContext context) =>
+        app.MapGet("/GetContext", async ([FromServices] IHttpContextAccessor httpContextAccessor) =>
         {
-            var result = await GetHttpContextLog(context);
+            var result = await GetHttpContextLog(httpContextAccessor.HttpContext);
             return result; // Properly returning the result
         });
-
 
         app.MapPost("/todos", (ToDo todo) =>
         {
             todos.Add(todo);
             return TypedResults.Created($"/todos/{todo.id}", todo);
         });
-        app.MapGet("/GetDatabase", async (ApplicationDbContext context) => TypedResults.Ok(new
+
+        app.MapGet("/GetDatabase", async ([FromServices] ApplicationDbContext context) => TypedResults.Ok(new
         {
-            Users = UserDto.CreateDtos(await context.Users.ToListAsync()),
-            UserSettings = UserSettingsDto.CreateDtos(await context.UserSettings.ToListAsync()),
-            Accounts = AccountDto.CreateDtos(await context.Accounts.ToListAsync()),
-            Transactions = TransactionDto.CreateDtos(await context.Transactions.ToListAsync()),
-            UserTokens = UserTokenDto.CreateDtos(await context.UserTokens.ToListAsync())
+            Users = context.Users.ConvertToDtoList(),
+            UserSettings = context.UserSettings.ConvertToDtoList(),
+            Accounts = context.Accounts.ConvertToDtoList(),
+            Transactions = context.Transactions.ConvertToDtoList()
         }));
+
+
+        app.MapGet("/GetConnections",
+            ([FromServices] IConnectionManager connectionManager) =>
+                $"connections{connectionManager.Test()} ");
 
         #endregion
 
         #region User
 
         app.MapPost("/Desktop/User/Register",
-            async ([FromBody] UserRegisterRequest userRegisterRequest, IAuthUserProvider authProvider) =>
-            (await ResultContainer
-                .Start()
-                .Validate<UserRegisterRequest, UserRegisterRequestValidator>(userRegisterRequest)
-                .ProcessAsync(
-                    async () =>
-                        await authProvider.RegisterNewUser(userRegisterRequest.DisplayName, userRegisterRequest.Email,
-                            userRegisterRequest.Password)))
-            .GetResult());
+            async (
+                    [FromBody] UserRegisterRequest userRegisterRequest,
+                    [FromServices] IUserController controller) =>
+                (await ResultContainer
+                    .Start()
+                    .Validate<UserRegisterRequest, UserRegisterRequestValidator>(userRegisterRequest)
+                    .ProcessAsync(
+                        async () =>
+                            await controller.RegisterNewUser(userRegisterRequest)))
+                .GetResult());
 
         app.MapPost("/Mobile/User/Login",
-            async ([FromBody] UserLoginRequest userSignData, IAuthUserProvider authProvider, HttpContext context) =>
-            (await ResultContainer
-                .Start()
-                .Validate<UserLoginRequest, UserLoginRequestValidator>(userSignData)
-                .ProcessAsync(
-                    async () =>
-                        await authProvider.LogInUser(context,
-                            userSignData.UserCred,
-                            userSignData.Password,
+            async (
+                    [FromBody] UserLoginRequest userLoginRequest,
+                    [FromServices] IUserController controller,
+                    [FromServices] IHttpContextAccessor httpContextAccessor) =>
+                (await ResultContainer
+                    .Start()
+                    .Validate<UserLoginRequest, UserLoginRequestValidator>(userLoginRequest)
+                    .ProcessAsync(
+                        async () => await controller.LogInUser(userLoginRequest, httpContextAccessor.HttpContext,
                             LoginDeviceType.Mobile)))
-            .GetResult()
+                .GetResult()
         );
 
         app.MapPost("/Desktop/User/Login",
-            async ([FromBody] UserLoginRequest userSignData, IAuthUserProvider authProvider, HttpContext context) =>
-            (await ResultContainer
-                .Start()
-                .Validate<UserLoginRequest, UserLoginRequestValidator>(userSignData)
-                .ProcessAsync(
-                    async () =>
-                        await authProvider.LogInUser(context,
-                            userSignData.UserCred,
-                            userSignData.Password,
+            async (
+                    [FromBody] UserLoginRequest userLoginRequest,
+                    [FromServices] IUserController controller,
+                    [FromServices] IHttpContextAccessor httpContextAccessor) =>
+                (await ResultContainer
+                    .Start()
+                    .Validate<UserLoginRequest, UserLoginRequestValidator>(userLoginRequest)
+                    .ProcessAsync(
+                        async () => await controller.LogInUser(userLoginRequest, httpContextAccessor.HttpContext,
                             LoginDeviceType.Desktop)))
-            .GetResult()
+                .GetResult()
         );
 
         app.MapPost("/User/Logout",
-            async (IAuthUserProvider authProvider, HttpContext context) =>
+            async (
+                    [FromServices] IUserController controller,
+                    [FromServices] IHttpContextAccessor httpContextAccessor) =>
                 (await ResultContainer
                     .Start()
-                    .Authorize(context)
+                    .Authorize(httpContextAccessor.HttpContext)
                     .ProcessAsync(
                         async () =>
-                            await authProvider.LogOutUser(context)))
+                            await controller.LogOutUser(httpContextAccessor.HttpContext)))
                 .GetResult()
         );
 
@@ -117,33 +134,37 @@ public static class AppInitializer
         #region UserSettings
 
         app.MapGet("/Desktop/UserSettings/Get/{userID}",
-            async (string userId, IDatabaseUserSettingsProvider provider,
-                HttpContext context) =>
+            async (
+                string userId,
+                [FromServices] IUserSettingsController controller,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
             {
                 var getRequest = new UserSettingsGetRequest(userId);
 
                 return (await ResultContainer
                         .Start()
-                        .Authorize(context)
+                        .Authorize(httpContextAccessor.HttpContext)
                         .Validate<UserSettingsGetRequest, UserSettingsGetRequestValidator>(getRequest)
                         .ProcessAsync(
                             async () =>
-                                await provider.GetUserSettings(getRequest)
+                                await controller.GetUserSettings(getRequest)
                         ))
                     .GetResult();
             }
         );
 
         app.MapPost("/Desktop/UserSettings/Update",
-            async ([FromBody] UserSettingsUpdateRequest updateRequest, IDatabaseUserSettingsProvider provider,
-                    HttpContext context) =>
+            async (
+                    [FromBody] UserSettingsUpdateRequest updateRequest,
+                    [FromServices] IUserSettingsController controller,
+                    [FromServices] IHttpContextAccessor httpContextAccessor) =>
                 (await ResultContainer
                     .Start()
-                    .Authorize(context)
+                    .Authorize(httpContextAccessor.HttpContext)
                     .Validate<UserSettingsUpdateRequest, UserSettingsUpdateRequestValidator>(updateRequest)
                     .ProcessAsync(
                         async () =>
-                            await provider.UpdateUserSettings(updateRequest)
+                            await controller.UpdateUserSettings(updateRequest)
                     ))
                 .GetResult()
         );
@@ -152,54 +173,64 @@ public static class AppInitializer
 
         #region Account
 
-        app.MapPost("/Desktop/Account/Register", async ([FromBody] AccountRegisterRequest deviceRegisterData,
-                IDatabaseAccountProvider deviceProvider, HttpContext context) =>
+        app.MapPost("/Desktop/Account/Register",
+            async (
+                    [FromBody] AccountRegisterRequest accountRegisterRequest,
+                    [FromServices] IAccountsController controller,
+                    [FromServices] IHttpContextAccessor httpContextAccessor) =>
+                (await ResultContainer
+                    .Start()
+                    .Validate<AccountRegisterRequest, DeviceRegisterRequestValidator>(accountRegisterRequest)
+                    .Authorize(httpContextAccessor.HttpContext)
+                    .ProcessAsync(async () =>
+                        await controller.RegisterAccount(accountRegisterRequest)))
+                .GetResult()
+        );
+
+        app.MapPost("/Desktop/Account/Update", async (
+                [FromBody] AccountUpdateRequest accountUpdateRequest,
+                [FromServices] IAccountsController controller,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
             (await ResultContainer
                 .Start()
-                .Validate<AccountRegisterRequest, DeviceRegisterRequestValidator>(deviceRegisterData)
-                .Authorize(context)
-                .ProcessAsync(async () => await deviceProvider.RegisterAccount(deviceRegisterData)))
+                .Validate<AccountUpdateRequest, DeviceUpdateRequestValidator>(accountUpdateRequest)
+                .Authorize(httpContextAccessor.HttpContext)
+                .ProcessAsync(async () =>
+                    await controller.UpdateAccount(accountUpdateRequest)))
             .GetResult()
         );
 
-        app.MapPost("/Desktop/Account/Update", async ([FromBody] AccountUpdateRequest deviceRegisterData,
-                IDatabaseAccountProvider deviceProvider, HttpContext context) =>
+        app.MapPost("/Desktop/Account/Delete", async (
+                [FromBody] AccountDeleteRequest accountDeleteRequest,
+                [FromServices] IAccountsController controller,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
             (await ResultContainer
                 .Start()
-                .Validate<AccountUpdateRequest, DeviceUpdateRequestValidator>(deviceRegisterData)
-                .Authorize(context)
-                .ProcessAsync(async () => await deviceProvider.UpdateAccount(deviceRegisterData)))
+                .Validate<AccountDeleteRequest, DeviceDeleteRequestValidator>(accountDeleteRequest)
+                .Authorize(httpContextAccessor.HttpContext)
+                .ProcessAsync(async () =>
+                    await controller.DeleteAccount(accountDeleteRequest)))
             .GetResult()
         );
 
-        app.MapPost("/Desktop/Account/Delete", async ([FromBody] AccountDeleteRequest deviceRegisterData,
-                IDatabaseAccountProvider deviceProvider, HttpContext context) =>
+        app.MapPost("/Desktop/Account/SetBalance", async (
+                [FromBody] AccountSetBalanceRequest accountSetBalanceRequest,
+                [FromServices] IAccountsController controller,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
             (await ResultContainer
                 .Start()
-                .Validate<AccountDeleteRequest, DeviceDeleteRequestValidator>(deviceRegisterData)
-                .Authorize(context)
-                .ProcessAsync(async () => await deviceProvider.DeleteAccount(deviceRegisterData)))
+                .Validate<AccountSetBalanceRequest, AccountSetBalanceRequestValidator>(accountSetBalanceRequest)
+                .Authorize(httpContextAccessor.HttpContext)
+                .ProcessAsync(async () =>
+                    await controller.SetAccountBalance(accountSetBalanceRequest)))
             .GetResult()
         );
-
-        app.MapGet("/Mobile/Account/GetForDevice/{userId}/{accountGroup:int}/{deviceId:int}",
-            async (string userId, int accountGroup, int deviceId,
-                IDatabaseAccountProvider deviceProvider, HttpContext context) =>
-            {
-                // Create the request object from the URL parameters 
-                var deviceGetRequestData = new AccountGetForDeviceRequest(userId, accountGroup, deviceId);
-
-                // Process the request using the same logic
-                return (await ResultContainer
-                        .Start()
-                        .Validate<AccountGetForDeviceRequest, AccountGetForDeviceRequestValidator>(deviceGetRequestData)
-                        .Authorize(context)
-                        .ProcessAsync(async () => await deviceProvider.GetAccountsForDevice(deviceGetRequestData)))
-                    .GetResult();
-            });
 
         app.MapGet("/Desktop/Account/GetAllForUser/{userId}",
-            async (string userId, IDatabaseAccountProvider deviceProvider, HttpContext context) =>
+            async (
+                string userId,
+                [FromServices] IAccountsController controller,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
             {
                 // Create the request object from the URL parameter
                 var getAllForUserRequest = new AccountGetAllForUserRequest(userId);
@@ -209,61 +240,115 @@ public static class AppInitializer
                         .Start()
                         .Validate<AccountGetAllForUserRequest, AccountGetAllForUserRequestValidator>(
                             getAllForUserRequest)
-                        .Authorize(context)
-                        .ProcessAsync(async () => await deviceProvider.GetAllAccountsForUser(getAllForUserRequest)))
+                        .Authorize(httpContextAccessor.HttpContext)
+                        .ProcessAsync(async () => await controller.GetAllAccountsForUser(getAllForUserRequest)))
+                    .GetResult();
+            });
+        
+        app.MapGet("/Mobile/Account/GetForDevice/{userId}/{accountGroup:int}/{deviceId:int}",
+            async (
+                string userId,
+                int accountGroup,
+                int deviceId,
+                [FromServices] IAccountsController controller,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
+            {
+                // Create the request object from the URL parameters 
+                var accountGetRequest = new AccountGetForDeviceRequest(userId, accountGroup, deviceId);
+
+                // Process the request using the same logic
+                return (await ResultContainer
+                        .Start()
+                        .Validate<AccountGetForDeviceRequest, AccountGetForDeviceRequestValidator>(accountGetRequest)
+                        .Authorize(httpContextAccessor.HttpContext)
+                        .ProcessAsync(async () =>
+                            await controller.GetAccountsForDevice(accountGetRequest)))
                     .GetResult();
             });
 
-        #endregion
+       
 
-        #region UserToken
+        app.MapGet("/Desktop/Account/GetAllGroupsForUser/{userId}",
+            async (
+                string userId,
+                [FromServices] IAccountsController controller,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
+            {
+                // Create the request object from the URL parameter
+                var getAllForUserRequest = new AccountGetAllGroupsForUserRequest(userId);
 
-        app.MapPost("/Desktop/UserToken/Set", async ([FromBody] SetUserTokenRequest userTokenRequest,
-                ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
-            (await ResultContainer
-                .Start()
-                .Validate<SetUserTokenRequest, SetUserTokenRequestValidator>(userTokenRequest)
-                .Authorize(context)
-                .ProcessAsync(async () => await cloudMessagingProvider.SetUserToken(userTokenRequest)))
-            .GetResult()
-        );
-
-        app.MapPost("/Desktop/UserToken/Delete", async ([FromBody] DeleteUserTokenRequest userTokenRequest,
-                ICloudMessagingProvider cloudMessagingProvider, HttpContext context) =>
-            (await ResultContainer
-                .Start()
-                .Validate<DeleteUserTokenRequest, UserTokenDeleteRequestValidator>(userTokenRequest)
-                .Authorize(context)
-                .ProcessAsync(async () => await cloudMessagingProvider.DeleteUserToken(userTokenRequest)))
-            .GetResult()
-        );
-
+                // Process the request using the same logic
+                return (await ResultContainer
+                        .Start()
+                        .Validate<AccountGetAllGroupsForUserRequest,AccountGetAllGroupsForUserRequestValidator>(
+                            getAllForUserRequest)
+                        .Authorize(httpContextAccessor.HttpContext)
+                        .ProcessAsync(async () => await controller.GetAllAccountGroupsForUser(getAllForUserRequest)))
+                    .GetResult();
+            });
+        
+        app.MapGet("/Desktop/Account/GetAllAccountNameNumberBankForUser/{userId}",
+            async (
+                string userId,
+                [FromServices] IAccountsController controller,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
+            {
+                // Create the request object from the URL parameter
+                var getAllForUserRequest = new AccountGetAllNameNumberBankForUserRequest(userId);
+                
+                // Process the request using the same logic
+                return (await ResultContainer
+                        .Start()
+                        .Validate<AccountGetAllNameNumberBankForUserRequest,AccountGetAllNameNumberBankForUserRequestValidator>(
+                            getAllForUserRequest)
+                        .Authorize(httpContextAccessor.HttpContext)
+                        .ProcessAsync(async () => await controller.GetAllAccountNameNubmerBankForUser(getAllForUserRequest)))
+                    .GetResult();
+            });
         #endregion
 
         #region Transaction
 
-        app.MapPost("/Mobile/Transaction/HandleNew", async (
-                [FromBody] NotificationHandleRequest handleNotificationRequest,
-                INotificationHandler notificationHandler, HttpContext context) =>
+        app.MapPost("/Mobile/Transaction/HandleNew",
+            async (
+                    [FromBody] NotificationHandleRequest handleNotificationRequest,
+                    [FromServices] ITransactionController controller,
+                    [FromServices] IHttpContextAccessor httpContextAccessor) =>
+                (await ResultContainer
+                    .Start()
+                    .Validate<NotificationHandleRequest, NotificationHandleRequestValidator>(handleNotificationRequest)
+                    // .Authorize(httpContextAccessor.HttpContext)
+                    .ProcessAsync(async () => await controller.RegisterNewTransaction(httpContextAccessor.HttpContext,handleNotificationRequest)))
+                .GetResult()
+        );
+        
+        app.MapPost("/Desktop/Transaction/CalculateBalance", async (
+                [FromBody] CalculateBalanceRequest request,
+                [FromServices] ITransactionController controller,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
             (await ResultContainer
                 .Start()
-                .Validate<NotificationHandleRequest, NotificationHandleRequestValidator>(handleNotificationRequest)
-                .Authorize(context)
-                .ProcessAsync(async () => await notificationHandler.HandleNotification(handleNotificationRequest)))
+                .Validate<CalculateBalanceRequest, CalculateBalanceRequestValidator>(request)
+                .Authorize(httpContextAccessor.HttpContext)
+                .ProcessAsync(async () =>
+                    await controller.CalculateBalance(request)))
             .GetResult()
         );
 
 
         app.MapPost("/Desktop/Transaction/GetMessages", async (
-                [FromBody] MessagesGetRequest getMessagesRequest,
-                IDatabaseTransactionProvider databaseTransactionProvider, HttpContext context) =>
+                [FromBody] MessagesGetRequest messagesGetRequest,
+                [FromServices] ITransactionController controller,
+                [FromServices] IHttpContextAccessor httpContextAccessor) =>
             (await ResultContainer
                 .Start()
-                .Validate<MessagesGetRequest, MessagesGetRequestValidator>(getMessagesRequest)
-                .Authorize(context)
-                .ProcessAsync(async () => await databaseTransactionProvider.GetMessages(getMessagesRequest)))
+                .Validate<MessagesGetRequest, MessagesGetRequestValidator>(messagesGetRequest)
+                .Authorize(httpContextAccessor.HttpContext)
+                .ProcessAsync(async () =>
+                    await controller.GetMessages(httpContextAccessor.HttpContext,messagesGetRequest)))
             .GetResult()
         );
+        
 
         #endregion
 
@@ -272,8 +357,6 @@ public static class AppInitializer
 
 //TODO: create new endpoint filtration and validation
 //TODO: try to rebuild project to mvc
-//TODO: split notification handling to parser(mb static) that returns transaction and transaction handler
-//TODO: try to upgrade architecture and make the code less cohesive
     }
 
 
@@ -285,6 +368,7 @@ public static class AppInitializer
         var queryParams = request.Query;
         var method = request.Method;
         var path = request.Path;
+        var connectionId = context.Connection.Id;
         var scheme = request.Scheme;
         var host = request.Host.ToString();
         var protocol = request.Protocol;
@@ -318,6 +402,7 @@ public static class AppInitializer
         {
             Console.WriteLine(e);
         }
+
         var identity = user.Identity;
         var isAuthenticated = user.Identity?.IsAuthenticated ?? false;
         var userName = user.Identity?.Name;
@@ -341,13 +426,14 @@ public static class AppInitializer
             QueryParams = queryParams.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToString()),
             QueryString = queryString,
             PathBase = pathBase,
+            ConnectionId = connectionId,
             ContentType = contentType,
             RemoteIpAddress = remoteIpAddress,
             Cookies = cookies.ToDictionary(c => c.Key, c => c.Value),
             Headers = headers.ToDictionary(h => h.Key, h => h.Value.ToString()),
             RequestBody = requestBody,
             ResponseStatusCode = responseStatusCode,
-           
+
             IsAuthenticated = isAuthenticated,
             UserName = userName,
             Claims = claims.ToList(),

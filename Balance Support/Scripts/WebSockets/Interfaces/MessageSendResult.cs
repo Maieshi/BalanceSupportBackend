@@ -2,18 +2,38 @@ namespace Balance_Support.Scripts.WebSockets.Interfaces;
 
 public class MessageSendResult
 {
-    public readonly bool Success;
-    
-    public readonly string? ErrorDetails;
+    public  bool IsSuccess {get; }
 
-    private MessageSendResult(bool success, string? errorDetails = null)
+    public MessageStatus MessageStatus{get; set; }
+    
+    public  string? StatusDetails{get; set; }
+
+    private MessageSendResult(bool isSuccess, string? statusDetails = null)
     {
-        Success = success;
-        ErrorDetails = errorDetails;
+        IsSuccess = isSuccess;
+        StatusDetails = statusDetails;
     }
 
+    
+    private MessageSendResult(bool isSuccess,MessageStatus messageStatus ,string? statusDetails = null)
+    {
+        IsSuccess = isSuccess;
+        StatusDetails = statusDetails;
+        MessageStatus = messageStatus;
+    }
     // Factory methods to create success or failure results
-    public static MessageSendResult SuccessResult() => new MessageSendResult(true);
-    public static MessageSendResult FailureResult(string? errorDetails = null) 
-        => new MessageSendResult(false, errorDetails);
+    public static MessageSendResult Success(string? message = null) => new MessageSendResult(true,MessageStatus.Success,message);
+    
+    // public static MessageSendResult Success() => new MessageSendResult(true);
+    public static MessageSendResult SendingError(string? errorDetails = null) 
+        => new MessageSendResult(false, MessageStatus.SendingError,errorDetails);
+    public static MessageSendResult UserNotFound(string? errorDetails = null) 
+        => new MessageSendResult(false, MessageStatus.UserNotFound,errorDetails);
+}
+
+public enum MessageStatus
+{
+    Success,
+    UserNotFound,
+    SendingError
 }

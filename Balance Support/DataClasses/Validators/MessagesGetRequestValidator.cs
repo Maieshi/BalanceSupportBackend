@@ -8,6 +8,5 @@ public class MessagesGetRequestValidator:AbstractValidator<MessagesGetRequest>
     public MessagesGetRequestValidator()
     {
         RuleFor(x => x.UserId).NotNull().NotEmpty();
-        RuleFor(x => x.Amount).NotNull().GreaterThan(0);
     }
 }

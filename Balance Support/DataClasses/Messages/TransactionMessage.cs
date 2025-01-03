@@ -9,6 +9,7 @@ public class TransactionMessage : IMessage
     public string SmsTime { get; set; }
     public string SmsDate { get; set; }
     public string CardNumber { get; set; }
+    public string BankType { get; set; }
     public string Channel { get; set; }
     public bool Incoming { get; set; }
     public bool Outgoing { get; set; }

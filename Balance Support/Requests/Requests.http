@@ -3,14 +3,13 @@
 GET https://localhost:5001/
 
 ###
-GET https://localhost:5001/todos/1
-
-###
 GET https://localhost:5001/GetContext
-
 
 ###
 GET https://localhost:5001/GetDatabase
+
+###
+POST  https://localhost:5001/Check
 
 ###
 POST https://localhost:5001/todos
@@ -22,8 +21,21 @@ content-type: application/json
 "isComplited":true
 }
 
+###
+GET https://localhost:5001/GetConnections
+
 ######### User 
 
+POST https://localhost:5001/Desktop/User/Register
+content-type: application/json
+
+{
+   "Email": "my@example.com",
+  "DisplayName":"myuser",
+  "Password": "testuser4testuser4"
+}
+
+###
 POST https://localhost:5001/Mobile/User/Login
 content-type: application/json
 
@@ -57,7 +69,7 @@ POST https://localhost:5001/Desktop/UserSettings/Update
 content-type: application/json
 
 {
-  "userId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "userId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2",
   "userName": null,
   "nickname": null,
   "phoneNumber": null,
@@ -70,9 +82,10 @@ content-type: application/json
   "newsAnnouncements": false,
   "productUpdates": false,
   "blogDigest": false,
-  "selectedGroup": 1,
+  "selectedGroups": [
+    2
+  ],
   "rowsCount": 100
-  
 }
 
 ######### Account
@@ -81,36 +94,41 @@ POST https://localhost:5001/Desktop/Account/Register
 content-type: application/json
 
 {
-  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
+  "UserId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2",
   "AccountData": {
-    "AccountNumber": "sampleAccountNumber",
-    "LastName": "sampleLastName",
+    "AccountNumber": "1234",
+    "LastName": "asdfsadf",
     "AccountGroup": 1,
-    "DeviceId": 2,
+    "DeviceId": 1,
     "SimSlot": 1,
-    "SimCardNumber": "+88005553535",
-    "BankCardNumber": "1488",
-    "BankType": "Sbebank",
-    "Description": "sampleDescription"
+    "SimCardNumber": "+1111111111",
+    "BankCardNumber": "2222",
+    "InitialBalance": "500",
+    "BankType": "Sberbank",
+    "InitialSmsBalance":"2000",
+    "Description": "111111"
   }
 }
+
 ###
 POST https://localhost:5001/Desktop/Account/Update
 content-type: application/json
 
 {
-  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
-  "AccountId": "53bc6280-1f8c-40b5-88a7-5a0e3e5e3f75",
+  "UserId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2",
+  "AccountId": "0999d646-6f7a-4057-81ef-8ae7e1115e32",
   "AccountData": {
-    "AccountNumber": "sampleAccountNumber3",
-    "LastName": "sampleLastName",
-    "AccountGroup": 3,
+    "AccountNumber": "1234",
+    "LastName": "asdfsadf",
+    "AccountGroup": 1,
     "DeviceId": 1,
     "SimSlot": 1,
-    "SimCardNumber": "+88005553566",
-    "BankCardNumber": "1234",
-    "BankType": "sampleBankType",
-    "Description": "sampleDescription"
+    "SimCardNumber": "+1111111111",
+    "BankCardNumber": "2222",
+    "InitialBalance": "500",
+    "BankType": "Sberbank",
+    "InitialSmsBalance":"2000",
+    "Description": "111111"
   }
 }
 ###
@@ -118,31 +136,24 @@ POST https://localhost:5001/Desktop/Account/Delete
 content-type: application/json 
 
 {
-  "AccountId": "sampleAccountId"
+  "AccountId": "1c202e1d-9456-43c0-94cb-3df998267277"
 }
 ###
-GET https://localhost:5001/Mobile/Account/GetForDevice/sDAmWae7RqMsmWIC74lVdLuQRpq1/3/3
-
-###
-GET https://localhost:5001/Desktop/Account/GetAllForUser/sDAmWae7RqMsmWIC74lVdLuQRpq1
-
-######### UserToken
-
-POST https://localhost:5001/Desktop/UserToken/Set
+POST https://localhost:5001/Desktop/Account/SetBalance
 content-type: application/json
 
 {
-  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
-  "Token": "sampleToken"
+  "AccountId": "02ac5ca2-9bdf-4261-80a0-787c3c0c4bc3",
+  "Balance":10
 }
+###
+GET https://localhost:5001/Mobile/Account/GetForDevice/Ex6YYoPzbJhiuAefYYbwNbjQF9k2/21/1
 
 ###
-POST https://localhost:5001/Desktop/UserToken/Delete
-content-type: application/json
+GET https://localhost:5001/Desktop/Account/GetAllForUser/Ex6YYoPzbJhiuAefYYbwNbjQF9k2
 
-{
-  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1"
-}
+###
+GET https://localhost:5001/Desktop/Account/GetAllAccountNameNumberBankForUser/Ex6YYoPzbJhiuAefYYbwNbjQF9k2
 
 ######### Transaction
 
@@ -150,8 +161,10 @@ POST https://localhost:5001/Mobile/Transaction/HandleNew
 content-type: application/json
 
 {
-  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
-  "NotificationText": "СЧЁТ2280 16:00 перевод 3900р Комиссия 19.50р Баланс: 69.40р"
+  "UserId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2",
+  "GroupId": 2,
+  "DeviceId": 2,
+  "NotificationText": "Выполнен перевод 10000р со счёта *1234. Павел Николаевич М через СБП."
 }
 
 ###
@@ -159,11 +172,21 @@ POST https://localhost:5001/Desktop/Transaction/GetMessages
 content-type: application/json
 
 {
-  "UserId": "sDAmWae7RqMsmWIC74lVdLuQRpq1",
-  "SearchText":null,
-  "AccountNumber":"sampleAccountNumber",
-  "StartingDate":"2024-09-19T00:42:30.647Z",
-  "EndingDate":"2024-09-21T00:42:30.647Z",
-  "MessageType":-1,
-  "Amount":100
+  "UserId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2",
+  "SearchText": null,
+  "LastName": "Саламатин",
+  "SimCard": "+79604917306",
+  "BankType": "Sberbank",
+  "StartingDate": null,
+  "EndingDate": null,
+  "MessageType": null,
+  "Amount": 100
+}
+
+###
+POST https://localhost:5001/Desktop/Transaction/CalculateBalance
+content-type: application/json
+
+{
+"UserId": "Ex6YYoPzbJhiuAefYYbwNbjQF9k2"
 }

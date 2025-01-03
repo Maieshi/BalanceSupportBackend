@@ -22,5 +22,20 @@ public class Transaction : BaseEntity
     [JsonIgnore]
     public Account Account { get; set; }  // Navigation property
     [JsonIgnore]
-    public User User { get; set; }   
+    public User User { get; set; }
+
+    public override object Convert()
+    {
+        return new
+        {
+            Id = Id,
+            UserId = UserId,
+            AccountId = AccountId,
+            Amount = Amount,
+            Balance = Balance,
+            Time = Time,
+            TransactionType = TransactionType,
+            Message = Message,
+        };
+    }
 }

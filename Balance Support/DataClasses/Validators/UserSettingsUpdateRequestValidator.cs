@@ -12,10 +12,8 @@ public class UserSettingsUpdateRequestValidator : AbstractValidator<UserSettings
             .NotEmpty()
             .WithMessage("UserId is required.");
 
-        RuleFor(x => x.SelectedGroup)
+        RuleFor(x => x.SelectedGroups)
             .NotNull()
-            .NotEmpty()
-            .GreaterThan(0)
             .WithMessage("SelectedGroup is required.");
 
         RuleFor(x => x.RowsCount)

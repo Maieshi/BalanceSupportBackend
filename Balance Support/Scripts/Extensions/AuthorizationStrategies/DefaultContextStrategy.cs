@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace Balance_Support.Scripts.Extensions;
+namespace Balance_Support.Scripts.Extensions.AuthorizationStrategies;
 
 public  class DefaultContextStrategy: ContextStrategy
 {

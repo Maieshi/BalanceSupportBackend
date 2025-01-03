@@ -1,11 +1,17 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Balance_Support.DataClasses.Records.AccountData;
 using Balance_Support.DataClasses.Records.NotificationData;
+using Balance_Support.DataClasses.SerializationClasses;
+using Balance_Support.Scripts.Controllers;
+using Balance_Support.Scripts.Database;
+using Balance_Support.Scripts.Database.Providers;
+using Balance_Support.Scripts.Database.Providers.Interfaces;
 using Balance_Support.Scripts.Extensions.DIExtensions;
-using Balance_Support.Scripts.Providers;
-using Balance_Support.Scripts.Providers.Interfaces;
+using Balance_Support.Scripts.Parsing;
 using Balance_Support.Scripts.WebSockets;
+using Balance_Support.Scripts.WebSockets.ConnectionManager;
 using Balance_Support.Scripts.WebSockets.Interfaces;
-using Balance_Support.SerializationClasses;
 using Firebase.Auth;
 using Firebase.Database;
 using FirebaseAdmin;
@@ -15,151 +21,184 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Serilog;
 using User = Balance_Support.DataClasses.DatabaseEntities.User;
 
 namespace Balance_Support.Scripts.Main.Initializers;
 
 public static class ServicesInitializer
 {
-    public static async Task Initialize(WebApplicationBuilder builder)
+  public static async Task Initialize(WebApplicationBuilder builder)
     {
-        var services = builder.Services;
-
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(
-                builder.Configuration
-                    .GetConnectionString("SqlServerConnection"))); // Register EF Core DbContext with SQL Server
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowSpecificOrigin",
+                policy => policy.WithOrigins("http://localhost:5173", "https://balance-support.vercel.app", "https://localhost:7158")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials());
+        });
         
-        services.AddDataProtection()
-            .PersistKeysToDbContext<ApplicationDbContext>()  // Store keys in the database
-            .SetDefaultKeyLifetime(TimeSpan.FromDays(90)); 
-           // Key lifetime set to 90 days
+        builder.Services.AddDistributedMemoryCache();
 
-        // Optionally configure SecurityStamp validation interval to fix the 30-minute logout issue
-        services.Configure<SecurityStampValidatorOptions>(options =>
-        {
-            options.ValidationInterval = TimeSpan.FromHours(10);
-        });
+        builder.Services.AddAuthorization();
 
-        var apiKey = JsonConvert.DeserializeObject<FirebaseAuthApiKey>(
-            File.ReadAllText(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseAuthApiKey)));
+        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.Name = "AuthCookie";
+                options.Cookie.Domain = ".balancesupportapi.top";
+                options.Cookie.Path = "/";
+                options.LoginPath = "/account/login";
+                options.LogoutPath = "/account/logout";
+                options.AccessDeniedPath = "/account/accessdenied";
+                options.SlidingExpiration = true;
+                options.Cookie.IsEssential = true;
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
+            });
 
-        var databaseConfig = JsonConvert.DeserializeObject<FirebaseDatabaseClientConfig>(
-            File.ReadAllText(
-                Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseDatabaseClientConfigJson)));
-
-        FirebaseApp.Create(new AppOptions
-        {
-            Credential = GoogleCredential.FromFile(Path.Combine(PathStorage.FirebaseConfigsPath,
-                PathStorage.FirebaseCloudMessagingJson))
-        });
-
-
-        services.AddHttpContextAccessor();
-        //services.AddFluentValidation();
-        services.AddAuthorization();
-
-
-        services.AddDistributedMemoryCache();
-
-        services.AddSession(options =>
+        // Session configuration
+        builder.Services.AddSession(options =>
         {
             options.IdleTimeout = TimeSpan.FromHours(24);
             options.Cookie.HttpOnly = true;
             options.Cookie.IsEssential = true;
         });
 
+        builder.Services.AddHttpContextAccessor();
         
-        // services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        //     .AddCookie(options =>
-        //     {
-        //         options.Cookie.IsEssential = true;
-        //         options.Cookie.HttpOnly = true;
-        //         options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookie is sent only over HTTPS
-        //         options.Cookie.SameSite = SameSiteMode.None; // Allow cookies in cross-site requests
-        //         // Set the login path
-        //         options.LoginPath = "/Account/Login";
-        //         // Set the logout path
-        //         options.LogoutPath = "/Account/Logout";
-        //         // Set cookie expiration time
-        //         options.ExpireTimeSpan = TimeSpan.FromHours(24); 
-        //         options.SlidingExpiration = true; // Automatically renew cookie if active within expiration window
-        //         // You can also customize other settings like the access denied path
-        //         options.AccessDeniedPath = "/Account/AccessDenied";
-        //     });
+        // Add SignalR support
+        builder.Services.AddSignalR();
+        
+        builder.Services.AddDataProtection()
+            .PersistKeysToDbContext<ApplicationDbContext>() // Persist keys to the database
+            .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+        
+        
+        
+        
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Verbose()
+            .WriteTo.File(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "stdout", $"{DateTime.Now:yyyy-MM-dd}", "Log.txt"),
+                rollingInterval: RollingInterval.Infinite,
+                outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff}] [{Level}] {Message}{NewLine}{Exception}")
+            .WriteTo.Console()
+            .CreateLogger();
 
-        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(options =>
+        builder.Host.UseSerilog();
+        
+        builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+        
+        
+        // Autofac container builder
+        builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+        {
+            containerBuilder.Register(c =>
             {
-                // Set up cookie options
-                options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookie is sent only over HTTPS
-                options.Cookie.SameSite = SameSiteMode.None; // Allow cookies in cross-site requests
-                options.Cookie.Name = "AuthCookie"; // Name your authentication cookie
-                options.Cookie.Domain = ".balancesupportapi.top"; // Specify the domain for the cookie
-                options.Cookie.Path = "/"; // Path for the cookie
-                options.LoginPath = "/account/login"; // Redirect to login if unauthorized
-                options.LogoutPath = "/account/logout"; // Path to handle logout
-                options.AccessDeniedPath = "/account/accessdenied"; // Path for access denied page
-                options.SlidingExpiration = true; // Automatically extend the cookie lifetime when the user is active
-                options.ExpireTimeSpan = TimeSpan.FromDays(7); // Set cookie expiration
+                var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+                optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection"));
+                return new ApplicationDbContext(optionsBuilder.Options);
+            }).AsSelf().InstancePerLifetimeScope();
+            
+            var apiKey = JsonConvert.DeserializeObject<FirebaseAuthApiKey>(
+                File.ReadAllText(Path.Combine(ConstStorage.FirebaseConfigsPath, ConstStorage.FirebaseAuthApiKey)));
+
+            var databaseConfig = JsonConvert.DeserializeObject<FirebaseDatabaseClientConfig>(
+                File.ReadAllText(
+                    Path.Combine(ConstStorage.FirebaseConfigsPath, ConstStorage.FirebaseDatabaseClientConfigJson)));
+
+            FirebaseApp.Create(new AppOptions
+            {
+                Credential = GoogleCredential.FromFile(Path.Combine(ConstStorage.FirebaseConfigsPath,
+                    ConstStorage.FirebaseCloudMessagingJson))
             });
 
-        services.AddCors(options =>
-        {
-            options.AddPolicy("AllowSpecificOrigin",
-                x => x.WithOrigins("http://localhost:5173", "https://balance-support.vercel.app",
-                        "https://localhost:7158")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials());
+            containerBuilder.RegisterType<AccountCleanupService>()
+                .As<IHostedService>()
+                .SingleInstance();
+            
+            // Register Firebase Client
+            containerBuilder.Register(c =>
+                new FirebaseClient("https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/",
+                    new FirebaseOptions
+                        { AuthTokenAsyncFactory = () => GetTokenByGoogleServices(), AsAccessToken = true })
+            ).AsSelf().SingleInstance();
+
+            // Register IFirebaseAuthProvider in Autofac
+            containerBuilder.Register(c =>
+                new FirebaseAuthProvider(new FirebaseConfig(apiKey.ApiKey))
+            ).As<IFirebaseAuthProvider>().SingleInstance();
+
+            containerBuilder.RegisterType<ConnectionManager>()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            containerBuilder.RegisterType<BaseHub>()
+                .AsImplementedInterfaces()
+                .AsSelf()
+                .SingleInstance()
+                .ExternallyOwned();  
+            
+            containerBuilder.RegisterType<DbContextContainer>()
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+            
+            // Register services in Autofac
+            containerBuilder.RegisterType<DatabaseUserProvider>()
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<DatabaseUserSettingsProvider>()
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<DatabaseUserProvider>()
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<DatabaseAccountProvider>()
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<DatabaseTransactionProvider>()
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<NotificationMessageParser>()
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+            
+            
+
+            containerBuilder.RegisterType<UserController>()
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+            
+            containerBuilder.RegisterType<UserSettingsController>()
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+            
+            containerBuilder.RegisterType<AccountsController>()
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+            
+            containerBuilder.RegisterType<TransactionController>()
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
         });
 
-        services.AddAuthorization();
-        
-
-        services.AddSignalR();
-
-        services.AddInterfacesSingleton<ConnectionManager>();
-
-        // services.AddInterfacesSingleton<AccountsHub>();
-        // services.AddSingleton<AccountsHub>();
-        // services.AddInterfacesSingleton<TransactionsHub>();
-        // services.AddSingleton<TransactionsHub>();
-
-        services.AddSingleton<IMessageSender,BaseHub>();
-
-        services.AddSingleton<BaseHub>();
-        
-        services.AddSingleton(
-            new FirebaseClient("https://balance-support-b9da3-default-rtdb.europe-west1.firebasedatabase.app/",
-                new FirebaseOptions { AuthTokenAsyncFactory = () => GetTokenByGoogleServices(), AsAccessToken = true })
-        );
-
-        services.AddSingleton<IFirebaseAuthProvider>(
-            new FirebaseAuthProvider(new FirebaseConfig(apiKey.ApiKey))
-        );
-//TODO:create DI installers
-        services.AddScoped<IDatabaseUserProvider, DatabaseUserProvider>();
-        services.AddScoped<IDatabaseUserSettingsProvider, DatabaseUserSettingsProvider>();  
-        services.AddScoped<IAuthUserProvider, AuthUserProvider>();
-        services.AddScoped<IDatabaseAccountProvider, DatabaseAccountProvider>();
-        services.AddScoped<ICloudMessagingProvider, CloudMessagingProvider>();
-        services.AddScoped<IDatabaseTransactionProvider, DatabaseTransactionProvider>();
-        services.AddScoped<INotificationHandler, NotificationHandler>();
-        services.AddScoped<FirebaseToSqlServerMigrator>();
-
-        var provider = services.BuildServiceProvider();
-        
-        //TODO: split providers to smaller interfaces to provide only functions that needed and make like container.BindInterfaces() 
-
-        
+     
+        var provider = builder.Services.BuildServiceProvider();
     }
 
     private static async Task<string> GetTokenByGoogleServices()
     {
         var credential = GoogleCredential
-            .FromFile(Path.Combine(PathStorage.FirebaseConfigsPath, PathStorage.FirebaseCloudMessagingJson))
+            .FromFile(Path.Combine(ConstStorage.FirebaseConfigsPath, ConstStorage.FirebaseCloudMessagingJson))
             .CreateScoped("https://www.googleapis.com/auth/userinfo.email",
                 "https://www.googleapis.com/auth/firebase.database");
 

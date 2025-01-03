@@ -4,6 +4,7 @@ using Balance_Support.DataClasses.DatabaseEntities;
 using Balance_Support.DataClasses.Records.UserData;
 using Newtonsoft.Json;
 
+namespace Balance_Support.DataClasses.DatabaseEntities;
 public class UserSettings : BaseEntity
 {
     public UserSettings(string userId)
@@ -24,7 +25,7 @@ public class UserSettings : BaseEntity
         ProductUpdates = false;
         BlogDigest = false;
 
-        SelectedGroup = 0;
+        SelectedGroups = Enumerable.Empty<int>().ToList();
         RowsCount = 0;
     }
 
@@ -54,8 +55,8 @@ public class UserSettings : BaseEntity
     public bool ProductUpdates { get; set; }
 
     public bool BlogDigest { get; set; }
-
-    public int SelectedGroup { get; set; }
+    
+    public List<int> SelectedGroups { get; set; } = new List<int>();
 
     public int RowsCount { get; set; }
 
@@ -79,7 +80,41 @@ public class UserSettings : BaseEntity
         ProductUpdates = request.ProductUpdates;
         BlogDigest = request.BlogDigest;
 
-        SelectedGroup = request.SelectedGroup;
+        SelectedGroups = request.SelectedGroups;
         RowsCount = request.RowsCount;
+    }
+
+    public override object Convert()
+    {
+        return new
+        {
+            Id = Id,
+            UserId = UserId, // Foreign key to User
+            UserName = UserName,
+
+            Nickname = Nickname,
+
+            PhoneNumber = PhoneNumber,
+
+            Address = Address,
+
+            Country = Country,
+
+            About = About,
+
+            CommentsOnArticle = CommentsOnArticle,
+
+            AnswersOnForm = AnswersOnForm,
+
+            OnFollower = OnFollower,
+
+            NewsAnnouncements = NewsAnnouncements,
+
+            ProductUpdates = ProductUpdates,
+
+            BlogDigest = BlogDigest,
+            SelectedGroups = SelectedGroups,
+            RowsCount = RowsCount
+        };
     }
 }

@@ -1,4 +1,4 @@
-namespace Balance_Support.SerializationClasses;
+namespace Balance_Support.DataClasses.SerializationClasses;
 
 public class FirebaseDatabaseClientConfig
 {
